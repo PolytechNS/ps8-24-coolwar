@@ -1,0 +1,35 @@
+
+.plate{
+    display: grid;
+
+    grid-template-columns: repeat(8,50px 5px) 50px;
+    grid-template-rows: repeat(8,50px 5px) 50px;
+
+    justify-content: center;
+    align-items: center;
+
+    margin: 50px auto;
+}
+
+.playable_square{
+    display: grid;
+    height: 50px;
+    background: black;
+}
+
+.horizontal_wall{
+    height: 5px;
+    background: red;
+}
+
+.vertical_wall{
+    height: 50px;
+    background: gold;
+}
+
+.intersection_wall{
+    height: 5px;
+    width: 5px;
+}
+
+
