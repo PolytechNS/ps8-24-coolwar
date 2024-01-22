@@ -16,8 +16,8 @@
 }
 
 .horizontal_wall{
-    height: 5px;
-    background: red;
+    opacity: 0;
+    height: 14px;
 }
 
 .vertical_wall{
@@ -41,10 +41,9 @@
     padding: 5px 0px 5px 0px;
 }
 
-.vertical_hitbox:hover > div{
+.vertical_hitbox:hover > .vertical_wall{
     background: green;
 }
 
-.horizontal_hitbox:hover > div{
-    background: green;
+.horizontal_hitbox:hover > .horizontal_wall{
 }
