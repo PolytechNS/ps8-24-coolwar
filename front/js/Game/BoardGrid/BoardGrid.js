@@ -5,6 +5,9 @@ export class BoardGrid{
         this.plateElement = this.getPlate();
         this.nbLignes = 9;
         this.nbColonnes = 9;
+        this.row = 0;
+        this.col = 0;
+        this.canMove = true;
     }
 
     createGrid(){
@@ -22,6 +25,10 @@ export class BoardGrid{
                     }
                 }
             }
+
+            this.openPopUp();
+            this.displayElements(this.row, this.col);
+            document.addEventListener("keydown", (event) => this.moveCharacter(event));
         });
     }
 
@@ -105,6 +112,63 @@ export class BoardGrid{
         playable_square.setAttribute("width",widthSquare+"px");
         playable_square.setAttribute("height",heightSquare+"px");
         return playable_square;
+    }
+
+    openPopUp(){
+        document.getElementById('modal').style.display = 'none'
+        document.getElementById('validateTurn').addEventListener('click', function(e) {
+            document.getElementById('modal').style.display = 'block'
+        });
+        document.getElementById('modalClose').addEventListener('click', function(e) {
+            document.getElementById('modal').style.display = 'none'
+        });
+    }
+
+
+    displayElements(row, col) {
+        row = Math.max(0, Math.min(row, 8));
+        col = Math.max(0, Math.min(col, 8));
+
+        let items = document.getElementsByClassName('playable_square');
+        for (let i = 0; i < items.length; i++) {
+            items[i].style.backgroundImage = '';
+            items[i].style.backgroundSize = 'cover';
+        }
+
+        let imgPath = 'assets/perso1.png'
+
+        items.item(row * 9 + col).style.backgroundImage = `url(${imgPath})`;
+    }
+
+    moveCharacter(event) {
+        let keyCode = event.keyCode;
+
+        if (this.canMove) {
+            let newRow = this.row;
+            let newCol = this.col;
+
+            if (keyCode === 37) {
+                // Gauche
+                newCol = Math.max(0, this.col - 1);
+            } else if (keyCode === 39) {
+                // Droite
+                newCol = Math.min(8, this.col + 1);
+            } else if (keyCode === 38) {
+                // Haut
+                newRow = Math.max(0, this.row - 1);
+            } else if (keyCode === 40) {
+                // Bas
+                newRow = Math.min(8, this.row + 1);
+            }
+
+            // Vérifie si le nouveau mouvement restera dans la grille
+            if (newRow !== this.row || newCol !== this.col) {
+                this.row = newRow;
+                this.col = newCol;
+                this.displayElements(this.row, this.col);
+                this.canMove = false; // Bloque le déplacement après le premier mouvement
+            }
+        }
     }
 
 }

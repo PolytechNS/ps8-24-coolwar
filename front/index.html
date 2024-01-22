@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GAME</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<div id="plate" class="plate"></div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>GAME</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div>
+            <button id="validateTurn">valider</button>
+            <div class="modal" id="modal">
+                <div class="modal-back"></div>
+                <div class="modal-container">
+                    Player<br />
+                    Your turn<br />
+                    Ready ?<br />
+                    <button id="modalClose">Play</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="plate" class="plate"></div>
+    </body>
 </html>
 
 <script type="module" src="./js/index.js"></script>
