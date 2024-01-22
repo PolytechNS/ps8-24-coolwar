@@ -14,6 +14,9 @@ window.addEventListener("load", (event) => {
     }
 });
 
+addEventListener("mouseover", (event) => {
+});
+
 function buildLineWithFullWall(nbColumns){
     var plate = getPlate();
     var finalNbColumns = nbColumns*2;
@@ -49,15 +52,22 @@ function getPlate(){return document.querySelector('.plate');}
 function getEmptyHtmlElement(type){return document.createElement(type);}
 
 function generateVerticalWallHTMLElement(){
+    var container = getEmptyHtmlElement("div");
     var wall= getEmptyHtmlElement("div");
     wall.classList.add("vertical_wall");
-    return wall;
+    container.classList.add("vertical_hitbox");
+    container.appendChild(wall);
+    console.log(wall);
+    return container;
 }
 function generateHorizontalWallHTMLElement(){
+    var container = getEmptyHtmlElement("div");
     var wall= getEmptyHtmlElement("div");
     wall.classList.add("horizontal_wall");
+    container.classList.add("horizontal_hitbox");
+    container.appendChild(wall);
     console.log(wall);
-    return wall;
+    return container;
 }
 
 function generateIntersectionElement(){

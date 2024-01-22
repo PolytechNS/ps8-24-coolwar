@@ -7,13 +7,11 @@
 
     justify-content: center;
     align-items: center;
-
-    margin: 50px auto;
 }
 
 .playable_square{
-    display: grid;
     height: 50px;
+    width: auto;
     background: black;
 }
 
@@ -24,12 +22,29 @@
 
 .vertical_wall{
     height: 50px;
+    width: 5px;
     background: gold;
 }
 
 .intersection_wall{
     height: 5px;
-    width: 5px;
 }
 
+.vertical_hitbox{
+    margin: -5px;
+    padding: 0px 5px 0px 5px;
+    z-index: 1;
+}
+.horizontal_hitbox{
+    width: auto;
+    z-index: 1;
+    padding: 5px 0px 5px 0px;
+}
 
+.vertical_hitbox:hover > div{
+    background: green;
+}
+
+.horizontal_hitbox:hover > div{
+    background: green;
+}
