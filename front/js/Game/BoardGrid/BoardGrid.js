@@ -55,7 +55,6 @@ export class BoardGrid{
     }
 
     buildLineWithPlayableSquare(nbLines,nbColumns){
-        console.log("BUILD PLAYABLE");
         var height_Plate = this.plateElement.offsetHeight;
         var width_Plate = this.plateElement.offsetWidth;
         var widthSquareWithoutVerticalWalls = width_Plate/nbColumns;
@@ -89,7 +88,6 @@ export class BoardGrid{
         var wall= this.getEmptyHtmlElement("div");
         wall.setAttribute("width",width+"px");
         wall.classList.add("horizontal_wall");
-        console.log(wall);
         return wall;
     }
 
