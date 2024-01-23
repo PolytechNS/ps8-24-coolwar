@@ -1,4 +1,4 @@
-// utils.js
+// config.js
 module.exports.parseJSON = (req, callback) => {
     let body = '';
     req.on('data', chunk => {
