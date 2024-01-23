@@ -6,13 +6,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const model = new GameModel();
     const view = new GameView();
     const presenter = new GamePresenter(model, view);
+    console.log("yo ?");
 
+    // ...rest of your code...
 
-    const token = localStorage.getItem('token');
+    // Function to sign up a user
+    function signUp(username, password) {
+        console.log("call signup");
+        fetch('http://localhost:3000/api/auth/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                localStorage.setItem('token', data.token); // Save the token
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+
+// Call the signUp function with the new parameters
+    signUp('testUser', 'testPassword');
+
 
     const socket = io('http://localhost:3000', {
         auth: {
-            token: token
+            token: localStorage.getItem('token'), // Get the token from local storage
         }
     });
 
