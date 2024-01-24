@@ -1,112 +1,113 @@
+function getPlate(){return document.querySelector('.plate');}
+function getEmptyHtmlElement(type){return document.createElement(type);}
+function generateVerticalWallHTMLElement(nbLigne,nbElement){
+    var container = getEmptyHtmlElement("div");
+    var wall= getEmptyHtmlElement("div");
+    wall.classList.add("vertical_wall");
+    container.classList.add("vertical_hitbox");
+    container.appendChild(wall);
+    return container;
+}
+function generateHorizontalWallHTMLElement(nbLigne,nbElement){
+    var container = getEmptyHtmlElement("div");
+    var wall= getEmptyHtmlElement("img");
+    wall.classList.add("horizontal_wall");
+    wall.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
+    wall.setAttribute("src","../front/datas/wall_texture.png");
+    container.classList.add("horizontal_hitbox");
+    container.appendChild(wall);
+    return container;
+}
+function generateIntersectionElement(){
+    var wall = getEmptyHtmlElement("div");
+    wall.classList.add("intersection_wall");
+    return wall;
+}
+function generatePlayableSquare(){
+    var playable_square = getEmptyHtmlElement("div");
+    playable_square.classList.add("playable_square");
+    return playable_square;
+}
 export class BoardGrid{
     constructor() {
-        this.HORIZONTAL_WALL_HEIGHT_NO_UNITS = 10;
-        this.VERTICAL_WALL_WIDTH_NO_UNITS = 10;
-        this.plateElement = this.getPlate();
+        this.plateElement = getPlate();
         this.nbLignes = 9;
         this.nbColonnes = 9;
     }
-
     createGrid(){
-        window.addEventListener("load", (event) => {
+        var plate = this.plateElement;
+        function buildLineWithFullWall(Y_plate_count,nbColumns){
+            var finalNbColumns = nbColumns*2;
 
-            this.buildEmptyGrid();
+            var X_plate_count = 0;
 
-            for(var lignes=0;lignes<this.nbLignes*2;lignes++) {
-                if(lignes===0 || lignes===this.nbLignes*2){}
+            for(var i=0;i<finalNbColumns;i++) {
+                var widthForOneWall;
+                if(i===0){}
                 else {
-                    if (lignes % 2 === 0) {
-                        this.buildLineWithFullWall(this.nbColonnes);
-                    } else {
-                        this.buildLineWithPlayableSquare(this.nbLignes, this.nbColonnes);
+                    //intersection
+                    if (i % 2 === 0) {
+                        widthForOneWall = 0;
+                        plate.appendChild(generateIntersectionElement());
+                    }
+                    //ligne
+                    else {
+                        plate.appendChild(generateHorizontalWallHTMLElement(Y_plate_count,X_plate_count));
+                        X_plate_count++;
                     }
                 }
             }
-        });
-    }
-
-    buildEmptyGrid() {
-        //this.plate.setAttribute("grid-template-columns",4+"px");
-    }
-
-    buildLineWithFullWall(nbColumns){
-
-        var finalNbColumns = nbColumns*2;
-        var width_Plate = this.plateElement.offsetWidth;
-        var squareWidthWithoutWall = width_Plate/nbColumns;
-        var squareWidth = squareWidthWithoutWall - 2*this.VERTICAL_WALL_WIDTH_NO_UNITS;
-
-        for(var i=0;i<finalNbColumns;i++) {
-            var widthForOneWall;
-            if(i===0){}
-            else {
-                //intersection
-                if (i % 2 === 0) {
-                    widthForOneWall = 0;
-                    this.plateElement.appendChild(this.generateIntersectionElement());
-                }
-                //ligne
-                else {
-                    widthForOneWall = squareWidth;
-                    this.plateElement.appendChild(this.generateHorizontalWallHTMLElement(widthForOneWall));
-                }
+        }
+        function buildLineWithPlayableSquare(nbLines,nbColumns){
+            for(var i=0;i<nbColumns;i++){
+                plate.appendChild(generatePlayableSquare());
+                if(i!==nbColumns-1){plate.appendChild(generateVerticalWallHTMLElement(nbLines,i));}
             }
         }
+
+        window.addEventListener("load", (event) => {
+            //définit l'emplacement des éléments Y
+            var Y_plate_count = 0;
+
+            for(var lignes=0;lignes<this.nbLignes*2;lignes++) {
+                if (lignes === 0 || lignes === this.nbLignes * 2) {
+                } else {
+                    if (lignes % 2 === 0) {
+                        buildLineWithFullWall(Y_plate_count, this.nbColonnes);
+                        Y_plate_count++;
+                    } else {
+                        buildLineWithPlayableSquare(Y_plate_count, this.nbColonnes);
+                    }
+                }
+            }
+            this.plateBehaviour();
+    })}
+
+    plateBehaviour(){
+        var walls = document.querySelectorAll('.horizontal_hitbox');
+
+        walls.forEach(function(wall) {
+            // Ajouter un écouteur pour l'événement "mouseenter" (survol)
+            wall.addEventListener('mouseenter', function() {
+                wall.children.item(0).style.opacity = "0.8";
+            });
+
+            // Ajouter un écouteur pour l'événement "mouseleave" (quand le survol se termine)
+            wall.addEventListener('mouseleave', function() {
+                wall.children.item(0).style.opacity = "0";
+            });
+        });
+
+        addEventListener("mouseenter", (event) => {
+            if(event.target.classList.contains("horizontal_wall")){
+                event.target.style.opacity = "1";
+            }
+        });
+        addEventListener("mouseleave", (event) => {
+            console.log("LEAVE");
+            if(event.target.classList.contains("horizontal_wall")){
+                event.target.style.opacity = "0";
+            }
+        });
     }
-
-    buildLineWithPlayableSquare(nbLines,nbColumns){
-        var height_Plate = this.plateElement.offsetHeight;
-        var width_Plate = this.plateElement.offsetWidth;
-        var widthSquareWithoutVerticalWalls = width_Plate/nbColumns;
-        var heightForOneElement = height_Plate/nbLines - 2*this.HORIZONTAL_WALL_HEIGHT_NO_UNITS;
-
-        var widthSquare = widthSquareWithoutVerticalWalls - 2*this.VERTICAL_WALL_WIDTH_NO_UNITS;
-
-        for(var i=0;i<nbColumns;i++){
-            this.plateElement.appendChild(this.generatePlayableSquare(widthSquare,heightForOneElement));
-            if(i!==nbColumns-1){this.plateElement.appendChild(this.generateVerticalWallHTMLElement(heightForOneElement));}
-            /*if(i===0){plate.appendChild(generatePlayableSquare(widthSquare,heightForOneElement));}
-            else {
-                plate.appendChild(generateVerticalWallHTMLElement(heightForOneElement));
-                plate.appendChild(generatePlayableSquare(widthSquare, heightForOneElement));
-            }*/
-        }
-    }
-
-    getPlate(){return document.querySelector('.plate');}
-
-    getEmptyHtmlElement(type){return document.createElement(type);}
-
-    generateVerticalWallHTMLElement(height){
-        var wall= this.getEmptyHtmlElement("div");
-        wall.setAttribute("height",height+"px");
-        wall.classList.add("vertical_wall");
-        return wall;
-    }
-
-    generateHorizontalWallHTMLElement(width){
-        var wall= this.getEmptyHtmlElement("div");
-        wall.setAttribute("width",width+"px");
-        wall.classList.add("horizontal_wall");
-        return wall;
-    }
-
-    generateIntersectionElement(){
-        var wall = this.getEmptyHtmlElement("div");
-        wall.classList.add("intersection_wall");
-        return wall;
-    }
-
-    generatePlayableSquare(widthSquare,heightSquare){
-        var playable_square = this.getEmptyHtmlElement("div");
-        playable_square.classList.add("playable_square");
-        playable_square.setAttribute("width",widthSquare+"px");
-        playable_square.setAttribute("height",heightSquare+"px");
-        return playable_square;
-    }
-
 }
-
-
-
-

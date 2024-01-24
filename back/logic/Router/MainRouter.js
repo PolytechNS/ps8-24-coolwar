@@ -1,6 +1,5 @@
 // MainRouter.js
 const authRouter = require('./authRouter');
-
 function mainRouter(req, res) {
     console.log('Main router called');
     console.log(req.url);
