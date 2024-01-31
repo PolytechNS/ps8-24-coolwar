@@ -15,15 +15,31 @@ function init_model(view){
 }
 
 function placeWall(wall) {
-    var wallToEdit = wall.children.item(0);
-    console.log("PLACE WALL ON :"+wallToEdit.id);
-    var wallBack = horizontal_Walls.get(wallToEdit.id);
-    console.log(wallBack);
-    if(wallBack===false){
-        horizontal_Walls.set(wallToEdit.id,true);
-        return true;
+    var wallToEdit = null;
+    var wallBack = null;
+    console.log(wall);
+    if(wall.classList.contains("horizontal_hitbox")){
+        wallToEdit = wall.children.item(0);
+        console.log("PLACE WALL ON :"+wallToEdit.id);
+        wallBack = horizontal_Walls.get(wallToEdit.id);
+        console.log(wallBack);
+        if(wallBack===false){
+            horizontal_Walls.set(wallToEdit.id,true);
+            return true;
+        }
+        return false;
     }
-    return false;
+    if(wall.classList.contains("vertical_hitbox")){
+        wallToEdit = wall.children.item(0);
+        console.log("PLACE WALL ON :"+wallToEdit.id);
+        wallBack = vertical_Walls.get(wallToEdit.id);
+        console.log(wallBack);
+        if(wallBack===false){
+            vertical_Walls.set(wallToEdit.id,true);
+            return true;
+        }
+        return false;
+    }
 }
 
 const hoverBehavior = (wall)=>{wall.children.item(0).style.opacity = "0.8";}
@@ -31,14 +47,14 @@ const leaveHoverBeahvior = (wall)=>{wall.children.item(0).style.opacity = "0";}
 
 
 function init_behaviour(view) {
-    var walls = document.querySelectorAll('.horizontal_hitbox');
-    walls.forEach(function(wall) {
+    var horizontal_walls = document.querySelectorAll('.horizontal_hitbox');
+    var vertical_walls = document.querySelectorAll('.vertical_hitbox');
+    horizontal_walls.forEach(function(wall) {
         function hoverHandler() {hoverBehavior(wall);}
         function leaveHoverHandler() {leaveHoverBeahvior(wall);}
 
         function clickHandler() {
             if (placeWall(wall)) {
-                console.log("AUTORISATION DE POSER !");
                 wall.removeEventListener('mouseenter', hoverHandler);
                 wall.removeEventListener('mouseleave', leaveHoverHandler);
                 wall.removeEventListener('click', clickHandler);
@@ -50,6 +66,26 @@ function init_behaviour(view) {
         wall.addEventListener('mouseleave', leaveHoverHandler);
         wall.addEventListener('click', clickHandler);
     });
+
+    vertical_walls.forEach(function(wall) {
+        function hoverHandler() {hoverBehavior(wall);}
+        function leaveHoverHandler() {leaveHoverBeahvior(wall);}
+
+        function clickHandler() {
+            if (placeWall(wall)) {
+                wall.removeEventListener('mouseenter', hoverHandler);
+                wall.removeEventListener('mouseleave', leaveHoverHandler);
+                wall.removeEventListener('click', clickHandler);
+                wall.children.item(0).style.opacity = "1";
+            }
+        }
+
+        wall.addEventListener('mouseenter', hoverHandler);
+        wall.addEventListener('mouseleave', leaveHoverHandler);
+        wall.addEventListener('click', clickHandler);
+    });
+
+
 }
 
 export class GamePresenter {

@@ -2,8 +2,10 @@ function getPlate(){return document.querySelector('.plate');}
 function getEmptyHtmlElement(type){return document.createElement(type);}
 function generateVerticalWallHTMLElement(nbLigne,nbElement){
     var container = getEmptyHtmlElement("div");
-    var wall= getEmptyHtmlElement("div");
+    var wall= getEmptyHtmlElement("img");
     wall.classList.add("vertical_wall");
+    wall.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
+    wall.setAttribute("src","../front/datas/vertical_wall_texture.png");
     container.classList.add("vertical_hitbox");
     container.appendChild(wall);
     return container;
