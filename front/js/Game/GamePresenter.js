@@ -1,4 +1,5 @@
 const horizontal_Walls = new Map();
+const vertical_Walls = new Map();
 
 function init_model(view){
     var nbLignes = view.nbLignes;
@@ -8,39 +9,46 @@ function init_model(view){
         for(var j=0;j<nbColonnes;j++){
             var key = i+","+j;
             horizontal_Walls.set(key,false);
+            vertical_Walls.set(key,false);
         }
     }
 }
 
 function placeWall(wall) {
-    console.log("PLACE WALL ON :"+wall.id);
-    var wallBack = horizontal_Walls.get(wall.id);
+    var wallToEdit = wall.children.item(0);
+    console.log("PLACE WALL ON :"+wallToEdit.id);
+    var wallBack = horizontal_Walls.get(wallToEdit.id);
     console.log(wallBack);
     if(wallBack===false){
-        horizontal_Walls.set(wall.id,true);
+        horizontal_Walls.set(wallToEdit.id,true);
         return true;
     }
     return false;
 }
 
-function init_behaviour(view) {
-    var horizontal_walls_HTML = document.querySelectorAll(".horizontal_hitbox");
-    horizontal_walls_HTML.forEach(function(wall){
-        wall.addEventListener('click',function(){
-            function removeAllBehaviour(wall) {
-                wall.removeEventListener('mouseenter', function() {
-                    wall.children.item(0).style.opacity = "0.8";
-                });
-                wall.removeEventListener('mouseleave', function() {
-                    wall.children.item(0).style.opacity = "0";
-                });
-            }
+const hoverBehavior = (wall)=>{wall.children.item(0).style.opacity = "0.8";}
+const leaveHoverBeahvior = (wall)=>{wall.children.item(0).style.opacity = "0";}
 
-            if(placeWall(wall.children.item(0))){
-                removeAllBehaviour(wall);
-                wall.children.item(0).style.opacity = 1;
+
+function init_behaviour(view) {
+    var walls = document.querySelectorAll('.horizontal_hitbox');
+    walls.forEach(function(wall) {
+        function hoverHandler() {hoverBehavior(wall);}
+        function leaveHoverHandler() {leaveHoverBeahvior(wall);}
+
+        function clickHandler() {
+            if (placeWall(wall)) {
+                console.log("AUTORISATION DE POSER !");
+                wall.removeEventListener('mouseenter', hoverHandler);
+                wall.removeEventListener('mouseleave', leaveHoverHandler);
+                wall.removeEventListener('click', clickHandler);
+                wall.children.item(0).style.opacity = "1";
             }
-        });
+        }
+
+        wall.addEventListener('mouseenter', hoverHandler);
+        wall.addEventListener('mouseleave', leaveHoverHandler);
+        wall.addEventListener('click', clickHandler);
     });
 }
 
@@ -49,11 +57,13 @@ export class GamePresenter {
         this.model = model;
         this.view = view;
 
-        window.addEventListener("load", (event) => {
+        window.addEventListener('load', (event) => {
             init_model(view);
             init_behaviour(view);
-        })};
+        });
+    };
         // Gérer les initialisations et les handlers d'événements ici
+
     handlePlayerMove(newPosition) {
         // Mettez à jour le modèle avec le nouveau mouvement du joueur
         // Puis mettez à jour la vue

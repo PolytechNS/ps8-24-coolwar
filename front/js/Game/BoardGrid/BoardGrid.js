@@ -13,7 +13,7 @@ function generateHorizontalWallHTMLElement(nbLigne,nbElement){
     var wall= getEmptyHtmlElement("img");
     wall.classList.add("horizontal_wall");
     wall.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
-    wall.setAttribute("src","../front/datas/wall_texture.png");
+    wall.setAttribute("src","../front/datas/horizontal_wall_texture.png");
     container.classList.add("horizontal_hitbox");
     container.appendChild(wall);
     return container;
@@ -80,34 +80,5 @@ export class BoardGrid{
                     }
                 }
             }
-            this.plateBehaviour();
     })}
-
-    plateBehaviour(){
-        var walls = document.querySelectorAll('.horizontal_hitbox');
-
-        walls.forEach(function(wall) {
-            // Ajouter un écouteur pour l'événement "mouseenter" (survol)
-            wall.addEventListener('mouseenter', function() {
-                wall.children.item(0).style.opacity = "0.8";
-            });
-
-            // Ajouter un écouteur pour l'événement "mouseleave" (quand le survol se termine)
-            wall.addEventListener('mouseleave', function() {
-                wall.children.item(0).style.opacity = "0";
-            });
-        });
-
-        addEventListener("mouseenter", (event) => {
-            if(event.target.classList.contains("horizontal_wall")){
-                event.target.style.opacity = "1";
-            }
-        });
-        addEventListener("mouseleave", (event) => {
-            console.log("LEAVE");
-            if(event.target.classList.contains("horizontal_wall")){
-                event.target.style.opacity = "0";
-            }
-        });
-    }
 }
