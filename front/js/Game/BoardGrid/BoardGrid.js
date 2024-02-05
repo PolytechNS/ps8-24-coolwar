@@ -7,36 +7,10 @@ export class BoardGrid{
         this.col = 0;
         this.canMove = true;
     }
-    createGrid(){
+
+    //INITIALISE LA GRILLE DE JEU
+    createGrid() {
         var plate = this.plateElement;
-        function buildLineWithFullWall(Y_plate_count,nbColumns){
-            var finalNbColumns = nbColumns*2;
-
-            var X_plate_count = 0;
-
-            for(var i=0;i<finalNbColumns;i++) {
-                var widthForOneWall;
-                if(i===0){}
-                else {
-                    //intersection
-                    if (i % 2 === 0) {
-                        widthForOneWall = 0;
-                        plate.appendChild(this.generateIntersectionElement());
-                    }
-                    //ligne
-                    else {
-                        plate.appendChild(this.generateHorizontalWallHTMLElement(Y_plate_count,X_plate_count));
-                        X_plate_count++;
-                    }
-                }
-            }
-        }
-        function buildLineWithPlayableSquare(nbLines,nbColumns){
-            for(var i=0;i<nbColumns;i++){
-                plate.appendChild(this.generatePlayableSquare());
-                if(i!==nbColumns-1){plate.appendChild(this.generateVerticalWallHTMLElement(nbLines,i));}
-            }
-        }
 
         window.addEventListener("load", (event) => {
             //définit l'emplacement des éléments Y
@@ -46,10 +20,10 @@ export class BoardGrid{
                 if (lignes === 0 || lignes === this.nbLignes * 2) {
                 } else {
                     if (lignes % 2 === 0) {
-                        buildLineWithFullWall(Y_plate_count, this.nbColonnes);
+                        this.buildLineWithFullWall(Y_plate_count, this.nbColonnes);
                         Y_plate_count++;
                     } else {
-                        buildLineWithPlayableSquare(Y_plate_count, this.nbColonnes);
+                        this.buildLineWithPlayableSquare(Y_plate_count, this.nbColonnes);
                     }
                 }
             }
@@ -69,7 +43,7 @@ export class BoardGrid{
         });
     }
 
-
+    //affiche le personnage sur une case jouable
     displayElements(row, col) {
         row = Math.max(0, Math.min(row, 8));
         col = Math.max(0, Math.min(col, 8));
@@ -80,7 +54,7 @@ export class BoardGrid{
             items[i].style.backgroundSize = 'cover';
         }
 
-        let imgPath = 'assets/perso1.png'
+        let imgPath = '../../assets/perso1.png'
 
         items.item(row * 9 + col).style.backgroundImage = `url(${imgPath})`;
     }
@@ -116,6 +90,29 @@ export class BoardGrid{
         }
     }
 
+    buildLineWithFullWall(Y_plate_count, nbColumns) {
+        var finalNbColumns = nbColumns * 2;
+
+        var X_plate_count = 0;
+
+        for (var i = 0; i < finalNbColumns; i++) {
+            var widthForOneWall;
+            if (i === 0) {
+            } else {
+                //intersection
+                if (i % 2 === 0) {
+                    widthForOneWall = 0;
+                    plate.appendChild(this.generateIntersectionElement());
+                }
+                //ligne
+                else {
+                    plate.appendChild(this.generateHorizontalWallHTMLElement(Y_plate_count, X_plate_count));
+                    X_plate_count++;
+                }
+            }
+        }
+    }
+
     generatePlayableSquare(){
         var playable_square = this.getEmptyHtmlElement("div");
         playable_square.classList.add("playable_square");
@@ -133,17 +130,23 @@ export class BoardGrid{
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("vertical_wall");
         wall.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
-        wall.setAttribute("src","../front/datas/vertical_wall_texture.png");
+        wall.setAttribute("src","../../datas/vertical_wall_texture.png");
         container.classList.add("vertical_hitbox");
         container.appendChild(wall);
         return container;
+    }
+    buildLineWithPlayableSquare(nbLines, nbColumns) {
+        for (var i = 0; i < nbColumns; i++) {
+            this.plateElement.appendChild(this.generatePlayableSquare());
+            if(i!==nbColumns-1){this.plateElement.appendChild(this.generateVerticalWallHTMLElement(nbLines,i));}
+        }
     }
     generateHorizontalWallHTMLElement(nbLigne,nbElement){
         var container = this.getEmptyHtmlElement("div");
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("horizontal_wall");
         wall.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
-        wall.setAttribute("src","../front/datas/horizontal_wall_texture.png");
+        wall.setAttribute("src","../../datas/horizontal_wall_texture.png");
         container.classList.add("horizontal_hitbox");
         container.appendChild(wall);
         return container;
