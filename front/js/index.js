@@ -6,7 +6,8 @@ import { config } from './utils/config.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const view = new GameView();
-    const presenter = new GamePresenter(view);
+    //TODO: PARAMETRER LE MODEL
+    const presenter = new GamePresenter(null,view);
 
     AuthService.signUp('testUser', 'testPassword')
         .then(data => {
