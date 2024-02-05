@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const username = signupForm.querySelector('[name="username"]').value;
         const password = signupForm.querySelector('[name="password"]').value;
+        console.log('username:', username);
+        console.log('password:', password)
         AuthService.signUp(username, password)
             .then(data => {
                 console.log('Signup success:', data);
                 localStorage.setItem('token', data.token);
-                //window.location.href = '/home'; // Redirigez vers la page après inscription
+                window.location.href = '/login.html'; // Redirigez vers la page après inscription
             })
             .catch(error => {
                 console.error('Signup error:', error);

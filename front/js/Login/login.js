@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const username = loginForm.querySelector('[name="username"]').value;
         const password = loginForm.querySelector('[name="password"]').value;
+
         AuthService.login(username, password)
             .then(data => {
                 console.log('Login success:', data);
