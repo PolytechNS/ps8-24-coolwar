@@ -7,6 +7,7 @@ const { PORT } = require('./logic/Utils/constants');
 const server = http.createServer((req, res) => {
     // Delegate the request to the mainRouter
     mainRouter.handle(req, res);
+    console.log("j'attends les requetes");
 });
 
 setupSocketServer(server);
