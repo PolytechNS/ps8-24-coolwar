@@ -1,13 +1,13 @@
 import { GamePresenter } from './Game/GamePresenter.js';
 import { GameView } from './Game/GameView.js';
+import {GameModel} from "../../back/logic/Model/Game/GameModel.js";
 import { AuthService } from './services/AuthService.js';
 import { socketManager } from './socket/socketManager.js';
-import { config } from './utils/config.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const view = new GameView();
-    //TODO: PARAMETRER LE MODEL
-    const presenter = new GamePresenter(null,view);
+    const model = new GameModel(view);
+    const presenter = new GamePresenter(model,view);
 
     AuthService.signUp('testUser', 'testPassword')
         .then(data => {

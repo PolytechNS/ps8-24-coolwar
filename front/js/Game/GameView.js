@@ -1,7 +1,6 @@
 import { BoardGrid } from './BoardGrid/BoardGrid.js';
 export class GameView {
     constructor() {
-        this.DOM = document;
         this.plateElement = document.querySelector('.plate');
         console.log(this.plateElement);
         console.log("in GameView constructor");

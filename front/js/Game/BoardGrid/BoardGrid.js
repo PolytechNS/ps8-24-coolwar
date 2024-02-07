@@ -96,26 +96,32 @@ export class BoardGrid{
         var X_plate_count = 0;
 
         for (var i = 0; i < finalNbColumns; i++) {
-            var widthForOneWall;
             if (i === 0) {
             } else {
                 //intersection
                 if (i % 2 === 0) {
-                    widthForOneWall = 0;
-                    plate.appendChild(this.generateIntersectionElement());
+                    this.plateElement.appendChild(this.generateIntersectionElement(Y_plate_count, X_plate_count));
                 }
                 //ligne
                 else {
-                    plate.appendChild(this.generateHorizontalWallHTMLElement(Y_plate_count, X_plate_count));
+                    this.plateElement.appendChild(this.generateHorizontalWallHTMLElement(Y_plate_count, X_plate_count));
                     X_plate_count++;
                 }
             }
         }
     }
 
-    generatePlayableSquare(){
+    buildLineWithPlayableSquare(nbLines, nbColumns) {
+        for (var i = 0; i < nbColumns; i++) {
+            this.plateElement.appendChild(this.generatePlayableSquare(nbLines,i));
+            if(i!==nbColumns-1){this.plateElement.appendChild(this.generateVerticalWallHTMLElement(nbLines,i));}
+        }
+    }
+
+    generatePlayableSquare(nbLigne,nbElement){
         var playable_square = this.getEmptyHtmlElement("div");
         playable_square.classList.add("playable_square");
+        playable_square.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
         return playable_square;
     }
 
@@ -134,12 +140,6 @@ export class BoardGrid{
         container.classList.add("vertical_hitbox");
         container.appendChild(wall);
         return container;
-    }
-    buildLineWithPlayableSquare(nbLines, nbColumns) {
-        for (var i = 0; i < nbColumns; i++) {
-            this.plateElement.appendChild(this.generatePlayableSquare());
-            if(i!==nbColumns-1){this.plateElement.appendChild(this.generateVerticalWallHTMLElement(nbLines,i));}
-        }
     }
     generateHorizontalWallHTMLElement(nbLigne,nbElement){
         var container = this.getEmptyHtmlElement("div");
