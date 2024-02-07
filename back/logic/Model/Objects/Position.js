@@ -3,6 +3,5 @@ export class Position{
         this.x = x;
         this.y = y;
     }
-
     toString(){return "X:"+this.x+"/Y:"+this.y+"\n";}
 }

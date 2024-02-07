@@ -5,8 +5,8 @@ import { AuthService } from './services/AuthService.js';
 import { socketManager } from './socket/socketManager.js';
 
 document.addEventListener("DOMContentLoaded", () => {
-    const view = new GameView();
-    const model = new GameModel(view);
+    const model = new GameModel();
+    const view = new GameView(model);
     const presenter = new GamePresenter(model,view);
 
     AuthService.signUp('testUser', 'testPassword')

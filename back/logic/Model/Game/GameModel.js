@@ -4,36 +4,40 @@ import {PlayerManager} from "../Objects/PlayerManager.js";
 import {GamePlayer} from "../Objects/GamePlayer.js";
 import {Position} from "../Objects/Position.js";
 
-const horizontal_Walls = new WallDictionary();
-const vertical_Walls = new WallDictionary();
-const playable_squares = new PlayableSquareDictionary();
-const players = new PlayerManager();
-
 export class GameModel {
 
     /*TODO: LAST POSITION IN EDIT
     CREATION DES JOUEURS ET NOTION DE TOUR ✅
     */
-    constructor(view) {
+    constructor() {
+        this.nbLignes = 9;
+        this.nbColonnes = 9;
+        this.nbPlayers = 2;
+        this.horizontal_Walls = new WallDictionary();
+        this.vertical_Walls = new WallDictionary();
+        this.playable_squares = new PlayableSquareDictionary();
+        this.player_array = new PlayerManager();
         //INIT GRILLE
-        this.grid = this.createInitialGrid(view.nbColonnes, view.nbLignes); // Pour une grille 9x9
+        this.grid = this.createInitialGrid(this.nbColonnes, this.nbLignes); // Pour une grille 9x9
         //INITIALISATION DES JOUEURS
         this.initPlayers();
         //INIT DU MODEL
-        this.init_model(view);
-        this.view = view;
+        this.init_model();
         this.currentPlayer = 1;
     }
     initPlayers(){
-        for(let i=0;i<this.view.nbPlayers;i++){
+        for(let i=0;i<this.nbPlayers;i++){
             let position = this.generateRandomPosition();
-            while(players.playerAlreadyOnPosition(position)){position = this.generateRandomPosition();}
-            players.addPlayer(new GamePlayer("Player"+i,this.generateRandomPosition()));
+            while(this.player_array.playerAlreadyOnPosition(position)){position = this.generateRandomPosition();}
+            this.player_array.addPlayer(new GamePlayer("Player"+i,this.generateRandomPosition()));
+
+            console.log("NEW PLAYER !");
+            console.log(this.player_array.players.get(i+1));
         }
     }
 
     generateRandomPosition() {
-        const max = this.view.nbColonnes
+        const max = this.nbColonnes;
         const min = 0;
         return new Position(this.generateRandom(min,max),this.generateRandom(min,max));
     }
@@ -61,39 +65,29 @@ export class GameModel {
         return grid;
     }
 
-    moveCharacter(direction) {
-        // Logique pour déplacer le personnage
-        // Mettez à jour this.playerPosition et this.grid en conséquence
-        // Ici, vous pouvez implémenter les détails de la logique de déplacement,
-        // par exemple vérifier les collisions, les murs, etc.
-
-        // Après le mouvement, renvoyez la nouvelle grille.
-        return Promise.resolve(this.grid); // Simule une opération asynchrone
-    }
-
     // Autres méthodes liées à la logique métier comme la gestion des murs, la vérification de victoire, etc.
 
 
-     init_model(view) {
-        var nbLignes = view.nbLignes;
-        var nbColonnes = view.nbColonnes;
+     init_model() {
+        var nbLignes = this.nbLignes;
+        var nbColonnes = this.nbColonnes;
 
         for (let i = 0; i < nbLignes - 1; i++) {
             for (let j = 0; j < nbColonnes; j++) {
-                horizontal_Walls.addWall(i, j);
-                vertical_Walls.addWall(i, j);
+                this.horizontal_Walls.addWall(i, j);
+                this.vertical_Walls.addWall(i, j);
             }
         }
         for (let i = 0; i < nbLignes; i++) {
             for (let j = 0; j < nbColonnes; j++) {
-                playable_squares.addPlayableSquare(i, j, null, false);
+                this.playable_squares.addPlayableSquare(i, j, null, false);
             }
         }
     }
 
     getWallByCoordinates(type,x,y){
-        if(type==='H'){return horizontal_Walls.getWall(x,y);}
-        else if(type==='V'){return vertical_Walls.getWall(x,y);}
+        if(type==='H'){return this.horizontal_Walls.getWall(x,y);}
+        else if(type==='V'){return this.vertical_Walls.getWall(x,y);}
         else{return null;}
     }
 
@@ -102,5 +96,9 @@ export class GameModel {
         else if(this.currentPlayer===2){this.currentPlayer=1;}
         else{}
         console.log(this.currentPlayer);
+    }
+
+    isPlayerAtCoordinates(x,y){
+        return this.player_array.playerAlreadyOnPosition(x,y);
     }
 }

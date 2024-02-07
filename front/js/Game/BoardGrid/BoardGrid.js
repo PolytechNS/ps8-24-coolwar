@@ -1,36 +1,35 @@
+const separator = "X";
 export class BoardGrid{
-    constructor() {
+    constructor(model) {
         this.plateElement = this.getPlate();
-        this.nbLignes = 9;
-        this.nbColonnes = 9;
-        this.row = 0;
-        this.col = 0;
-        this.canMove = true;
+        this.nbLignes = model.nbLignes;
+        this.nbColonnes = model.nbColonnes;
     }
 
     //INITIALISE LA GRILLE DE JEU
-    createGrid() {
-        var plate = this.plateElement;
+    createGrid(model) {
+        //définit l'emplacement des éléments
+        var Y_plate_count = 0;
 
-        window.addEventListener("load", (event) => {
-            //définit l'emplacement des éléments Y
-            var Y_plate_count = 0;
-
-            for(var lignes=0;lignes<this.nbLignes*2;lignes++) {
-                if (lignes === 0 || lignes === this.nbLignes * 2) {
+        for(var lignes=0;lignes<this.nbLignes*2;lignes++) {
+            if (lignes === 0 || lignes === this.nbLignes * 2) {
+            } else {
+                if (lignes % 2 === 0) {
+                    this.buildLineWithFullWall(Y_plate_count, this.nbColonnes);
+                    Y_plate_count++;
                 } else {
-                    if (lignes % 2 === 0) {
-                        this.buildLineWithFullWall(Y_plate_count, this.nbColonnes);
-                        Y_plate_count++;
-                    } else {
-                        this.buildLineWithPlayableSquare(Y_plate_count, this.nbColonnes);
-                    }
+                    this.buildLineWithPlayableSquare(Y_plate_count, this.nbColonnes);
                 }
             }
-            this.openPopUp();
-            this.displayElements(this.row, this.col);
-            document.addEventListener("keydown", (event) => this.moveCharacter(event));
-    })}
+        }
+        this.openPopUp();
+        //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
+        let iteration=1;
+        model.player_array.players.forEach((player)=>{
+            this.displayPlayer(player.position.x,player.position.y,iteration);
+            iteration++;
+        });
+    }
 
 
     openPopUp(){
@@ -44,51 +43,23 @@ export class BoardGrid{
     }
 
     //affiche le personnage sur une case jouable
-    displayElements(row, col) {
+    displayPlayer(row, col,id) {
         row = Math.max(0, Math.min(row, 8));
         col = Math.max(0, Math.min(col, 8));
-
         let items = document.getElementsByClassName('playable_square');
-        for (let i = 0; i < items.length; i++) {
-            items[i].style.backgroundImage = '';
-            items[i].style.backgroundSize = 'cover';
-        }
-
-        let imgPath = '../../assets/perso1.png'
-
+        let imgPath = '../../assets/perso'+id+'.png';
+        items.item(row*9+col).style.backgroundSize = 'cover';
         items.item(row * 9 + col).style.backgroundImage = `url(${imgPath})`;
     }
 
-    moveCharacter(event) {
-        let keyCode = event.keyCode;
-
-        if (this.canMove) {
-            let newRow = this.row;
-            let newCol = this.col;
-
-            if (keyCode === 37) {
-                // Gauche
-                newCol = Math.max(0, this.col - 1);
-            } else if (keyCode === 39) {
-                // Droite
-                newCol = Math.min(8, this.col + 1);
-            } else if (keyCode === 38) {
-                // Haut
-                newRow = Math.max(0, this.row - 1);
-            } else if (keyCode === 40) {
-                // Bas
-                newRow = Math.min(8, this.row + 1);
-            }
-
-            // Vérifie si le nouveau mouvement restera dans la grille
-            if (newRow !== this.row || newCol !== this.col) {
-                this.row = newRow;
-                this.col = newCol;
-                this.displayElements(this.row, this.col);
-                this.canMove = false; // Bloque le déplacement après le premier mouvement
-            }
-        }
+    deletePlayer(row,col,id){
+        row = Math.max(0, Math.min(row, 8));
+        col = Math.max(0, Math.min(col, 8));
+        let items = document.getElementsByClassName('playable_square');
+        items.item(row*9+col).style.backgroundSize = 'cover';
+        items.item(row * 9 + col).style.backgroundImage = ``;
     }
+
 
     buildLineWithFullWall(Y_plate_count, nbColumns) {
         var finalNbColumns = nbColumns * 2;
@@ -121,7 +92,7 @@ export class BoardGrid{
     generatePlayableSquare(nbLigne,nbElement){
         var playable_square = this.getEmptyHtmlElement("div");
         playable_square.classList.add("playable_square");
-        playable_square.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
+        playable_square.setAttribute("id",nbLigne.toString()+separator+nbElement.toString());
         return playable_square;
     }
 
@@ -135,7 +106,7 @@ export class BoardGrid{
         var container = this.getEmptyHtmlElement("div");
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("vertical_wall");
-        wall.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
+        wall.setAttribute("id",nbLigne.toString()+separator+nbElement.toString());
         wall.setAttribute("src","../../datas/vertical_wall_texture.png");
         container.classList.add("vertical_hitbox");
         container.appendChild(wall);
@@ -145,7 +116,7 @@ export class BoardGrid{
         var container = this.getEmptyHtmlElement("div");
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("horizontal_wall");
-        wall.setAttribute("id",nbLigne.toString()+","+nbElement.toString());
+        wall.setAttribute("id",nbLigne.toString()+separator+nbElement.toString());
         wall.setAttribute("src","../../datas/horizontal_wall_texture.png");
         container.classList.add("horizontal_hitbox");
         container.appendChild(wall);
