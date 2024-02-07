@@ -1,3 +1,5 @@
+import {ActionController} from "../../../back/logic/Controller/actionController.js";
+
 const hoverBehavior = (wall)=>{wall.children.item(0).style.opacity = "0.8";}
 const leaveHoverBeahvior = (wall)=>{wall.children.item(0).style.opacity = "0";}
 
@@ -6,9 +8,10 @@ export class GamePresenter {
         this.model = model;
         console.log(model);
         this.view = view;
+        this.actionController=new ActionController(model);
 
         window.addEventListener('load', (event) => {
-            this.init_behaviour(view,model);
+            this.init_behaviour(view,model,this.actionController);
         });
     };
 
@@ -22,7 +25,7 @@ export class GamePresenter {
     }
 
 
-    init_behaviour(view,model) {
+    init_behaviour(view,model,actionController) {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         horizontal_walls_HTML.forEach(function(wall) {
@@ -31,13 +34,12 @@ export class GamePresenter {
 
             function clickHandler() {
                 //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
-                if(model.isPlacable(wall)) {
-                    console.log("PLACABLE !");
-                    wall.removeEventListener('mouseenter', hoverHandler);
-                    wall.removeEventListener('mouseleave', leaveHoverHandler);
-                    wall.removeEventListener('click', clickHandler);
-                    wall.children.item(0).style.opacity = "1";
-                }
+                    if(actionController.placeWall(1,wall)){
+                        wall.removeEventListener('mouseenter', hoverHandler);
+                        wall.removeEventListener('mouseleave', leaveHoverHandler);
+                        wall.removeEventListener('click', clickHandler);
+                        wall.children.item(0).style.opacity = "1";
+                    }
             }
 
             wall.addEventListener('mouseenter', hoverHandler);
@@ -50,8 +52,7 @@ export class GamePresenter {
             function leaveHoverHandler() {leaveHoverBeahvior(wall);}
 
             function clickHandler() {
-                if (model.isPlacable(wall)) {
-                    console.log("PLACABLE !");
+                if (actionController.placeWall(1,wall)) {
                     wall.removeEventListener('mouseenter', hoverHandler);
                     wall.removeEventListener('mouseleave', leaveHoverHandler);
                     wall.removeEventListener('click', clickHandler);

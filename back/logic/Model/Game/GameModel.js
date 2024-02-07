@@ -1,17 +1,52 @@
 import {WallDictionary} from "../Objects/WallDictionary.js";
 import {PlayableSquareDictionary} from "../Objects/PlayableSquareDictionary.js";
+import {PlayerManager} from "../Objects/PlayerManager.js";
+import {GamePlayer} from "../Objects/GamePlayer.js";
+import {Position} from "../Objects/Position.js";
 
 const horizontal_Walls = new WallDictionary();
 const vertical_Walls = new WallDictionary();
 const playable_squares = new PlayableSquareDictionary();
+const players = new PlayerManager();
 
 export class GameModel {
 
+    /*TODO: LAST POSITION IN EDIT
+    CREATION DES JOUEURS ET NOTION DE TOUR ✅
+    */
     constructor(view) {
-        // Initialisez votre grille ici, cela peut être un tableau 2D par exemple.
-        this.grid = this.createInitialGrid(9, 9); // Pour une grille 9x9
-        this.playerPosition = { x: 0, y: 0 }; // Position initiale du joueur
+        //INIT GRILLE
+        this.grid = this.createInitialGrid(view.nbColonnes, view.nbLignes); // Pour une grille 9x9
+        //INITIALISATION DES JOUEURS
+        this.initPlayers();
+        //INIT DU MODEL
         this.init_model(view);
+        this.view = view;
+        this.currentPlayer = 1;
+    }
+    initPlayers(){
+        for(let i=0;i<this.view.nbPlayers;i++){
+            let position = this.generateRandomPosition();
+            while(players.playerAlreadyOnPosition(position)){position = this.generateRandomPosition();}
+            players.addPlayer(new GamePlayer("Player"+i,this.generateRandomPosition()));
+        }
+    }
+
+    generateRandomPosition() {
+        const max = this.view.nbColonnes
+        const min = 0;
+        return new Position(this.generateRandom(min,max),this.generateRandom(min,max));
+    }
+    generateRandom(min, max) {
+        // find diff
+        let difference = max - min;
+        // generate random number
+        let rand = Math.random();
+        // multiply with difference
+        rand = Math.floor( rand * difference);
+        // add with min value
+        rand = rand + min;
+        return rand;
     }
 
     createInitialGrid(rows, cols) {
@@ -39,38 +74,33 @@ export class GameModel {
     // Autres méthodes liées à la logique métier comme la gestion des murs, la vérification de victoire, etc.
 
 
- init_model(view) {
-    var nbLignes = view.nbLignes;
-    var nbColonnes = view.nbColonnes;
+     init_model(view) {
+        var nbLignes = view.nbLignes;
+        var nbColonnes = view.nbColonnes;
 
-    for (let i = 0; i < nbLignes - 1; i++) {
-        for (let j = 0; j < nbColonnes; j++) {
-            horizontal_Walls.addWall(i, j);
-            vertical_Walls.addWall(i, j);
+        for (let i = 0; i < nbLignes - 1; i++) {
+            for (let j = 0; j < nbColonnes; j++) {
+                horizontal_Walls.addWall(i, j);
+                vertical_Walls.addWall(i, j);
+            }
+        }
+        for (let i = 0; i < nbLignes; i++) {
+            for (let j = 0; j < nbColonnes; j++) {
+                playable_squares.addPlayableSquare(i, j, null, false);
+            }
         }
     }
-    for (let i = 0; i < nbLignes; i++) {
-        for (let j = 0; j < nbColonnes; j++) {
-            playable_squares.addPlayableSquare(i, j, null, false);
-        }
-    }
-}
 
- isPlacable(wall) {
-    let wallToEdit = null;
-    let wallBack = null;
-    if(wall.classList.contains("horizontal_hitbox") || wall.classList.contains("vertical_hitbox")){
-        wallToEdit = wall.children.item(0);
-        console.log("PLACE WALL ON :"+wallToEdit.id);
-        let coordinates = wallToEdit.id.split(',');
-        if(wall.classList.contains("horizontal_hitbox")){wallBack = horizontal_Walls.getWall(coordinates[0],coordinates[1]);}
-        else{wallBack = vertical_Walls.getWall(coordinates[0],coordinates[1]);}
-        console.log(wallBack);
-        if(!wallBack.isPresent){
-            wallBack.setPresent();
-            return true;
-        }
-        return false;
+    getWallByCoordinates(type,x,y){
+        if(type==='H'){return horizontal_Walls.getWall(x,y);}
+        else if(type==='V'){return vertical_Walls.getWall(x,y);}
+        else{return null;}
     }
-}
+
+    setNextPlayer(){
+        if(this.currentPlayer===1){this.currentPlayer=2;}
+        else if(this.currentPlayer===2){this.currentPlayer=1;}
+        else{}
+        console.log(this.currentPlayer);
+    }
 }

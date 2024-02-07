@@ -1,4 +1,4 @@
-import {Position} from "../../../../front/js/Game/Position.js";
+import {Position} from "./Position.js";
 
 export class Wall{
     constructor(x,y,isPresent) {

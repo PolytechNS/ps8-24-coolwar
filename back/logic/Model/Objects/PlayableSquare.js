@@ -1,4 +1,4 @@
-import {Position} from "../../../../front/js/Game/Position.js";
+import {Position} from "./Position.js";
 
 export class PlayableSquare{
     constructor(x,y,player,isVisible) {
@@ -8,6 +8,6 @@ export class PlayableSquare{
     }
 
     toString(){
-        return this.position.toString() + "|Player: "+this.player;
+        return this.position.toString() + "|GamePlayer: "+this.player;
     }
 }

@@ -7,6 +7,7 @@ export class GameView {
         this.boardGrid = new BoardGrid();
         this.nbLignes = this.boardGrid.nbLignes;
         this.nbColonnes = this.boardGrid.nbColonnes;
+        this.nbPlayers = 2;
         this.initializeGrid();
     }
 
