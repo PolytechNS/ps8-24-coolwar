@@ -1,6 +1,6 @@
 // MainRouter.js
 const authRouter = require('./authRouter');
-function mainRouter(req, res) {
+function mainRouter(req, res,db) {
     console.log('Main router called');
     console.log(req.url);
 
@@ -17,7 +17,7 @@ function mainRouter(req, res) {
     }
 
     if (req.url.startsWith('/api/auth')) {
-        authRouter(req, res);
+        authRouter(req, res,db);
     } else {
         // Handle other routes or return 404
         res.writeHead(404, { 'Content-Type': 'text/plain' });
