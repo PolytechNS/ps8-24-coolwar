@@ -95,7 +95,7 @@ export class GameModel {
         if(this.currentPlayer===1){this.currentPlayer=2;}
         else if(this.currentPlayer===2){this.currentPlayer=1;}
         else{}
-        console.log(this.currentPlayer);
+        console.log("After next Player : "+this.currentPlayer);
     }
 
     isPlayerAtCoordinates(x,y){

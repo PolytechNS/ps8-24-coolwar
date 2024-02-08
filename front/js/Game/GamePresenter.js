@@ -18,18 +18,19 @@ const getCaseFromCoordinates = (x, y) => {
 export class GamePresenter {
     constructor(model, view) {
         this.actionController=new ActionController(model);
+        this.model = model;
         window.addEventListener('load', (event) => {
             this.init_behaviour(view,model,this.actionController);
         });
+        this.currentPlayer = 1;
     };
-
-
 
 
     init_behaviour(view,model,actionController) {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
+        let currentPlayer_inside = this.currentPlayer;
         horizontal_walls_HTML.forEach(function(wall) {
             function hoverHandler() {wall_hoverBehavior(wall);}
             function leaveHoverHandler() {wall_leaveHoverBeahvior(wall);}
@@ -41,6 +42,7 @@ export class GamePresenter {
                         wall.removeEventListener('mouseleave', leaveHoverHandler);
                         wall.removeEventListener('click', clickHandler);
                         wall.children.item(0).style.opacity = "1";
+                        updateCurrentPlayer();
                     }
             }
 
@@ -53,11 +55,12 @@ export class GamePresenter {
             function leaveHoverHandler() {wall_leaveHoverBeahvior(wall);}
 
             function clickHandler() {
-                if (actionController.placeWall(1,wall)) {
+                if (actionController.placeWall(currentPlayer_inside,wall)) {
                     wall.removeEventListener('mouseenter', hoverHandler);
                     wall.removeEventListener('mouseleave', leaveHoverHandler);
                     wall.removeEventListener('click', clickHandler);
                     wall.children.item(0).style.opacity = "1";
+                    updateCurrentPlayer();
                 }
             }
 
@@ -66,8 +69,8 @@ export class GamePresenter {
             wall.addEventListener('click', clickHandler);
         });
 
-        playable_case_HTML.forEach(function(playable_case){
 
+        playable_case_HTML.forEach(function(playable_case){
             /*TODO: TERMINER CETTE FONCTION
                SUPPRIMER LA MISE EN FORME DE L'ANCIENNE CASE
             */
@@ -78,14 +81,22 @@ export class GamePresenter {
                     console.log(oldPosition);
                     let caseToAlter = getCaseFromCoordinates(oldPosition);
                     console.log(caseToAlter);
-                    actionController.moveCharacter(1,tab[0],tab[1]);
-
+                    actionController.moveCharacter(currentPlayer_inside,tab[0],tab[1]);
                     //let oldCase = getCaseFromCoordinates(positionBeforeMove[0],positionBeforeMove[1]);
-                    view.boardGrid.displayPlayer(tab[0],tab[1],1);
+                    view.boardGrid.displayPlayer(tab[0],tab[1],currentPlayer_inside);
+                    updateCurrentPlayer();
                 }
             }
 
             playable_case.addEventListener('click', clickHandler);
+
         });
+
+        function updateCurrentPlayer() {
+            if(currentPlayer_inside===1){currentPlayer_inside=2;}
+            else if(currentPlayer_inside===2){currentPlayer_inside=1;}
+            else{}
+            console.log("After next Player : "+currentPlayer_inside);
+        }
     }
 }
