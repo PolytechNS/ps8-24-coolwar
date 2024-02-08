@@ -17,8 +17,6 @@ export class GameModel {
         this.vertical_Walls = new WallDictionary();
         this.playable_squares = new PlayableSquareDictionary();
         this.player_array = new PlayerManager();
-        //INIT GRILLE
-        this.grid = this.createInitialGrid(this.nbColonnes, this.nbLignes); // Pour une grille 9x9
         //INITIALISATION DES JOUEURS
         this.initPlayers();
         //INIT DU MODEL
@@ -51,18 +49,6 @@ export class GameModel {
         // add with min value
         rand = rand + min;
         return rand;
-    }
-
-    createInitialGrid(rows, cols) {
-        let grid = [];
-        for (let i = 0; i < rows; i++) {
-            let row = [];
-            for (let j = 0; j < cols; j++) {
-                row.push({}); // Remplacer par l'objet cellule approprié
-            }
-            grid.push(row);
-        }
-        return grid;
     }
 
     // Autres méthodes liées à la logique métier comme la gestion des murs, la vérification de victoire, etc.
