@@ -4,7 +4,21 @@ This part of the project contains the server and the business logic.
 
 ---
 
+## Docker avec db
+
+pour accéder à la db :
+mongosh "mongodb://localhost:27017/myappdb"
+
+pour lancer docker :
+docker-compose up --build
+
+si le back a changé --> mettre à jour le container
+docker-compose down
+et
+docker-compose up --build
+
 ## Server
+
 
 All requests are managed by `back/index.js`, which checks if the request is for a file 
 (in which case it's treated by `queryManagers/front.js`) or is a REST request (managed by `queryManagers/api.js`).
