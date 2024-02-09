@@ -12,11 +12,14 @@ function signup(req, res, db) {
             return;
         }
         // Insérer un nouvel utilisateur
+        //faut rajouter le token
         try {
-            const result = await db.collection('users').insertOne({ username, password });
-            console.log('Utilisateur créé', result);
+            const user = await db.collection('users').insertOne({ username, password });
+            console.log('Utilisateur créé', user);
+            const token = generateToken(user.email);
+
             res.writeHead(201, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Utilisateur créé' }));
+            res.end(JSON.stringify({ token }));
         } catch (error) {
             res.writeHead(500, { 'Content-Type': 'text/plain' });
             res.end('Erreur lors de la création de l’utilisateur');
