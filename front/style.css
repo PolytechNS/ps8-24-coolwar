@@ -1,0 +1,56 @@
+body{
+    color: #fff;
+    font-family: 'Kumar One', serif;
+    font-size: 35px;
+    background-color: #345128;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+}
+
+.head{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    background-image: url("assets/background.jpg");
+    opacity: 0.8;
+}
+
+.logo{
+    max-height: 20%;
+    object-fit: contain;
+    background-color: #345128;
+    position: absolute;
+    left: 1.15%;
+}
+
+h1{
+    color: #000;
+}
+
+
+.cadre{
+    background-color: #22341A;
+    border: #497637 2px solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 70px;
+    margin-top: 50px;
+    text-align: center;
+}
+
+
+button{
+    background-color: #D9D9D9;
+    color: #000;
+    border-radius: 8px;
+    padding: 5px;
+    font-family: 'Kumar One', serif;
+    font-size: 20px;
+    margin: 15px;
+    text-decoration: none;
+}

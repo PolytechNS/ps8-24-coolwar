@@ -4,15 +4,30 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="../../style.css">
 </head>
+
 <body>
-<form id="loginForm">
-    <label for="usernameLogin">Username:</label>
-    <input type="text" id="usernameLogin" name="username"><br>
-    <label for="passwordLogin">Password:</label>
-    <input type="password" id="passwordLogin" name="password"><br>
-    <input type="submit" value="Login">
-</form>
+<div class="head">
+    <img src="../../assets/logo.png" class="logo"/>
+    <h1>CoolWar</h1>
+</div>
+<main>
+    <div class="cadre">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="usernameLogin">User name:</label>
+            <input type="text" id="usernameLogin" name="username"><br>
+            <label for="passwordLogin">Password:</label>
+            <input type="password" id="passwordLogin" name="password"><br>
+            <input class="button" type="submit" value="Login">
+        </form>
+    </div>
+</main>
 <script type="module" src="login.js"></script>
 </body>
 </html>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>
