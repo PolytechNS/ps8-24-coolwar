@@ -1,22 +1,6 @@
 import {ActionController} from "../../../back/logic/Controller/actionController.js";
 import {Utils} from "../Utils/utils.js";
 
-const wall_hoverBehavior = (wall)=>{
-    console.log("HOVER ON");
-    //SURVOLER UN MUR = SURVOLER DEUX MURS
-    //conversion en position
-    let neighborhood = getWallNeighborhood(wall);
-    wall.children.item(0).style.opacity = "0.8";
-    neighborhood.children.item(0).style.opacity = "0.8";
-}
-const wall_leaveHoverBeahvior = (wall)=>{
-    console.log("HOVER OFF");
-    let neighborhood = getWallNeighborhood(wall);
-    wall.children.item(0).style.opacity = "0";
-    neighborhood.children.item(0).style.opacity = "0";
-}
-
-
 const getWallNeighborhood = (wall) => {
     let nbColonnes = 9;
     let nbLignes = 9;
@@ -26,7 +10,7 @@ const getWallNeighborhood = (wall) => {
         let hWalls = document.querySelectorAll('.horizontal_hitbox');
         let xToFind = parseInt(wallPosition[0]);
         let yToFind = parseInt(wallPosition[1])+1;
-        //SI DES MURS PEUVENT ETRE EENCORE POSES
+        //SI DES MURS PEUVENT ETRE ENCORE POSES
         for(let i=0;i<hWalls.length;i++){
             let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
             if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
@@ -100,6 +84,7 @@ const getWallNeighborhood = (wall) => {
     }
     return null;
 }
+
 //TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
 const getCaseFromCoordinates = (x, y) => {
     let toSend = null;
@@ -126,24 +111,29 @@ export class GamePresenter {
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
         let currentPlayer_inside = this.currentPlayer;
+
         horizontal_walls_HTML.forEach(function(wall) {
-            function hoverHandler() {wall_hoverBehavior(wall);}
-            function leaveHoverHandler() {wall_leaveHoverBeahvior(wall);}
+            function hoverHandler() {
+                let neighborhood = getWallNeighborhood(wall);
+                wall.children.item(0).style.opacity = "0.8";
+                neighborhood.children.item(0).style.opacity = "0.8";
+            }
+            function leaveHoverHandler() {
+                let neighborhood = getWallNeighborhood(wall);
+                wall.children.item(0).style.opacity = "0";
+                neighborhood.children.item(0).style.opacity = "0";
+            }
 
             function clickHandler() {
                 //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
                 let neighborhood = getWallNeighborhood(wall);
                 let wallList = [wall,neighborhood];
-                console.log(wallList);
                     if(actionController.placeWall(1,wallList)){
-                        for(let i=0;i<wallList.length;i++){
-                            let wallToEdit = wallList[i];
-                            console.log(wallToEdit);
-                            wallToEdit.removeEventListener('mouseenter', hoverHandler);
-                            wallToEdit.removeEventListener('mouseleave', leaveHoverHandler);
-                            wallToEdit.removeEventListener('click', clickHandler);
+                        wallList.forEach(wallToEdit=>{
                             wallToEdit.children.item(0).style.opacity = "1";
-                        }
+                            let replaceOBJ = wallToEdit.cloneNode(true);
+                            wallToEdit.replaceWith(replaceOBJ);
+                        });
                         updateCurrentPlayer();
                     }
             }
@@ -152,15 +142,26 @@ export class GamePresenter {
             wall.addEventListener('click', clickHandler);
         });
         vertical_walls_HTML.forEach(function(wall) {
-            function hoverHandler() {wall_hoverBehavior(wall);}
-            function leaveHoverHandler() {wall_leaveHoverBeahvior(wall);}
+            function hoverHandler() {
+                let neighborhood = getWallNeighborhood(wall);
+                wall.children.item(0).style.opacity = "0.8";
+                neighborhood.children.item(0).style.opacity = "0.8";
+            }
+            function leaveHoverHandler() {
+                let neighborhood = getWallNeighborhood(wall);
+                wall.children.item(0).style.opacity = "0";
+                neighborhood.children.item(0).style.opacity = "0";
+            }
 
             function clickHandler() {
-                if (actionController.placeWall(currentPlayer_inside,wall)) {
-                    wall.removeEventListener('mouseenter', hoverHandler);
-                    wall.removeEventListener('mouseleave', leaveHoverHandler);
-                    wall.removeEventListener('click', clickHandler);
-                    wall.children.item(0).style.opacity = "1";
+                let neighborhood = getWallNeighborhood(wall);
+                let wallList = [wall,neighborhood];
+                if(actionController.placeWall(1,wallList)){
+                    wallList.forEach(wallToEdit=>{
+                        wallToEdit.children.item(0).style.opacity = "1";
+                        let replaceOBJ = wallToEdit.cloneNode(true);
+                        wallToEdit.replaceWith(replaceOBJ);
+                    });
                     updateCurrentPlayer();
                 }
             }
@@ -169,8 +170,6 @@ export class GamePresenter {
             wall.addEventListener('mouseleave', leaveHoverHandler);
             wall.addEventListener('click', clickHandler);
         });
-
-
         playable_case_HTML.forEach(function(playable_case){
             /*TODO: TERMINER CETTE FONCTION
                SUPPRIMER LA MISE EN FORME DE L'ANCIENNE CASE

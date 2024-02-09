@@ -36,7 +36,6 @@ export class ActionController{
             }
             else{return false;}
         }
-
         return true;
     }
 
