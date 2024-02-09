@@ -14,25 +14,30 @@ export class ActionController{
         else{return true;}
     }
 
-    placeWall(id,wall) {
+    placeWall(id,walls) {
         if (!this.checkCurrentPlayer(id)) {return null;}
         let wallToEdit = null;
         let wallBack = null;
-        if (wall.classList.contains("horizontal_hitbox") || wall.classList.contains("vertical_hitbox")) {
-            wallToEdit = wall.children.item(0);
-            let coordinates = wallToEdit.id.split('X');
-            if (wall.classList.contains("horizontal_hitbox")) {
-                wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1]);
-            } else {
-                wallBack = this.model.getWallByCoordinates('V', coordinates[0], coordinates[1]);
+
+        for(let i=0;i<walls.size;i++){
+            let wall = walls.item(i);
+            if (wall.classList.contains("horizontal_hitbox") || wall.classList.contains("vertical_hitbox")) {
+                wallToEdit = wall.children.item(0);
+                let coordinates = wallToEdit.id.split('X');
+                if (wall.classList.contains("horizontal_hitbox")) {
+                    wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1]);
+                } else {
+                    wallBack = this.model.getWallByCoordinates('V', coordinates[0], coordinates[1]);
+                }
+                if (wallBack.isPresent === false) {
+                    wallBack.setPresent();
+                    this.model.setNextPlayer();
+                }
             }
-            if (wallBack.isPresent === false) {
-                wallBack.setPresent();
-                this.model.setNextPlayer();
-                return true;
-            }
+            else{return false;}
         }
-        return false;
+
+        return true;
     }
 
     characterCanBeMoved(x,y){

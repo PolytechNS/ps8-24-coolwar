@@ -22,6 +22,7 @@ export class GameModel {
         //INIT DU MODEL
         this.init_model();
         this.currentPlayer = 1;
+        this.roundCounter = 0;
     }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
@@ -84,6 +85,7 @@ export class GameModel {
         if(this.currentPlayer===1){this.currentPlayer=2;}
         else if(this.currentPlayer===2){this.currentPlayer=1;}
         else{}
+        this.roundCounter+=1;
         console.log("After next Player : "+this.currentPlayer);
     }
 

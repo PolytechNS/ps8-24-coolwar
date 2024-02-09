@@ -2,12 +2,104 @@ import {ActionController} from "../../../back/logic/Controller/actionController.
 import {Utils} from "../Utils/utils.js";
 
 const wall_hoverBehavior = (wall)=>{
+    console.log("HOVER ON");
     //SURVOLER UN MUR = SURVOLER DEUX MURS
+    //conversion en position
+    let neighborhood = getWallNeighborhood(wall);
     wall.children.item(0).style.opacity = "0.8";
+    neighborhood.children.item(0).style.opacity = "0.8";
 }
-const wall_leaveHoverBeahvior = (wall)=>{wall.children.item(0).style.opacity = "0";}
+const wall_leaveHoverBeahvior = (wall)=>{
+    console.log("HOVER OFF");
+    let neighborhood = getWallNeighborhood(wall);
+    wall.children.item(0).style.opacity = "0";
+    neighborhood.children.item(0).style.opacity = "0";
+}
 
 
+const getWallNeighborhood = (wall) => {
+    let nbColonnes = 9;
+    let nbLignes = 9;
+    let wallPosition = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id)
+    //si mur HORIZONTAL A GAUCHE
+    if(parseInt(wallPosition[1])===0 && wall.classList.contains('horizontal_hitbox')){
+        let hWalls = document.querySelectorAll('.horizontal_hitbox');
+        let xToFind = parseInt(wallPosition[0]);
+        let yToFind = parseInt(wallPosition[1])+1;
+        //SI DES MURS PEUVENT ETRE EENCORE POSES
+        for(let i=0;i<hWalls.length;i++){
+            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
+            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+                return hWalls.item(i);
+            }
+        }
+    }
+    //si mur vertical tout en haut
+    if(parseInt(wallPosition[0])===0 && wall.classList.contains('vertical_hitbox')){
+        let vWalls = document.querySelectorAll('.vertical_hitbox');
+        let xToFind = parseInt(wallPosition[0])+1;
+        let yToFind = parseInt(wallPosition[1]);
+        //SI DES MURS PEUVEENT ETRE EENCORE POSES
+        for(let i=0;i<vWalls.length;i++){
+            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
+            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+                return vWalls.item(i);
+            }
+        }
+    }
+    //si mur vertical tout en bas
+    if(parseInt(wallPosition[0])===nbLignes-1 && wall.classList.contains('vertical_hitbox')){
+        let vWalls = document.querySelectorAll('.vertical_hitbox');
+        let xToFind = parseInt(wallPosition[0])-1;
+        let yToFind = parseInt(wallPosition[1]);
+        //SI DES MURS PEUVENT ETRE ENCORE POSES
+        for(let i=0;i<vWalls.length;i++){
+            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
+            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+                return vWalls.item(i);
+            }
+        }
+    }
+    //si mur horizontal A DROITE
+    if(parseInt(wallPosition[1])===nbColonnes-1 && wall.classList.contains('horizontal_hitbox')){
+        let hWalls = document.querySelectorAll('.horizontal_hitbox');
+        let xToFind = parseInt(wallPosition[0]);
+        let yToFind = parseInt(wallPosition[1])-1;
+        //SI DES MURS PEUVEENT ETRE EENCORE POSES
+        for(let i=0;i<hWalls.length;i++){
+            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
+            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+                return hWalls.item(i);
+            }
+        }
+    }
+    //autre cas PAR DEFAUT
+    if(wall.classList.contains('horizontal_hitbox')){
+        let hWalls = document.querySelectorAll('.horizontal_hitbox');
+        let xToFind = parseInt(wallPosition[0]);
+        let yToFind = parseInt(wallPosition[1])+1;
+        //SI DES MURS PEUVEENT ETRE EENCORE POSES
+        for(let i=0;i<hWalls.length;i++){
+            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
+            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+                return hWalls.item(i);
+            }
+        }
+    }
+    if(wall.classList.contains('vertical_hitbox')){
+        let vWalls = document.querySelectorAll('.vertical_hitbox');
+        let xToFind = parseInt(wallPosition[0])+1;
+        let yToFind = parseInt(wallPosition[1]);
+        //SI DES MURS PEUVEENT ETRE EENCORE POSES
+        for(let i=0;i<vWalls.length;i++){
+            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
+            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+                return vWalls.item(i);
+            }
+        }
+    }
+    return null;
+}
 //TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
 const getCaseFromCoordinates = (x, y) => {
     let toSend = null;
@@ -40,15 +132,21 @@ export class GamePresenter {
 
             function clickHandler() {
                 //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
-                    if(actionController.placeWall(1,wall)){
-                        wall.removeEventListener('mouseenter', hoverHandler);
-                        wall.removeEventListener('mouseleave', leaveHoverHandler);
-                        wall.removeEventListener('click', clickHandler);
-                        wall.children.item(0).style.opacity = "1";
+                let neighborhood = getWallNeighborhood(wall);
+                let wallList = [wall,neighborhood];
+                console.log(wallList);
+                    if(actionController.placeWall(1,wallList)){
+                        for(let i=0;i<wallList.length;i++){
+                            let wallToEdit = wallList[i];
+                            console.log(wallToEdit);
+                            wallToEdit.removeEventListener('mouseenter', hoverHandler);
+                            wallToEdit.removeEventListener('mouseleave', leaveHoverHandler);
+                            wallToEdit.removeEventListener('click', clickHandler);
+                            wallToEdit.children.item(0).style.opacity = "1";
+                        }
                         updateCurrentPlayer();
                     }
             }
-
             wall.addEventListener('mouseenter', hoverHandler);
             wall.addEventListener('mouseleave', leaveHoverHandler);
             wall.addEventListener('click', clickHandler);
@@ -96,9 +194,9 @@ export class GamePresenter {
         });
 
         function updateCurrentPlayer() {
-            if(currentPlayer_inside===1){currentPlayer_inside=2;}
+            /*if(currentPlayer_inside===1){currentPlayer_inside=2;}
             else if(currentPlayer_inside===2){currentPlayer_inside=1;}
-            else{}
+            else{}*/
             console.log("After next Player : "+currentPlayer_inside);
         }
     }
