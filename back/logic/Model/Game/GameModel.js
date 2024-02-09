@@ -24,14 +24,17 @@ export class GameModel {
         this.currentPlayer = 1;
     }
     initPlayers(){
-        for(let i=0;i<this.nbPlayers;i++){
-            let position = this.generateRandomPosition();
-            while(this.player_array.playerAlreadyOnPosition(position)){position = this.generateRandomPosition();}
-            this.player_array.addPlayer(new GamePlayer("Player"+i,this.generateRandomPosition()));
-
-            console.log("NEW PLAYER !");
-            console.log(this.player_array.players.get(i+1));
+        let index1 = this.generateRandom(0,this.nbColonnes);
+        let index2 = this.generateRandom(0,this.nbColonnes);
+        if(this.generateRandom(0,1)===0){
+            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index1)));
+            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index2)));
         }
+        else{
+            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index2)));
+            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1)));
+        }
+
     }
 
     generateRandomPosition() {

@@ -1,7 +1,10 @@
 import {ActionController} from "../../../back/logic/Controller/actionController.js";
 import {Utils} from "../Utils/utils.js";
 
-const wall_hoverBehavior = (wall)=>{wall.children.item(0).style.opacity = "0.8";}
+const wall_hoverBehavior = (wall)=>{
+    //SURVOLER UN MUR = SURVOLER DEUX MURS
+    wall.children.item(0).style.opacity = "0.8";
+}
 const wall_leaveHoverBeahvior = (wall)=>{wall.children.item(0).style.opacity = "0";}
 
 
