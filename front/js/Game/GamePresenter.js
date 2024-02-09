@@ -5,32 +5,9 @@ const getWallNeighborhood = (wall) => {
     let nbColonnes = 9;
     let nbLignes = 9;
     let wallPosition = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id)
-    //si mur HORIZONTAL A GAUCHE
-    if(parseInt(wallPosition[1])===0 && wall.classList.contains('horizontal_hitbox')){
-        let hWalls = document.querySelectorAll('.horizontal_hitbox');
-        let xToFind = parseInt(wallPosition[0]);
-        let yToFind = parseInt(wallPosition[1])+1;
-        //SI DES MURS PEUVENT ETRE ENCORE POSES
-        for(let i=0;i<hWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
-                return hWalls.item(i);
-            }
-        }
-    }
-    //si mur vertical tout en haut
-    if(parseInt(wallPosition[0])===0 && wall.classList.contains('vertical_hitbox')){
-        let vWalls = document.querySelectorAll('.vertical_hitbox');
-        let xToFind = parseInt(wallPosition[0])+1;
-        let yToFind = parseInt(wallPosition[1]);
-        //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for(let i=0;i<vWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
-                return vWalls.item(i);
-            }
-        }
-    }
+
+    //CALL BG - SI MUR OCCUPE
+
     //si mur vertical tout en bas
     if(parseInt(wallPosition[0])===nbLignes-1 && wall.classList.contains('vertical_hitbox')){
         let vWalls = document.querySelectorAll('.vertical_hitbox');
@@ -105,29 +82,31 @@ export class GamePresenter {
         this.currentPlayer = 1;
     };
 
-
     init_behaviour(view,model,actionController) {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
         let currentPlayer_inside = this.currentPlayer;
 
-        horizontal_walls_HTML.forEach(function(wall) {
-            function hoverHandler() {
-                let neighborhood = getWallNeighborhood(wall);
-                wall.children.item(0).style.opacity = "0.8";
-                neighborhood.children.item(0).style.opacity = "0.8";
-            }
-            function leaveHoverHandler() {
-                let neighborhood = getWallNeighborhood(wall);
-                wall.children.item(0).style.opacity = "0";
-                neighborhood.children.item(0).style.opacity = "0";
-            }
+        function init_walls(list){
+            list.forEach(function(wall) {
 
-            function clickHandler() {
-                //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
-                let neighborhood = getWallNeighborhood(wall);
-                let wallList = [wall,neighborhood];
+                function hoverHandler() {
+                    let neighborhood = getWallNeighborhood(wall);
+                    wall.children.item(0).style.opacity = "0.8";
+                    neighborhood.children.item(0).style.opacity = "0.8";
+                }
+                function leaveHoverHandler() {
+                    let neighborhood = getWallNeighborhood(wall);
+                    wall.children.item(0).style.opacity = "0";
+                    neighborhood.children.item(0).style.opacity = "0";
+                }
+                function clickHandler() {
+                    //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
+                    let neighborhood = getWallNeighborhood(wall);
+                    let wallList = [wall,neighborhood];
+
+                    //CALL BD - PLACER UN MUR
                     if(actionController.placeWall(1,wallList)){
                         wallList.forEach(wallToEdit=>{
                             wallToEdit.children.item(0).style.opacity = "1";
@@ -136,46 +115,25 @@ export class GamePresenter {
                         });
                         updateCurrentPlayer();
                     }
-            }
-            wall.addEventListener('mouseenter', hoverHandler);
-            wall.addEventListener('mouseleave', leaveHoverHandler);
-            wall.addEventListener('click', clickHandler);
-        });
-        vertical_walls_HTML.forEach(function(wall) {
-            function hoverHandler() {
-                let neighborhood = getWallNeighborhood(wall);
-                wall.children.item(0).style.opacity = "0.8";
-                neighborhood.children.item(0).style.opacity = "0.8";
-            }
-            function leaveHoverHandler() {
-                let neighborhood = getWallNeighborhood(wall);
-                wall.children.item(0).style.opacity = "0";
-                neighborhood.children.item(0).style.opacity = "0";
-            }
-
-            function clickHandler() {
-                let neighborhood = getWallNeighborhood(wall);
-                let wallList = [wall,neighborhood];
-                if(actionController.placeWall(1,wallList)){
-                    wallList.forEach(wallToEdit=>{
-                        wallToEdit.children.item(0).style.opacity = "1";
-                        let replaceOBJ = wallToEdit.cloneNode(true);
-                        wallToEdit.replaceWith(replaceOBJ);
-                    });
-                    updateCurrentPlayer();
                 }
-            }
 
-            wall.addEventListener('mouseenter', hoverHandler);
-            wall.addEventListener('mouseleave', leaveHoverHandler);
-            wall.addEventListener('click', clickHandler);
-        });
+                wall.addEventListener('mouseenter', hoverHandler);
+                wall.addEventListener('mouseleave', leaveHoverHandler);
+                wall.addEventListener('click', clickHandler);
+            });
+        }
+
+       init_walls(horizontal_walls_HTML);
+       init_walls(vertical_walls_HTML);
+
         playable_case_HTML.forEach(function(playable_case){
             /*TODO: TERMINER CETTE FONCTION
                SUPPRIMER LA MISE EN FORME DE L'ANCIENNE CASE
             */
             function clickHandler(){
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
+
+                //CALL BD -
                 if(actionController.characterCanBeMoved(tab[0],tab[1])){
                     let oldPosition = model.player_array.getPlayerPosition(1);
                     console.log(oldPosition);
@@ -187,7 +145,6 @@ export class GamePresenter {
                     updateCurrentPlayer();
                 }
             }
-
             playable_case.addEventListener('click', clickHandler);
 
         });

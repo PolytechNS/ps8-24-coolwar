@@ -50,7 +50,7 @@ export class ActionController{
                 //TODO : VERIFIER SI MOUVEMENT POSSIBLE (pas de sauts)
                 let playerToMove = this.model.player_array.players.get(id);
                 playerToMove.position = new Position(x,y);
-                this.model.setNextPlayer();
+                //this.model.setNextPlayer();
                 console.log(this.model.currentPlayer);
                 return true;
             }
