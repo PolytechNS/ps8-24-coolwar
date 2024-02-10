@@ -62,7 +62,7 @@ export class GameModel {
         var nbLignes = this.nbLignes;
         var nbColonnes = this.nbColonnes;
 
-        for (let i = 0; i < nbLignes - 1; i++) {
+        for (let i = 0; i < nbLignes; i++) {
             for (let j = 0; j < nbColonnes; j++) {
                 this.horizontal_Walls.addWall(i, j);
                 this.vertical_Walls.addWall(i, j);
