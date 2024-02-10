@@ -82,14 +82,31 @@ export class GameModel {
     }
 
     setNextPlayer(){
-        if(this.currentPlayer===1){this.currentPlayer=2;}
+       /* if(this.currentPlayer===1){this.currentPlayer=2;}
         else if(this.currentPlayer===2){this.currentPlayer=1;}
         else{}
         this.roundCounter+=1;
         console.log("After next Player : "+this.currentPlayer);
+        */
     }
 
     isPlayerAtCoordinates(x,y){
         return this.player_array.playerAlreadyOnPosition(x,y);
+    }
+
+    isLastWallOnTheLine(type,x,y){
+        let wallsOnLine;
+        if(type==='H'){
+            wallsOnLine = this.horizontal_Walls.getLineOnX(x);
+        }
+        else if(type==='V'){
+            wallsOnLine = this.vertical_Walls.getLineOnY(y);
+        }
+        let occupied = 0;
+        for(let i=0;i<wallsOnLine.length;i++){
+            let wall = wallsOnLine[i];
+            if(wall.isPresent){occupied++;}
+        }
+        return occupied >= this.nbColonnes-1;
     }
 }

@@ -7,7 +7,7 @@ export class ActionController{
     }
 
     checkCurrentPlayer(id){
-        console.log("JOUEUR ACTUEL : "+this.model.currentPlayer);
+        //console.log("JOUEUR ACTUEL : "+this.model.currentPlayer);
         if(id!==this.model.currentPlayer){
             console.log("Joueur "+id + " ne peux pas jouer !");
             return false;
@@ -16,7 +16,6 @@ export class ActionController{
     }
 
     placeWall(id,walls) {
-        console.log("PLACEWALL");
         if (!this.checkCurrentPlayer(id)) {return null;}
         let wallToEdit = null;
         let wallBack = null;
@@ -26,13 +25,19 @@ export class ActionController{
                 wallToEdit = wall.children.item(0);
                 let coordinates = wallToEdit.id.split('X');
                 if (wall.classList.contains("horizontal_hitbox")) {
-                    wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1]);
+                    //SI LE DERNIER SUR LA LIGNE
+                    wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1])
+                    if(this.model.isLastWallOnTheLine('H',wallBack.position.x,wallBack.position.y)){
+                        return false;
+                    }
                 } else {
                     wallBack = this.model.getWallByCoordinates('V', coordinates[0], coordinates[1]);
+                    if(this.model.isLastWallOnTheLine('V',wallBack.position.x,wallBack.position.y)){
+                        return false;
+                    }
                 }
                 if (wallBack.isPresent === false) {
                     wallBack.setPresent();
-                    console.log(wallBack);
                     this.model.setNextPlayer();
                 }
             }
@@ -66,15 +71,10 @@ export class ActionController{
     isPresentWall(wall){
         let coordinates = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id);
 
-        console.log("IS PRESENT LOGS");
         if(wall.children.item(0).classList.contains("horizontal_wall")){
-            console.log("IS OCCUPIED AT THIS POSITION :"+"["+coordinates[0]+"|"+coordinates[1]+"] ?");
-            console.log(this.model.horizontal_Walls.getWall(parseInt(coordinates[0]),parseInt(coordinates[1])).isPresent);
             return this.model.horizontal_Walls.getWall(parseInt(coordinates[0]),parseInt(coordinates[1])).isPresent;
         }
         if(wall.children.item(0).classList.contains("vertical_wall")){
-            console.log("IS OCCUPIED AT THIS POSITION :"+"["+coordinates[0]+"|"+coordinates[1]+"] ?");
-            console.log(this.model.vertical_Walls.getWall(parseInt(coordinates[0]),parseInt(coordinates[1])).isPresent);
             return this.model.vertical_Walls.getWall(parseInt(coordinates[0]),parseInt(coordinates[1])).isPresent;
         }
         else{

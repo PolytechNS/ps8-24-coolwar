@@ -117,7 +117,6 @@ const getWallNeighborhood_Invert = (wall) => {
             }
         }
     }
-    console.log(wallToReturn);
     return wallToReturn;
 }
 
@@ -154,9 +153,9 @@ export class GamePresenter {
                     if(!actionController.isPresentWall(neighborhood)){
                         neighborhood.children.item(0).style.opacity = "0.8";
                     }
-                    else{
+                    else {
                         neighborhood = getWallNeighborhood_Invert(wall);
-                        if(!actionController.isPresentWall(neighborhood)){
+                        if (!actionController.isPresentWall(neighborhood)) {
                             neighborhood.children.item(0).style.opacity = "0.8";
                         }
                     }
@@ -178,6 +177,9 @@ export class GamePresenter {
                 function clickHandler() {
                     //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
                     let neighborhood = getWallNeighborhood(wall);
+                    if(actionController.isPresentWall(neighborhood)){
+                        neighborhood = getWallNeighborhood_Invert(wall);
+                    }
                     let wallList = [wall];
                     if(!actionController.isPresentWall(neighborhood)){wallList.push(neighborhood);}
 
@@ -227,8 +229,9 @@ export class GamePresenter {
         function updateCurrentPlayer() {
             /*if(currentPlayer_inside===1){currentPlayer_inside=2;}
             else if(currentPlayer_inside===2){currentPlayer_inside=1;}
-            else{}*/
+            else{}
             console.log("After next Player : "+currentPlayer_inside);
+            */
         }
     }
 }

@@ -20,6 +20,24 @@ export class WallDictionary{
         return wallToReturn;
     }
 
+    getLineOnX(x){
+        let listToReturn = [];
+        for(let i=0;i<this.wallList.length;i++){
+            let wall = this.wallList[i];
+            if(parseInt(wall.position.x)===parseInt(x)){listToReturn.push(wall);}
+        }
+        return listToReturn;
+    }
+
+    getLineOnY(y){
+        let listToReturn = [];
+        for(let i=0;i<this.wallList.length;i++){
+            let wall = this.wallList[i];
+            if(parseInt(wall.position.y)===parseInt(y)){listToReturn.push(wall);}
+        }
+        return listToReturn;
+    }
+
     putWall(wall){
         //TODO: VERIFIER SI LE MUR EST DEJA POSE
         wall.isPresent = true;
