@@ -112,7 +112,7 @@ button{
 }
 
 .profilePicture{
-    border-radius: 50px;
+    border-radius: 50%;
     max-height: 70px;
     margin-left: 10px;
 }
