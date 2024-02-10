@@ -1,12 +1,12 @@
 import {Position} from "./Position.js";
 
 export class Wall{
-    constructor(x,y,isPresent) {
-        this.position = new Position(x,y);
+    constructor(row,col,isPresent) {
+        this.position = new Position(row,col);
         this.isPresent = isPresent;
     }
 
-    equals(x,y){return this.position.x.toString() === x.toString() && this.position.y.toString() === y.toString();}
+    equals(row,col){return this.position.row.toString() === row.toString() && this.position.col.toString() === col.toString();}
 
     setPresent(){this.isPresent = true;}
 }

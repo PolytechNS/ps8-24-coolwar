@@ -1,8 +1,8 @@
 import {Position} from "./Position.js";
 
 export class PlayableSquare{
-    constructor(x,y,player,isVisible) {
-        this.position = new Position(x,y);
+    constructor(row,col,player,isVisible) {
+        this.position = new Position(row,col);
         this.player = player;
         this.isVisible = isVisible;
     }

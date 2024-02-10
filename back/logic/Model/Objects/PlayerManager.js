@@ -16,11 +16,11 @@ export class PlayerManager {
         }
     }
 
-    playerAlreadyOnPosition(x,y){
+    playerAlreadyOnPosition(row,col){
         if(this.players.size>1){
             for(let i=0;i<this.players.size;i++){
                 let player = this.players.get(i+1);
-                if( player.position.x.toString() === x.toString() && player.position.y.toString() === y.toString() ){return true;}
+                if( player.position.row.toString() === row.toString() && player.position.col.toString() === col.toString() ){return true;}
             }
         }
         return false;

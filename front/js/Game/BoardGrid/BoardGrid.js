@@ -26,7 +26,7 @@ export class BoardGrid{
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
         model.player_array.players.forEach((player)=>{
-            this.displayPlayer(player.position.x,player.position.y,iteration);
+            this.displayPlayer(player.position.row,player.position.col,iteration);
             iteration++;
         });
     }
@@ -64,22 +64,22 @@ export class BoardGrid{
     }
 
 
-    buildLineWithFullWall(Y_plate_count, nbColumns) {
+    buildLineWithFullWall(col_plate_count, nbColumns) {
         var finalNbColumns = nbColumns * 2;
 
-        var X_plate_count = 0;
+        var row_plate_count = 0;
 
         for (var i = 0; i < finalNbColumns; i++) {
             if (i === 0) {
             } else {
                 //intersection
                 if (i % 2 === 0) {
-                    this.plateElement.appendChild(this.generateIntersectionElement(Y_plate_count, X_plate_count));
+                    this.plateElement.appendChild(this.generateIntersectionElement(col_plate_count, row_plate_count));
                 }
                 //ligne
                 else {
-                    this.plateElement.appendChild(this.generateHorizontalWallHTMLElement(Y_plate_count, X_plate_count));
-                    X_plate_count++;
+                    this.plateElement.appendChild(this.generateHorizontalWallHTMLElement(col_plate_count, row_plate_count));
+                    row_plate_count++;
                 }
             }
         }
@@ -92,10 +92,10 @@ export class BoardGrid{
         }
     }
 
-    generatePlayableSquare(nbLigne,nbElement){
+    generatePlayableSquare(nbLines,nbElement){
         var playable_square = this.getEmptyHtmlElement("div");
         playable_square.classList.add("playable_square");
-        playable_square.setAttribute("id",nbLigne.toString()+separator+nbElement.toString());
+        playable_square.setAttribute("id",nbLines.toString()+separator+nbElement.toString());
         return playable_square;
     }
 
@@ -105,21 +105,21 @@ export class BoardGrid{
         return wall;
     }
 
-    generateVerticalWallHTMLElement(nbLigne,nbElement){
+    generateVerticalWallHTMLElement(nbLines,nbElement){
         var container = this.getEmptyHtmlElement("div");
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("vertical_wall");
-        wall.setAttribute("id",nbLigne.toString()+separator+nbElement.toString());
+        wall.setAttribute("id",nbLines.toString()+separator+nbElement.toString());
         wall.setAttribute("src","../../datas/vertical_wall_texture.png");
         container.classList.add("vertical_hitbox");
         container.appendChild(wall);
         return container;
     }
-    generateHorizontalWallHTMLElement(nbLigne,nbElement){
+    generateHorizontalWallHTMLElement(nbLines,nbElement){
         var container = this.getEmptyHtmlElement("div");
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("horizontal_wall");
-        wall.setAttribute("id",nbLigne.toString()+separator+nbElement.toString());
+        wall.setAttribute("id",nbLines.toString()+separator+nbElement.toString());
         wall.setAttribute("src","../../datas/horizontal_wall_texture.png");
         container.classList.add("horizontal_hitbox");
         container.appendChild(wall);

@@ -38,11 +38,6 @@ export class GameModel {
 
     }
 
-    generateRandomPosition() {
-        const max = this.nbColonnes;
-        const min = 0;
-        return new Position(this.generateRandom(min,max),this.generateRandom(min,max));
-    }
     generateRandom(min, max) {
         // find diff
         let difference = max - min;
@@ -75,9 +70,9 @@ export class GameModel {
         }
     }
 
-    getWallByCoordinates(type,x,y){
-        if(type==='H'){return this.horizontal_Walls.getWall(x,y);}
-        else if(type==='V'){return this.vertical_Walls.getWall(x,y);}
+    getWallByCoordinates(type,row,col){
+        if(type==='H'){return this.horizontal_Walls.getWall(row,col);}
+        else if(type==='V'){return this.vertical_Walls.getWall(row,col);}
         else{return null;}
     }
 
@@ -90,17 +85,17 @@ export class GameModel {
         */
     }
 
-    isPlayerAtCoordinates(x,y){
-        return this.player_array.playerAlreadyOnPosition(x,y);
+    isPlayerAtCoordinates(row,col){
+        return this.player_array.playerAlreadyOnPosition(row,col);
     }
 
-    isLastWallOnTheLine(type,x,y){
+    isLastWallOnTheLine(type,row,col){
         let wallsOnLine;
         if(type==='H'){
-            wallsOnLine = this.horizontal_Walls.getLineOnX(x);
+            wallsOnLine = this.horizontal_Walls.getLineOnX(row);
         }
         else if(type==='V'){
-            wallsOnLine = this.vertical_Walls.getLineOnY(y);
+            wallsOnLine = this.vertical_Walls.getLineOnY(col);
         }
         let occupied = 0;
         for(let i=0;i<wallsOnLine.length;i++){

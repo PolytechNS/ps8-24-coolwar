@@ -27,12 +27,12 @@ export class ActionController{
                 if (wall.classList.contains("horizontal_hitbox")) {
                     //SI LE DERNIER SUR LA LIGNE
                     wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1])
-                    if(this.model.isLastWallOnTheLine('H',wallBack.position.x,wallBack.position.y)){
+                    if(this.model.isLastWallOnTheLine('H',wallBack.position.row,wallBack.position.col)){
                         return false;
                     }
                 } else {
                     wallBack = this.model.getWallByCoordinates('V', coordinates[0], coordinates[1]);
-                    if(this.model.isLastWallOnTheLine('V',wallBack.position.x,wallBack.position.y)){
+                    if(this.model.isLastWallOnTheLine('V',wallBack.position.row,wallBack.position.col)){
                         return false;
                     }
                 }
@@ -46,17 +46,17 @@ export class ActionController{
         return true;
     }
 
-    characterCanBeMoved(x,y){
-        if(!this.model.isPlayerAtCoordinates(x,y)){return true;}
+    characterCanBeMoved(row,col){
+        if(!this.model.isPlayerAtCoordinates(row,col)){return true;}
     }
-    moveCharacter(id,x,y) {
+    moveCharacter(id,row,col) {
         if (this.checkCurrentPlayer(id)) {
             //VERIFICATION DU DEPLACEMENT
-            if(!this.model.isPlayerAtCoordinates(x,y)){
+            if(!this.model.isPlayerAtCoordinates(row,col)){
                 console.log("JOUEUR DEPLACABLE !");
                 //TODO : VERIFIER SI MOUVEMENT POSSIBLE (pas de sauts)
                 let playerToMove = this.model.player_array.getPlayer(id);
-                playerToMove.position = new Position(x,y);
+                playerToMove.position = new Position(row,col);
                 //this.model.setNextPlayer();
                 return true;
             }

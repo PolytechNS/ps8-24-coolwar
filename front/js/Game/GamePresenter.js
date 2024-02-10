@@ -61,33 +61,33 @@ const getWallNeighborhood = (wall) => {
     return wallToReturn;
 }
 const getWallNeighborhood_Invert = (wall) => {
-    let nbColonnes = 9;
-    let nbLignes = 9;
+    let nbColumns = 9;
+    let nbLines = 9;
     let wallPosition = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id)
     let wallToReturn = null;
 
     //si mur vertical tout en bas
-    if(parseInt(wallPosition[0])===nbLignes-1 && wall.classList.contains('vertical_hitbox')){
+    if(parseInt(wallPosition[0])===nbLines-1 && wall.classList.contains('vertical_hitbox')){
         let vWalls = document.querySelectorAll('.vertical_hitbox');
-        let xToFind = parseInt(wallPosition[0])-1;
-        let yToFind = parseInt(wallPosition[1]);
+        let rowToFind = parseInt(wallPosition[0])-1;
+        let colToFind = parseInt(wallPosition[1]);
         //SI DES MURS PEUVENT ETRE ENCORE POSES
         for(let i=0;i<vWalls.length;i++){
             let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
                 wallToReturn = vWalls.item(i);
             }
         }
     }
     //si mur horizontal A DROITE
-    if(parseInt(wallPosition[1])===nbColonnes-1 && wall.classList.contains('horizontal_hitbox')){
+    if(parseInt(wallPosition[1])===nbColumns-1 && wall.classList.contains('horizontal_hitbox')){
         let hWalls = document.querySelectorAll('.horizontal_hitbox');
-        let xToFind = parseInt(wallPosition[0]);
-        let yToFind = parseInt(wallPosition[1])-1;
+        let rowToFind = parseInt(wallPosition[0]);
+        let colToFind = parseInt(wallPosition[1])-1;
         //SI DES MURS PEUVEENT ETRE EENCORE POSES
         for(let i=0;i<hWalls.length;i++){
             let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
                 wallToReturn = hWalls.item(i);
             }
         }
@@ -95,24 +95,24 @@ const getWallNeighborhood_Invert = (wall) => {
     //autre cas PAR DEFAUT
     if(wall.classList.contains('horizontal_hitbox')){
         let hWalls = document.querySelectorAll('.horizontal_hitbox');
-        let xToFind = parseInt(wallPosition[0]);
-        let yToFind = parseInt(wallPosition[1])-1;
+        let rowToFind = parseInt(wallPosition[0]);
+        let colToFind = parseInt(wallPosition[1])-1;
         //SI DES MURS PEUVEENT ETRE EENCORE POSES
         for(let i=0;i<hWalls.length;i++){
             let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
                 wallToReturn = hWalls.item(i);
             }
         }
     }
     if(wall.classList.contains('vertical_hitbox')){
         let vWalls = document.querySelectorAll('.vertical_hitbox');
-        let xToFind = parseInt(wallPosition[0])-1;
-        let yToFind = parseInt(wallPosition[1]);
+        let rowToFind = parseInt(wallPosition[0])-1;
+        let colToFind = parseInt(wallPosition[1]);
         //SI DES MURS PEUVEENT ETRE EENCORE POSES
         for(let i=0;i<vWalls.length;i++){
             let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
+            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
                 wallToReturn = vWalls.item(i);
             }
         }
@@ -121,13 +121,13 @@ const getWallNeighborhood_Invert = (wall) => {
 }
 
 //TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
-const getCaseFromCoordinates = (x, y) => {
+const getCaseFromCoordinates = (row, col) => {
     let toSend = null;
-    console.log(x);
-    console.log(y);
+    console.log(row);
+    console.log(col);
     document.querySelectorAll('.playable_square').forEach((playable_case)=>{
         let coordinates = Utils.prototype.getCoordinatesFromID(playable_case.id);
-        if(parseInt(coordinates[0])===parseInt(x) && parseInt(coordinates[1])===parseInt(y)){toSend=playable_case;}
+        if(parseInt(coordinates[0])===parseInt(row) && parseInt(coordinates[1])===parseInt(col)){toSend=playable_case;}
     });
     return toSend;
 };
@@ -215,13 +215,13 @@ export class GamePresenter {
                 //CALL BD -
                 if(actionController.characterCanBeMoved(tab[0],tab[1])){
                     let oldPosition = model.player_array.getPlayerPosition(1);
-                    let caseToAlter = getCaseFromCoordinates(oldPosition.x,oldPosition.y);
+                    let caseToAlter = getCaseFromCoordinates(oldPosition.row,oldPosition.col);
                     if(actionController.moveCharacter(currentPlayer_inside,tab[0],tab[1])){
                         //ON DEPLACE LE PERSONNAGE
                         view.boardGrid.displayPlayer(tab[0],tab[1],currentPlayer_inside);
 
                         //ON RETIRE L'ANCIEN STYLE
-                        view.boardGrid.deletePlayer(oldPosition.x.toString(),oldPosition.y.toString(),currentPlayer_inside);
+                        view.boardGrid.deletePlayer(oldPosition.row.toString(),oldPosition.col.toString(),currentPlayer_inside);
                     }
                     //let oldCase = getCaseFromCoordinates(positionBeforeMove[0],positionBeforeMove[1]);
 

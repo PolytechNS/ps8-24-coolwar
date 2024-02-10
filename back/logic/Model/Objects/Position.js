@@ -1,7 +1,7 @@
 export class Position{
-    constructor(x,y) {
-        this.x = x;
-        this.y = y;
+    constructor(row,col) {
+        this.row = row;
+        this.col = col;
     }
-    toString(){return "X:"+this.x+"/Y:"+this.y+"\n";}
+    toString(){return "row:"+this.row+"/col:"+this.col+"\n";}
 }

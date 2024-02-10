@@ -6,34 +6,34 @@ export class WallDictionary{
         this.wallList = [];
     }
 
-    addWall(x,y){
+    addWall(row,col){
         //TODO: VERIFIER SI L'INDEX EXISTE DEJA
-        this.wallList.push(new Wall(x,y,false));
+        this.wallList.push(new Wall(row,col,false));
     }
 
-    getWall(x,y){
+    getWall(row,col){
         //TODO: VERIFIER S'IL EXISTE
         let wallToReturn=null;
         this.wallList.forEach(function (wall){
-            if(wall.equals(x,y)){wallToReturn=wall;}
+            if(wall.equals(row,col)){wallToReturn=wall;}
         });
         return wallToReturn;
     }
 
-    getLineOnX(x){
+    getLineOnX(row){
         let listToReturn = [];
         for(let i=0;i<this.wallList.length;i++){
             let wall = this.wallList[i];
-            if(parseInt(wall.position.x)===parseInt(x)){listToReturn.push(wall);}
+            if(parseInt(wall.position.row)===parseInt(row)){listToReturn.push(wall);}
         }
         return listToReturn;
     }
 
-    getLineOnY(y){
+    getLineOnY(col){
         let listToReturn = [];
         for(let i=0;i<this.wallList.length;i++){
             let wall = this.wallList[i];
-            if(parseInt(wall.position.y)===parseInt(y)){listToReturn.push(wall);}
+            if(parseInt(wall.position.col)===parseInt(col)){listToReturn.push(wall);}
         }
         return listToReturn;
     }
