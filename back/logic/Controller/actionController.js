@@ -55,10 +55,9 @@ export class ActionController{
             if(!this.model.isPlayerAtCoordinates(x,y)){
                 console.log("JOUEUR DEPLACABLE !");
                 //TODO : VERIFIER SI MOUVEMENT POSSIBLE (pas de sauts)
-                let playerToMove = this.model.player_array.players.get(id);
+                let playerToMove = this.model.player_array.getPlayer(id);
                 playerToMove.position = new Position(x,y);
                 //this.model.setNextPlayer();
-                console.log(this.model.currentPlayer);
                 return true;
             }
             else{

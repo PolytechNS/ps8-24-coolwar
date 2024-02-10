@@ -123,9 +123,11 @@ const getWallNeighborhood_Invert = (wall) => {
 //TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
 const getCaseFromCoordinates = (x, y) => {
     let toSend = null;
+    console.log(x);
+    console.log(y);
     document.querySelectorAll('.playable_square').forEach((playable_case)=>{
         let coordinates = Utils.prototype.getCoordinatesFromID(playable_case.id);
-        if(coordinates[0].toString()===x.toString() && coordinates[1].toString()===y.toString()){toSend=playable_case;}
+        if(parseInt(coordinates[0])===parseInt(x) && parseInt(coordinates[1])===parseInt(y)){toSend=playable_case;}
     });
     return toSend;
 };
@@ -213,12 +215,16 @@ export class GamePresenter {
                 //CALL BD -
                 if(actionController.characterCanBeMoved(tab[0],tab[1])){
                     let oldPosition = model.player_array.getPlayerPosition(1);
-                    console.log(oldPosition);
-                    let caseToAlter = getCaseFromCoordinates(oldPosition);
-                    console.log(caseToAlter);
-                    actionController.moveCharacter(currentPlayer_inside,tab[0],tab[1]);
+                    let caseToAlter = getCaseFromCoordinates(oldPosition.x,oldPosition.y);
+                    if(actionController.moveCharacter(currentPlayer_inside,tab[0],tab[1])){
+                        //ON DEPLACE LE PERSONNAGE
+                        view.boardGrid.displayPlayer(tab[0],tab[1],currentPlayer_inside);
+
+                        //ON RETIRE L'ANCIEN STYLE
+                        view.boardGrid.deletePlayer(oldPosition.x.toString(),oldPosition.y.toString(),currentPlayer_inside);
+                    }
                     //let oldCase = getCaseFromCoordinates(positionBeforeMove[0],positionBeforeMove[1]);
-                    view.boardGrid.displayPlayer(tab[0],tab[1],currentPlayer_inside);
+
                     updateCurrentPlayer();
                 }
             }

@@ -4,6 +4,10 @@ export class PlayerManager {
         this.players = new Map();
     }
 
+    getPlayer(index){
+        return this.players.get(index);
+    }
+
     addPlayer(player){
         if(this.playerAlreadyOnPosition(player.position)){return false;}
         else{
@@ -24,6 +28,7 @@ export class PlayerManager {
 
     getPlayerPosition(id){
         if(this.players.get(id)!=null){return this.players.get(id).position;}
+        console.log("NULL ELEMENT!");
         return null;
     }
 }
