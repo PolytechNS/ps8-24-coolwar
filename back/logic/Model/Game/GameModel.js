@@ -23,6 +23,8 @@ class GameModel {
         this.init_model();
         this.currentPlayer = 1;
         this.roundCounter = 0;
+
+        console.log("PLAYER ARRAY AFTER CONSTRCUCTOR"+this.player_array.players);
     }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
@@ -36,6 +38,7 @@ class GameModel {
             this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1)));
         }
 
+        console.log(this.player_array.players);
     }
 
     generateRandom(min, max) {
@@ -106,4 +109,4 @@ class GameModel {
     }
 }
 
-module.exports = GameModel;
+module.exports = {GameModel};

@@ -14,7 +14,6 @@ export const actionGameService = {
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('game model', (gameModel) => {
-            console.log('Game model received:', gameModel);
             callback(gameModel);
         });
     }
