@@ -66,21 +66,6 @@ class ActionController {
         }
         return false;
     }
-
-    isPresentWall(wall) {
-        let coordinates = Utils.getCoordinatesFromID(wall.children.item(0).id);
-
-        if (wall.children.item(0).classList.contains("horizontal_wall")) {
-            return this.model.horizontal_Walls.getWall(parseInt(coordinates[0]), parseInt(coordinates[1])).isPresent;
-        }
-        if (wall.children.item(0).classList.contains("vertical_wall")) {
-            return this.model.vertical_Walls.getWall(parseInt(coordinates[0]), parseInt(coordinates[1])).isPresent;
-        }
-        else {
-            console.log("AUCUN MUR TROUVE A CETTE POSITION !\n [" + coordinates[0] + "|" + coordinates[1] + "]");
-            return null;
-        }
-    }
 }
 
 module.exports = { ActionController };

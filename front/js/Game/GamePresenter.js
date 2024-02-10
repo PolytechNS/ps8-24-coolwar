@@ -1,17 +1,16 @@
 import {actionGameService} from "../Services/actionGameService.js";
 import {getCaseFromCoordinates,getWallNeighborhood,getWallNeighborhood_Invert} from "./BoardGrid/WallManager.js";
 import {Utils} from "../Utils/utils.js";
+import {GameBehaviour} from "./GameBehaviour.js";
 
 export class GamePresenter {
     constructor(model, view) {
         this.model = model;
         this.view = view;
+        this.init_behaviour(view, model);
+        this.currentPlayer = 1;
         console.log("GamePresenter created");
         console.log(this.view);
-        window.addEventListener('load', (event) => {
-            this.init_behaviour(this.view, this.model);
-        });
-        this.currentPlayer = 1;
     }
 
     init_behaviour(view, model) {
@@ -20,15 +19,15 @@ export class GamePresenter {
         let playable_case_HTML = document.querySelectorAll('.playable_square');
 
         const init_walls = (list) => {
+            console.log("INIT WALLS");
             list.forEach((wall) => {
                 const hoverHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (!actionGameService.isPresentWall(neighborhood)) {
-
+                    if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
                         this.view.displayWall(neighborhood, 0.8);
                     } else {
                         neighborhood = getWallNeighborhood_Invert(wall);
-                        if (!actionGameService.isPresentWall(neighborhood)) {
+                        if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
                             this.view.displayWall(neighborhood, 0.8);
                         }
                     }
@@ -37,11 +36,11 @@ export class GamePresenter {
 
                 const leaveHoverHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (!actionGameService.isPresentWall(neighborhood)) {
+                    if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
                         this.view.displayWall(neighborhood, 0);
                     } else {
                         neighborhood = getWallNeighborhood_Invert(wall);
-                        if (!actionGameService.isPresentWall(neighborhood)) {
+                        if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
                             this.view.displayWall(neighborhood, 0);
                         }
                     }
@@ -50,11 +49,11 @@ export class GamePresenter {
 
                 const clickHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (actionGameService.isPresentWall(neighborhood)) {
+                    if (GameBehaviour.isPresentWall(neighborhood,this.model)) {
                         neighborhood = getWallNeighborhood_Invert(wall);
                     }
                     let wallList = [wall];
-                    if (!actionGameService.isPresentWall(neighborhood)) {
+                    if (!GameBehaviour.isPresentWall(neighborhood)) {
                         wallList.push(neighborhood);
                     }
 
