@@ -106,4 +106,4 @@ class GameModel {
     }
 }
 
-module.exports = { GameModel };
+module.exports = GameModel;
