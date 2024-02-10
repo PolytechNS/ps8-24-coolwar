@@ -1,21 +1,20 @@
-import {ActionController} from "../../../back/logic/Controller/actionController.js";
+import {actionGameService} from "../Services/actionGameService.js";
 import {getCaseFromCoordinates,getWallNeighborhood,getWallNeighborhood_Invert} from "./BoardGrid/WallManager.js";
 import {Utils} from "../Utils/utils.js";
 
 export class GamePresenter {
     constructor(model, view) {
-        this.actionController = new ActionController(model);
         this.model = model;
         this.view = view;
         console.log("GamePresenter created");
         console.log(this.view);
         window.addEventListener('load', (event) => {
-            this.init_behaviour(this.view, this.model, this.actionController);
+            this.init_behaviour(this.view, this.model);
         });
         this.currentPlayer = 1;
     }
 
-    init_behaviour(view, model, actionController) {
+    init_behaviour(view, model) {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
@@ -24,12 +23,12 @@ export class GamePresenter {
             list.forEach((wall) => {
                 const hoverHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (!actionController.isPresentWall(neighborhood)) {
+                    if (!actionGameService.isPresentWall(neighborhood)) {
 
                         this.view.displayWall(neighborhood, 0.8);
                     } else {
                         neighborhood = getWallNeighborhood_Invert(wall);
-                        if (!actionController.isPresentWall(neighborhood)) {
+                        if (!actionGameService.isPresentWall(neighborhood)) {
                             this.view.displayWall(neighborhood, 0.8);
                         }
                     }
@@ -38,11 +37,11 @@ export class GamePresenter {
 
                 const leaveHoverHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (!actionController.isPresentWall(neighborhood)) {
+                    if (!actionGameService.isPresentWall(neighborhood)) {
                         this.view.displayWall(neighborhood, 0);
                     } else {
                         neighborhood = getWallNeighborhood_Invert(wall);
-                        if (!actionController.isPresentWall(neighborhood)) {
+                        if (!actionGameService.isPresentWall(neighborhood)) {
                             this.view.displayWall(neighborhood, 0);
                         }
                     }
@@ -51,15 +50,15 @@ export class GamePresenter {
 
                 const clickHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (actionController.isPresentWall(neighborhood)) {
+                    if (actionGameService.isPresentWall(neighborhood)) {
                         neighborhood = getWallNeighborhood_Invert(wall);
                     }
                     let wallList = [wall];
-                    if (!actionController.isPresentWall(neighborhood)) {
+                    if (!actionGameService.isPresentWall(neighborhood)) {
                         wallList.push(neighborhood);
                     }
 
-                    if (actionController.placeWall(this.currentPlayer, wallList)) {
+                    if (actionGameService.placeWall(this.currentPlayer, wallList)) {
                         wallList.forEach((wallToEdit) => {
                             this.view.displayWall(wallToEdit, 1);
                             let replaceOBJ = wallToEdit.cloneNode(true);
@@ -81,10 +80,10 @@ export class GamePresenter {
         playable_case_HTML.forEach((playable_case) => {
             const clickHandler = () => {
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
-                if (actionController.characterCanBeMoved(tab[0], tab[1])) {
+                if (actionGameService.characterCanBeMoved(tab[0], tab[1])) {
                     let oldPosition = model.player_array.getPlayerPosition(this.currentPlayer);
                     let caseToAlter = getCaseFromCoordinates(oldPosition.row, oldPosition.col);
-                    if (actionController.moveCharacter(this.currentPlayer, tab[0], tab[1])) {
+                    if (actionGameService.moveCharacter(this.currentPlayer, tab[0], tab[1])) {
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.currentPlayer);
                         this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.currentPlayer);
                     }

@@ -1,5 +1,5 @@
 
-export class PlayerManager {
+class PlayerManager {
     constructor() {
         this.players = new Map();
     }
@@ -32,3 +32,5 @@ export class PlayerManager {
         return null;
     }
 }
+
+module.exports = { PlayerManager };

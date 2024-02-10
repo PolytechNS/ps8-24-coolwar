@@ -1,6 +1,6 @@
-import {PlayableSquare} from "./PlayableSquare.js";
+const {PlayableSquare} = require("./PlayableSquare.js");
 
-export class PlayableSquareDictionary{
+class PlayableSquareDictionary{
     constructor() {
         this.playableSquares = [];
     }
@@ -16,3 +16,5 @@ export class PlayableSquareDictionary{
         return result;
     }
 }
+
+module.exports = { PlayableSquareDictionary };

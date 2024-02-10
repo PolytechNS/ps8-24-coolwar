@@ -1,6 +1,6 @@
-import {Position} from "./Position.js";
+const {Position} = require("./Position.js");
 
-export class Wall{
+class Wall{
     constructor(row,col,isPresent) {
         this.position = new Position(row,col);
         this.isPresent = isPresent;
@@ -10,3 +10,5 @@ export class Wall{
 
     setPresent(){this.isPresent = true;}
 }
+
+module.exports = { Wall };

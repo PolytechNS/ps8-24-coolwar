@@ -1,4 +1,4 @@
-
+import "../socket.io.js";
 export const socketManager = {
     socket: null,
     initializeSocket(token) {

@@ -1,8 +1,10 @@
-import {Position} from "./Position.js";
+const {Position} = require("./Position.js");
 
-export class GamePlayer {
+class GamePlayer {
     constructor(name,position) {
         this.name=name;
         this.position = position;
     }
 }
+
+module.exports = { GamePlayer };

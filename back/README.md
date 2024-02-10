@@ -10,6 +10,7 @@ pour accéder à la db :
 mongosh "mongodb://localhost:27017/myappdb"
 
 pour lancer docker :
+d'abord lancer docker desktop
 docker-compose up --build
 
 si le back a changé --> mettre à jour le container

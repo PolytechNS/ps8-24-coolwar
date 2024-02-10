@@ -1,7 +1,7 @@
-import {Wall} from "./Wall.js";
+const {Wall} = require("./Wall.js");
 
 
-export class WallDictionary{
+class WallDictionary{
     constructor() {
         this.wallList = [];
     }
@@ -43,3 +43,5 @@ export class WallDictionary{
         wall.isPresent = true;
     }
 }
+
+module.exports = { WallDictionary };

@@ -1,10 +1,10 @@
-import {WallDictionary} from "../Objects/WallDictionary.js";
-import {PlayableSquareDictionary} from "../Objects/PlayableSquareDictionary.js";
-import {PlayerManager} from "../Objects/PlayerManager.js";
-import {GamePlayer} from "../Objects/GamePlayer.js";
-import {Position} from "../Objects/Position.js";
+const {WallDictionary} = require("../Objects/WallDictionary.js");
+const {PlayableSquareDictionary} = require("../Objects/PlayableSquareDictionary.js");
+const {GamePlayer} = require("../Objects/GamePlayer.js");
+const {PlayerManager} = require("../Objects/PlayerManager.js");
+const {Position} = require("../Objects/Position.js");
 
-export class GameModel {
+class GameModel {
 
     /*TODO: LAST POSITION IN EDIT
     CREATION DES JOUEURS ET NOTION DE TOUR ✅
@@ -105,3 +105,5 @@ export class GameModel {
         return occupied >= this.nbColonnes-1;
     }
 }
+
+module.exports = { GameModel };
