@@ -3,6 +3,8 @@ const {PlayableSquareDictionary} = require("../Objects/PlayableSquareDictionary.
 const {GamePlayer} = require("../Objects/GamePlayer.js");
 const {PlayerManager} = require("../Objects/PlayerManager.js");
 const {Position} = require("../Objects/Position.js");
+const { v4:uuidv4 } = require('uuid');
+
 
 class GameModel {
 
@@ -10,6 +12,7 @@ class GameModel {
     CREATION DES JOUEURS ET NOTION DE TOUR ✅
     */
     constructor() {
+        this.idGame = uuidv4();
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;
@@ -23,8 +26,6 @@ class GameModel {
         this.init_model();
         this.currentPlayer = 1;
         this.roundCounter = 0;
-
-        console.log("PLAYER ARRAY AFTER CONSTRCUCTOR"+this.player_array.players);
     }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
@@ -62,8 +63,8 @@ class GameModel {
 
         for (let i = 0; i < nbLignes; i++) {
             for (let j = 0; j < nbColonnes; j++) {
-                this.horizontal_Walls.addWall(i, j);
-                this.vertical_Walls.addWall(i, j);
+                this.horizontal_Walls.addWall(i, j,'H');
+                this.vertical_Walls.addWall(i, j,'V');
             }
         }
         for (let i = 0; i < nbLignes; i++) {
@@ -94,12 +95,8 @@ class GameModel {
 
     isLastWallOnTheLine(type,row,col){
         let wallsOnLine;
-        if(type==='H'){
-            wallsOnLine = this.horizontal_Walls.getLineOnX(row);
-        }
-        else if(type==='V'){
-            wallsOnLine = this.vertical_Walls.getLineOnY(col);
-        }
+        if(type==='H'){wallsOnLine = this.horizontal_Walls.getLineOnX(row);}
+        else if(type==='V'){wallsOnLine = this.vertical_Walls.getLineOnY(col);}
         let occupied = 0;
         for(let i=0;i<wallsOnLine.length;i++){
             let wall = wallsOnLine[i];

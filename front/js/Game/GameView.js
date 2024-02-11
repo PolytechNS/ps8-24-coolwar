@@ -19,8 +19,6 @@ export class GameView {
     }
 
     displayWall(wall, opacity) {
-        console.log("dans display wall")
-        console.log(wall);
         wall.children.item(0).style.opacity = opacity;
     }
 }

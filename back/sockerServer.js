@@ -1,6 +1,8 @@
 // socketServer.js
 const socketIo = require('socket.io');
 const {GameModel} = require('./logic/Model/Game/GameModel.js');
+const {ActionController} = require("./logic/Controller/actionController.js");
+const {GameManager} = require("./logic/GameManager.js");
 
 module.exports = (server) => {
     const io = socketIo(server, {
@@ -20,15 +22,28 @@ module.exports = (server) => {
         socket.on('get game model', () => {
             // Créez ou récupérez une instance de GameModel ici
             const gameModel = new GameModel();
-            console.log("PLAYER ARRAY BEFORE SERIALIZATION :"+gameModel.player_array.players);
             // Sérialisez l'objet gameModel en JSON
             const serializedGameModel = JSON.stringify(gameModel);
-            console.log(serializedGameModel);
             // Envoyez le modèle de jeu au client qui a demandé
             socket.emit('game model', serializedGameModel);
         });
 
-        // Additional socket event handlers...
+        socket.on('joinGame', () => {
+            let responseBoolean = gameController.join()
+
+            socket.emit('placewallResponse',responseBoolean);
+        });
+
+        socket.on('placewall', (wallData) => {
+            let wallDataDeserialized = JSON.parse(wallData);
+            let actionController = new ActionController();
+            let responseBoolean = actionController.placeWall(wallDataDeserialized);
+            socket.emit('placewallResponse',responseBoolean);
+        });
+
+        socket.on('moveCharacter', ()=>{
+
+        });
     });
 
     return io;

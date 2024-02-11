@@ -8,9 +8,8 @@ export class GamePresenter {
         this.model = model;
         this.view = view;
         this.init_behaviour(view, model);
-        this.currentPlayer = 1;
+        this.gameBehaviour = new GameBehaviour();
         console.log("GamePresenter created");
-        console.log(this.view);
     }
 
     init_behaviour(view, model) {
@@ -23,11 +22,11 @@ export class GamePresenter {
             list.forEach((wall) => {
                 const hoverHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
+                    if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
                         this.view.displayWall(neighborhood, 0.8);
                     } else {
                         neighborhood = getWallNeighborhood_Invert(wall);
-                        if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
+                        if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
                             this.view.displayWall(neighborhood, 0.8);
                         }
                     }
@@ -36,11 +35,11 @@ export class GamePresenter {
 
                 const leaveHoverHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
+                    if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
                         this.view.displayWall(neighborhood, 0);
                     } else {
                         neighborhood = getWallNeighborhood_Invert(wall);
-                        if (!GameBehaviour.isPresentWall(neighborhood,this.model)) {
+                        if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
                             this.view.displayWall(neighborhood, 0);
                         }
                     }
@@ -49,22 +48,26 @@ export class GamePresenter {
 
                 const clickHandler = () => {
                     let neighborhood = getWallNeighborhood(wall);
-                    if (GameBehaviour.isPresentWall(neighborhood,this.model)) {
+                    if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
                         neighborhood = getWallNeighborhood_Invert(wall);
                     }
-                    let wallList = [wall];
-                    if (!GameBehaviour.isPresentWall(neighborhood)) {
-                        wallList.push(neighborhood);
+                    let wallListReq = [wall.children.item(0).id];
+                    let wallListObj = [wall];
+                    if (!this.gameBehaviour.isPresentWall(neighborhood)) {
+                        wallListReq.push(neighborhood.children.item(0).id);
+                        wallListObj.push(neighborhood);
                     }
 
-                    if (actionGameService.placeWall(this.currentPlayer, wallList)) {
-                        wallList.forEach((wallToEdit) => {
+                    //CALL BD -
+                    actionGameService.placeWall(wallListReq, (res)=>{
+                        console.log(res);
+                        wallListObj.forEach((wallToEdit) => {
                             this.view.displayWall(wallToEdit, 1);
                             let replaceOBJ = wallToEdit.cloneNode(true);
                             wallToEdit.replaceWith(replaceOBJ);
                         });
                         updateCurrentPlayer();
-                    }
+                    });
                 };
 
                 wall.addEventListener('mouseenter', hoverHandler);

@@ -25,7 +25,6 @@ export class BoardGrid{
         this.openPopUp();
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
-        console.log(model.player_array);
         model.player_array.players.forEach((player, iteration) => {
             this.displayPlayer(player.position.row, player.position.col, iteration + 1);
         });
@@ -54,8 +53,6 @@ export class BoardGrid{
 
     deletePlayer(row,col,id){
         console.log("DELETE PLAYER !");
-        console.log(row);
-        console.log(col);
         row = Math.max(0, Math.min(row, 8));
         col = Math.max(0, Math.min(col, 8));
         let items = document.getElementsByClassName('playable_square');
@@ -109,7 +106,7 @@ export class BoardGrid{
         var container = this.getEmptyHtmlElement("div");
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("vertical_wall");
-        wall.setAttribute("id",nbLines.toString()+separator+nbElement.toString());
+        wall.setAttribute("id",nbLines.toString()+separator+nbElement.toString()+separator+'V');
         wall.setAttribute("src","../../datas/vertical_wall_texture.png");
         container.classList.add("vertical_hitbox");
         container.appendChild(wall);
@@ -119,7 +116,7 @@ export class BoardGrid{
         var container = this.getEmptyHtmlElement("div");
         var wall= this.getEmptyHtmlElement("img");
         wall.classList.add("horizontal_wall");
-        wall.setAttribute("id",nbLines.toString()+separator+nbElement.toString());
+        wall.setAttribute("id",nbLines.toString()+separator+nbElement.toString()+separator+'H');
         wall.setAttribute("src","../../datas/horizontal_wall_texture.png");
         container.classList.add("horizontal_hitbox");
         container.appendChild(wall);

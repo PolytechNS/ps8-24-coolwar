@@ -1,4 +1,3 @@
-const { Utils } = require('../Utils/utils.js');
 const { Position } = require('../Model/Objects/Position.js');
 
 class ActionController {
@@ -14,26 +13,17 @@ class ActionController {
         } else { return true; }
     }
 
-    placeWall(id, walls) {
-        if (!this.checkCurrentPlayer(id)) { return null; }
+    placeWall(walls) {
+        //if (!this.checkCurrentPlayer(id)) { return null; }
         let wallToEdit = null;
         let wallBack = null;
         for (let i = 0; i < walls.length; i++) {
-            let wall = walls[i];
-            if (wall.classList.contains("horizontal_hitbox") || wall.classList.contains("vertical_hitbox")) {
-                wallToEdit = wall.children.item(0);
-                let coordinates = wallToEdit.id.split('X');
-                if (wall.classList.contains("horizontal_hitbox")) {
-                    //SI LE DERNIER SUR LA LIGNE
-                    wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1]);
-                    if (this.model.isLastWallOnTheLine('H', wallBack.position.row, wallBack.position.col)) {
-                        return false;
-                    }
-                } else {
-                    wallBack = this.model.getWallByCoordinates('V', coordinates[0], coordinates[1]);
-                    if (this.model.isLastWallOnTheLine('V', wallBack.position.row, wallBack.position.col)) {
-                        return false;
-                    }
+            let wall = walls.wallList[i];
+            let wallInformations = wall.split("X");
+            if (wallInformations[2]==='H' || wallInformations[2]==='V') {
+                wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
+                if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {
+                    return false;
                 }
                 if (wallBack.isPresent === false) {
                     wallBack.setPresent();
@@ -68,4 +58,4 @@ class ActionController {
     }
 }
 
-module.exports = { ActionController };
+module.exports = { ActionController};

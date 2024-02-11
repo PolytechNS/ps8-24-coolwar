@@ -120,11 +120,8 @@ export const getWallNeighborhood_Invert = (wall) => {
 }
 
 //TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
-
 export const getCaseFromCoordinates = (row, col) => {
     let toSend = null;
-    console.log(row);
-    console.log(col);
     document.querySelectorAll('.playable_square').forEach((playable_case)=>{
         let coordinates = Utils.prototype.getCoordinatesFromID(playable_case.id);
         if(parseInt(coordinates[0])===parseInt(row) && parseInt(coordinates[1])===parseInt(col)){toSend=playable_case;}
