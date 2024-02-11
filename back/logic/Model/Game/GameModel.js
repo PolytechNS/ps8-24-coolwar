@@ -11,35 +11,60 @@ class GameModel {
     /*TODO: LAST POSITION IN EDIT
     CREATION DES JOUEURS ET NOTION DE TOUR ✅
     */
-    constructor() {
+    constructor(config = {}) {
+        const {
+            idGame = uuidv4(),
+            nbLignes = 9,
+            nbColonnes = 9,
+            nbPlayers = 2,
+            horizontal_Walls = new WallDictionary(),
+            vertical_Walls = new WallDictionary(),
+            playable_squares = new PlayableSquareDictionary(),
+            player_array = new PlayerManager(),
+            currentPlayer = 1,
+            roundCounter = 0
+        } = config;
+
         this.idGame = uuidv4();
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;
-        this.horizontal_Walls = new WallDictionary();
-        this.vertical_Walls = new WallDictionary();
-        this.playable_squares = new PlayableSquareDictionary();
-        this.player_array = new PlayerManager();
         //INITIALISATION DES JOUEURS
-        this.initPlayers();
+
+
         //INIT DU MODEL
-        this.init_model();
         this.currentPlayer = 1;
         this.roundCounter = 0;
+        if(!config.horizontal_Walls){
+            this.horizontal_Walls = new WallDictionary();
+        }else {
+            this.horizontal_Walls = horizontal_Walls;
+        }
+        if(!config.vertical_Walls){
+            this.vertical_Walls = new WallDictionary();
+        }else {
+            this.vertical_Walls = vertical_Walls;
+        }
+        if(!config.playable_squares){
+            this.playable_squares = new PlayableSquareDictionary();
+            this.init_model();
+
+        }
+        else {
+            this.playable_squares = playable_squares;
+        }
+        if(!config.player_array){
+            this.player_array = new PlayerManager();
+            this.initPlayers();
+
+
+        }else {
+            this.player_array = player_array;
+        }
+
+
     }
 
-    constructor(player_array, horizontal_Walls, vertical_Walls, playable_squares, currentPlayer, roundCounter) {
-        this.idGame = uuidv4();
-        this.nbLignes = 9;
-        this.nbColonnes = 9;
-        this.nbPlayers = 2;
-        this.horizontal_Walls = horizontal_Walls;
-        this.vertical_Walls = vertical_Walls;
-        this.playable_squares = playable_squares;
-        this.player_array = player_array;
-        this.currentPlayer = currentPlayer;
-        this.roundCounter = roundCounter;
-    }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
         let index2 = this.generateRandom(0,this.nbColonnes);

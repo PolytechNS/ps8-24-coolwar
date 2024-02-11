@@ -6,7 +6,8 @@ const { MongoClient } = require('mongodb');
 const {MONGO_URL} = require("./logic/Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-
+let gameModel = null;
+let actionController = null;
 
 module.exports = (server) => {
     const io = socketIo(server, {
@@ -35,8 +36,9 @@ module.exports = (server) => {
                 const gameId = newGame.insertedId;
 
                 // Créer un nouveau GameModel
-                const gameModel = new GameModel();
-
+                gameModel = new GameModel();
+                console.log("Game model created", gameModel);
+                actionController = new ActionController(gameModel);
                 // Persister le plateau de jeu
                 const gameBoard = await db.collection('gameboards').insertOne({
                     gameId: gameId, // Lier le plateau de jeu à la partie
@@ -84,6 +86,10 @@ module.exports = (server) => {
                 try {
                     let actionController = new ActionController();
                     let responseBoolean = actionController.placeWall(data);
+
+                } catch (error) {
+                    console.error('Error updating wall', error);
+
                 }
                 await client.connect();
                 const db = client.db();
