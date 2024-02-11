@@ -23,6 +23,8 @@ export class GameModel {
         this.init_model();
         this.currentPlayer = 1;
         this.roundCounter = 0;
+        this.winner = null;
+        this.lastChance = 0;
     }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
@@ -145,5 +147,30 @@ export class GameModel {
         }
         console.log(wallToAnalys.isPresent);
         return wallToAnalys.isPresent;
+    }
+
+    checkWinner(){
+        let valueToReturn = -1;
+        if(this.roundCounter>=200){console.log("STOP GAME !");valueToReturn = 0;}
+        else{
+            let p1 = this.player_array.getPlayerPosition(1);
+            let p2 = this.player_array.getPlayerPosition(2);
+
+            console.log(p1.row);
+            console.log(p2.row);
+
+            //APRES LE DERNIER COUP DE B
+            if(this.lastChance>0){
+                //SI B N'A PAS REUSSI A AVANCER
+                if(p2.row!==0){valueToReturn= 1;}
+                else{valueToReturn = 0;}
+            }
+            //SI B EST SUR 0 EN PREMIER
+            else if(p2.row===0){valueToReturn=2;}
+            //si A est sur la derniere ligne en premier
+            else if(p1.row===8 && p2.row!==0){this.lastChance++;}
+        }
+        this.winner = valueToReturn;
+        return valueToReturn;
     }
 }

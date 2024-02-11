@@ -28,7 +28,6 @@ export class PlayerManager {
 
     getPlayerPosition(id){
         if(this.players.get(id)!=null){return this.players.get(id).position;}
-        console.log("NULL ELEMENT!");
         return null;
     }
 }

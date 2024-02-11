@@ -136,7 +136,7 @@ export class GamePresenter {
         this.model = model;
         window.addEventListener('load', (event) => {
             this.init_behaviour();
-            this.updateRounds();
+            this.updateInformations();
         });
         this.currentPlayer = this.model.currentPlayer;
     };
@@ -149,6 +149,23 @@ export class GamePresenter {
        this.init_walls(horizontal_walls_HTML);
        this.init_walls(vertical_walls_HTML);
        this.init_playable_case(playable_case_HTML);
+    }
+
+    cancel_behaviour(){
+        let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
+        let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
+        let playable_case_HTML = document.querySelectorAll('.playable_square');
+
+        function cancel_behaviour_func (list){
+            list.forEach((wall)=> {
+                let replaceOBJ = wall.cloneNode(true);
+                wall.replaceWith(replaceOBJ);
+            });
+        }
+
+        cancel_behaviour_func(horizontal_walls_HTML);
+        cancel_behaviour_func(vertical_walls_HTML);
+        cancel_behaviour_func(playable_case_HTML);
     }
 
     init_walls(list){
@@ -207,16 +224,23 @@ export class GamePresenter {
         });
     }
 
+    checkEndGame(){
+        let res = this.model.checkWinner();
+        if(res!==-1){this.cancel_behaviour();}
+    }
+
     updatePage() {
+        this.checkEndGame();
+        this.updateInformations();
         if(this.currentPlayer === 1) { this.currentPlayer = 2; }
         else if(this.currentPlayer === 2) { this.currentPlayer = 1; }
         else { }
-        this.updateRounds();
     }
-
-    updateRounds(){
+    updateInformations(){
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
+        let winner_HTML = document.querySelectorAll('#winner');
+        winner_HTML.item(0).innerHTML = "Winner = "+this.model.winner;
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
         curplayer_HTML.item(0).innerHTML = "Current Player : "+this.model.currentPlayer;
     }
