@@ -123,8 +123,6 @@ const getWallNeighborhood_Invert = (wall) => {
 //TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
 const getCaseFromCoordinates = (row, col) => {
     let toSend = null;
-    console.log(row);
-    console.log(col);
     document.querySelectorAll('.playable_square').forEach((playable_case)=>{
         let coordinates = Utils.prototype.getCoordinatesFromID(playable_case.id);
         if(parseInt(coordinates[0])===parseInt(row) && parseInt(coordinates[1])===parseInt(col)){toSend=playable_case;}
@@ -213,7 +211,7 @@ export class GamePresenter {
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
 
                 //CALL BD -
-                if(actionController.characterCanBeMoved(tab[0],tab[1])){
+                if(actionController.characterCanBeMoved(tab[0],tab[1],model.player_array.getPlayerPosition(1))){
                     let oldPosition = model.player_array.getPlayerPosition(1);
                     let caseToAlter = getCaseFromCoordinates(oldPosition.row,oldPosition.col);
                     if(actionController.moveCharacter(currentPlayer_inside,tab[0],tab[1])){

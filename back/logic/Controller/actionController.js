@@ -46,9 +46,15 @@ export class ActionController{
         return true;
     }
 
-    characterCanBeMoved(row,col){
-        if(!this.model.isPlayerAtCoordinates(row,col)){return true;}
+    characterCanBeMoved(row,col,player_position){
+        console.log(this.model.isNeighboorhoodFromPlayer(row,col,player_position));
+        if(this.model.isNeighboorhoodFromPlayer(row,col,player_position)){
+            if(!this.model.isPlayerAtCoordinates(row,col)){return true;}
+        }
+        return false;
     }
+
+
     moveCharacter(id,row,col) {
         if (this.checkCurrentPlayer(id)) {
             //VERIFICATION DU DEPLACEMENT

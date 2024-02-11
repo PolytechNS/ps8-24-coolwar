@@ -104,4 +104,22 @@ export class GameModel {
         }
         return occupied >= this.nbColonnes-1;
     }
+
+    isNeighboorhoodFromPlayer(row, col, player_position) {
+        let availableMovesPosition = [
+            [parseInt(player_position.row),parseInt(player_position.col)+1],
+            [parseInt(player_position.row),parseInt(player_position.col)-1],
+            [parseInt(player_position.row)+1,parseInt(player_position.col)],
+            [parseInt(player_position.row)-1,parseInt(player_position.col)]
+        ];
+        availableMovesPosition = availableMovesPosition.filter(position => {
+            return position[0] >= 0 && position[1] >= 0 && position[0]<9 && position[1]<9;
+        });
+
+        for(let i=0;i<availableMovesPosition.length;i++){
+            let position = availableMovesPosition[i];
+            if(position[0]===parseInt(row) && position[1]===parseInt(col)){return true;}
+        }
+        return false;
+    }
 }
