@@ -38,18 +38,22 @@ export class ActionController{
                 }
                 if (wallBack.isPresent === false) {
                     wallBack.setPresent();
-                    this.model.setNextPlayer();
                 }
             }
             else{return false;}
         }
+        this.model.setNextPlayer();
         return true;
     }
 
     characterCanBeMoved(row,col,player_position){
-        console.log(this.model.isNeighboorhoodFromPlayer(row,col,player_position));
+        //SI LA CASE EST VOISINE CARDINALEMENT
         if(this.model.isNeighboorhoodFromPlayer(row,col,player_position)){
-            if(!this.model.isPlayerAtCoordinates(row,col)){return true;}
+            //SI UN MUR NE BLOQUE PAS
+            if(!this.model.isWallBlock(row,col,player_position)){
+                //SI UN JOUEUR EST DEJA DESSUS
+                if(!this.model.isPlayerAtCoordinates(row,col)){return true;}
+            }
         }
         return false;
     }

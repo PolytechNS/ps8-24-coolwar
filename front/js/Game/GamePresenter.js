@@ -216,7 +216,9 @@ export class GamePresenter {
 
     updateRounds(){
         let rounds = document.querySelectorAll('#rounds');
+        let curplayer_HTML = document.querySelectorAll('#curplayer');
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
+        curplayer_HTML.item(0).innerHTML = "Current Player : "+this.model.currentPlayer;
     }
 
     init_playable_case(playable_case_HTML) {

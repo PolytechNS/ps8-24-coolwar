@@ -121,4 +121,29 @@ export class GameModel {
         }
         return false;
     }
+
+    //COORDONNEES BONNES EN ENTREE
+    isWallBlock(row,col,player_position){
+        let rowDiff = parseInt(row)-parseInt(player_position.row);
+        let colDiff = parseInt(col)-parseInt(player_position.col);
+
+        console.log(rowDiff+"|"+colDiff);
+
+        let wallToAnalys=null;
+        //LA CASE EST AU-DESSUS DU PERSONNAGE
+        if(rowDiff<0){wallToAnalys = this.horizontal_Walls.getWall(row,col);}
+        //LA CASE EST EN-DESSOUS DU PERSONNAGE
+        else if(rowDiff>0){
+            console.log("CASE DU DESSOUS !");
+            wallToAnalys = this.horizontal_Walls.getWall(player_position.row,player_position.col);
+            console.log("wall: "+wallToAnalys.isPresent);
+        }
+        else{
+            //LA CASE EST A GAUCHE
+            if(colDiff<0){wallToAnalys = this.vertical_Walls.getWall(row,col);}
+            if(colDiff>0){wallToAnalys = this.vertical_Walls.getWall(player_position.row,player_position.col);}
+        }
+        console.log(wallToAnalys.isPresent);
+        return wallToAnalys.isPresent;
+    }
 }
