@@ -120,7 +120,6 @@ const getWallNeighborhood_Invert = (wall) => {
     return wallToReturn;
 }
 
-//TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
 const getCaseFromCoordinates = (row, col) => {
     let toSend = null;
     document.querySelectorAll('.playable_square').forEach((playable_case)=>{
@@ -133,109 +132,113 @@ const getCaseFromCoordinates = (row, col) => {
 export class GamePresenter {
     constructor(model, view) {
         this.actionController=new ActionController(model);
+        this.view = view;
         this.model = model;
         window.addEventListener('load', (event) => {
-            this.init_behaviour(view,model,this.actionController);
+            this.init_behaviour();
+            this.updateRounds();
         });
-        this.currentPlayer = 1;
+        this.currentPlayer = this.model.currentPlayer;
     };
 
-    init_behaviour(view,model,actionController) {
+    init_behaviour() {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
-        let playable_case_HTML = document.querySelectorAll('.playable_square');
-        let currentPlayer_inside = this.currentPlayer;
+        let playable_case_HTML = document.querySelectorAll('.playable_square')
 
-        function init_walls(list){
-            list.forEach(function(wall) {
-                function hoverHandler() {
-                    let neighborhood = getWallNeighborhood(wall);
-                    if(!actionController.isPresentWall(neighborhood)){
+       this.init_walls(horizontal_walls_HTML);
+       this.init_walls(vertical_walls_HTML);
+       this.init_playable_case(playable_case_HTML);
+    }
+
+    init_walls(list){
+        list.forEach((wall)=> {
+            const hoverHandler = () => {
+                let neighborhood = getWallNeighborhood(wall);
+                if(!this.actionController.isPresentWall(neighborhood)){
+                    neighborhood.children.item(0).style.opacity = "0.8";
+                }
+                else {
+                    neighborhood = getWallNeighborhood_Invert(wall);
+                    if (!this.actionController.isPresentWall(neighborhood)) {
                         neighborhood.children.item(0).style.opacity = "0.8";
                     }
-                    else {
-                        neighborhood = getWallNeighborhood_Invert(wall);
-                        if (!actionController.isPresentWall(neighborhood)) {
-                            neighborhood.children.item(0).style.opacity = "0.8";
-                        }
-                    }
-                    wall.children.item(0).style.opacity = "0.8";
                 }
-                function leaveHoverHandler() {
-                    let neighborhood = getWallNeighborhood(wall);
-                    if(!actionController.isPresentWall(neighborhood)){
+                wall.children.item(0).style.opacity = "0.8";
+            };
+
+            const leaveHoverHandler = () => {
+                let neighborhood = getWallNeighborhood(wall);
+                if(!this.actionController.isPresentWall(neighborhood)){
+                    neighborhood.children.item(0).style.opacity = "0";
+                }
+                else{
+                    neighborhood = getWallNeighborhood_Invert(wall);
+                    if(!this.actionController.isPresentWall(neighborhood)){
                         neighborhood.children.item(0).style.opacity = "0";
                     }
-                    else{
-                        neighborhood = getWallNeighborhood_Invert(wall);
-                        if(!actionController.isPresentWall(neighborhood)){
-                            neighborhood.children.item(0).style.opacity = "0";
-                        }
-                    }
-                    wall.children.item(0).style.opacity = "0";
                 }
-                function clickHandler() {
-                    //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
-                    let neighborhood = getWallNeighborhood(wall);
-                    if(actionController.isPresentWall(neighborhood)){
-                        neighborhood = getWallNeighborhood_Invert(wall);
-                    }
-                    let wallList = [wall];
-                    if(!actionController.isPresentWall(neighborhood)){wallList.push(neighborhood);}
+                wall.children.item(0).style.opacity = "0";
+            };
 
-                    //CALL BD - PLACER UN MUR
-                    if(actionController.placeWall(1,wallList)){
-                        wallList.forEach(wallToEdit=>{
-                            wallToEdit.children.item(0).style.opacity = "1";
-                            let replaceOBJ = wallToEdit.cloneNode(true);
-                            wallToEdit.replaceWith(replaceOBJ);
-                        });
-                        updateCurrentPlayer();
-                    }
+            const clickHandler = () => {
+                //ENVOIE DE L'ACTION AU BACK AVEC 'isPlacable()'
+                let neighborhood = getWallNeighborhood(wall);
+                if(this.actionController.isPresentWall(neighborhood)){
+                    neighborhood = getWallNeighborhood_Invert(wall);
                 }
+                let wallList = [wall];
+                if(!this.actionController.isPresentWall(neighborhood)){wallList.push(neighborhood);}
 
-                wall.addEventListener('mouseenter', hoverHandler);
-                wall.addEventListener('mouseleave', leaveHoverHandler);
-                wall.addEventListener('click', clickHandler);
-            });
-        }
-
-       init_walls(horizontal_walls_HTML);
-       init_walls(vertical_walls_HTML);
-
-        playable_case_HTML.forEach(function(playable_case){
-            /*TODO: TERMINER CETTE FONCTION
-               SUPPRIMER LA MISE EN FORME DE L'ANCIENNE CASE
-            */
-            function clickHandler(){
-                let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
-
-                //CALL BD -
-                if(actionController.characterCanBeMoved(tab[0],tab[1],model.player_array.getPlayerPosition(1))){
-                    let oldPosition = model.player_array.getPlayerPosition(1);
-                    let caseToAlter = getCaseFromCoordinates(oldPosition.row,oldPosition.col);
-                    if(actionController.moveCharacter(currentPlayer_inside,tab[0],tab[1])){
-                        //ON DEPLACE LE PERSONNAGE
-                        view.boardGrid.displayPlayer(tab[0],tab[1],currentPlayer_inside);
-
-                        //ON RETIRE L'ANCIEN STYLE
-                        view.boardGrid.deletePlayer(oldPosition.row.toString(),oldPosition.col.toString(),currentPlayer_inside);
-                    }
-                    //let oldCase = getCaseFromCoordinates(positionBeforeMove[0],positionBeforeMove[1]);
-
-                    updateCurrentPlayer();
+                //CALL BD - PLACER UN MUR
+                if(this.actionController.placeWall(this.currentPlayer,wallList)){
+                    wallList.forEach(wallToEdit=>{
+                        wallToEdit.children.item(0).style.opacity = "1";
+                        let replaceOBJ = wallToEdit.cloneNode(true);
+                        wallToEdit.replaceWith(replaceOBJ);
+                    });
+                    this.updatePage();
                 }
-            }
-            playable_case.addEventListener('click', clickHandler);
+            };
 
+            wall.addEventListener('mouseenter', hoverHandler);
+            wall.addEventListener('mouseleave', leaveHoverHandler);
+            wall.addEventListener('click', clickHandler);
         });
-
-        function updateCurrentPlayer() {
-            /*if(currentPlayer_inside===1){currentPlayer_inside=2;}
-            else if(currentPlayer_inside===2){currentPlayer_inside=1;}
-            else{}
-            console.log("After next Player : "+currentPlayer_inside);
-            */
-        }
     }
+
+    updatePage() {
+        if(this.currentPlayer === 1) { this.currentPlayer = 2; }
+        else if(this.currentPlayer === 2) { this.currentPlayer = 1; }
+        else { }
+        this.updateRounds();
+    }
+
+    updateRounds(){
+        let rounds = document.querySelectorAll('#rounds');
+        rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
+    }
+
+    init_playable_case(playable_case_HTML) {
+        playable_case_HTML.forEach(playable_case => {
+            const clickHandler = () => {
+                let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
+                //CALL BD
+                if(this.actionController.characterCanBeMoved(tab[0], tab[1], this.model.player_array.getPlayerPosition(this.currentPlayer))){
+                    let oldPosition = this.model.player_array.getPlayerPosition(this.currentPlayer);
+                    let caseToAlter = getCaseFromCoordinates(oldPosition.row, oldPosition.col);
+                    if(this.actionController.moveCharacter(this.currentPlayer, tab[0], tab[1])){
+                        //ON DEPLACE LE PERSONNAGE
+                        this.view.boardGrid.displayPlayer(tab[0], tab[1], this.currentPlayer);
+                        //ON RETIRE L'ANCIEN STYLE
+                        this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.currentPlayer);
+                    }
+                    this.updatePage();
+                }
+            };
+
+            playable_case.addEventListener('click', clickHandler);
+        });
+    }
+
 }
