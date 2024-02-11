@@ -15,7 +15,13 @@ export const actionGameService = {
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('joinGamResponse', (response) => {
-            callback(response);
+            try {
+                const gameModel = JSON.parse(response);
+                callback(gameModel);
+            } catch (error) {
+                console.error('Error parsing game model:', error);
+                // Gérer l'erreur de désérialisation ici
+            }
         });
 
     },
@@ -34,6 +40,8 @@ export const actionGameService = {
             callback(gameModel);
         });
     },
+
+
 
     placeWall(wallList,callback){
         // Assurez-vous que la socket est initialisée et connectée

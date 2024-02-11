@@ -4,6 +4,7 @@ class PlayableSquare{
         this.position = new Position(row,col);
         this.player = player;
         this.isVisible = isVisible;
+        this.playerId = null;
     }
 
     toString(){

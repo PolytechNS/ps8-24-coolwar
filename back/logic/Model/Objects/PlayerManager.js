@@ -8,6 +8,10 @@ class PlayerManager {
         return this.players[index];
     }
 
+    getAllPlayers(){
+        return this.players;
+    }
+
     addPlayer(player){
         if(this.playerAlreadyOnPosition(player.position)){return false;}
         else{

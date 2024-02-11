@@ -5,6 +5,7 @@ import { AuthService } from './services/AuthService.js';
 import { socketManager } from './socket/socketManager.js';
 
 // index.js
+/*
 document.addEventListener("DOMContentLoaded", () => {
     AuthService.signUp('testUser', 'testPassword').then(data => {
         console.log('Success:', data);
@@ -13,3 +14,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }).catch(console.error);
 });
+
+ */

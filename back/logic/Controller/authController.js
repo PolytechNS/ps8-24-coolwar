@@ -40,7 +40,7 @@ function login(req, res, db) {
             const user = await db.collection('users').findOne({ username });
             if (user && user.password === password) {
                 const token = generateToken(user.username);
-                const result = await db.collection('users').updateOne({ username, password }, { $set: { token } });
+                //const result = await db.collection('users').updateOne({ username, password }, { $set: { token } });
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ token }));

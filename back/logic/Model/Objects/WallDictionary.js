@@ -11,6 +11,10 @@ class WallDictionary{
         this.wallList.push(new Wall(row,col,false,type));
     }
 
+    getAllWalls(){
+        return this.wallList;
+    }
+
     getWall(row,col){
         //TODO: VERIFIER S'IL EXISTE
         let wallToReturn=null;

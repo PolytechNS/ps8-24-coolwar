@@ -27,6 +27,19 @@ class GameModel {
         this.currentPlayer = 1;
         this.roundCounter = 0;
     }
+
+    constructor(player_array, horizontal_Walls, vertical_Walls, playable_squares, currentPlayer, roundCounter) {
+        this.idGame = uuidv4();
+        this.nbLignes = 9;
+        this.nbColonnes = 9;
+        this.nbPlayers = 2;
+        this.horizontal_Walls = horizontal_Walls;
+        this.vertical_Walls = vertical_Walls;
+        this.playable_squares = playable_squares;
+        this.player_array = player_array;
+        this.currentPlayer = currentPlayer;
+        this.roundCounter = roundCounter;
+    }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
         let index2 = this.generateRandom(0,this.nbColonnes);

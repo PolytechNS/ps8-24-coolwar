@@ -25,7 +25,7 @@ export class BoardGrid{
         this.openPopUp();
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
-        model.player_array.players.forEach((player, iteration) => {
+        model.player_array.forEach((player, iteration) => {
             this.displayPlayer(player.position.row, player.position.col, iteration + 1);
         });
     }

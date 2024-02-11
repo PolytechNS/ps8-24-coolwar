@@ -1,7 +1,9 @@
 import {actionGameService} from "../Services/actionGameService.js";
+import {gameService} from "../Services/gameService.js";
 import {getCaseFromCoordinates,getWallNeighborhood,getWallNeighborhood_Invert} from "./BoardGrid/WallManager.js";
 import {Utils} from "../Utils/utils.js";
 import {GameBehaviour} from "./GameBehaviour.js";
+
 
 export class GamePresenter {
     constructor(model, view) {
@@ -10,7 +12,19 @@ export class GamePresenter {
         this.init_behaviour(view, model);
         this.gameBehaviour = new GameBehaviour();
         console.log("GamePresenter created");
+        this.attachSaveHandler();
     }
+
+    attachSaveHandler() {
+        document.getElementById('save').addEventListener('click', () => {
+            // Ici, vous devriez avoir accès à 'this.model' qui contient l'état actuel du jeu
+            console.log('Save button clicked');
+            const gameState = this.model; // Assurez-vous que c'est l'état du jeu complet que vous souhaitez envoyer
+            // Vous devriez probablement convertir 'gameState' en un format approprié si nécessaire
+            gameService.saveGame(gameState);
+        });
+    }
+
 
     init_behaviour(view, model) {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
@@ -104,4 +118,6 @@ export class GamePresenter {
             */
         }
     }
+
+
 }
