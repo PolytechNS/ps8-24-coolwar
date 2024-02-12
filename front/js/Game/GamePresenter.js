@@ -134,7 +134,6 @@ export class GamePresenter {
     constructor(model, view) {
         this.view = view;
         this.model = model;
-        console.log("le model donné au presenter",this.model);
         this.init_behaviour();
         this.updateInformations();
         this.gameBehaviour = new GameBehaviour();
@@ -248,6 +247,11 @@ export class GamePresenter {
         });
     }
     updatePage() {
+        console.log("UPDATE AFTER PLACING WALL !!");
+        let informationsData = [this.model.currentPlayer,this.model.gameId];
+        actionGameService.updateGameModel(informationsData,(callback)=>{
+            console.log("UPDATE GAMEMODEL RESPONSE : ",callback);
+        });
         actionGameService.updateGameInformation((callback)=>{
             console.log(callback);
             this.currentPlayer = callback[0];

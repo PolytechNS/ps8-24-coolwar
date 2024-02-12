@@ -86,8 +86,6 @@ class GameModel {
             this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index2)));
             this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1)));
         }
-
-        console.log(this.player_array.players);
     }
 
     generateRandom(min, max) {

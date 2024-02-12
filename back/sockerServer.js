@@ -54,7 +54,8 @@ module.exports = (server) => {
                 })));
 
                 const squares = gameModel.playable_squares;
-                await db.collection('squares').insertMany(squares.getAllPlayableSquares(square => ({
+                const squaresList = [...squares.getAllPlayableSquares()];
+                await db.collection('squares').insertMany(squaresList.map(square => ({
                     ...square,
                     gameBoardId: gameBoardId
                 })));
@@ -203,7 +204,42 @@ module.exports = (server) => {
         socket.on('checkWinner',()=>{
             let response = actionController.checkWinner();
             socket.emit('checkWinnerResponse',response);
-        })
+        });
+
+        /*
+        data:{
+                userId,
+                gameId
+              }
+
+         */
+
+        socket.on('updateGameModel', async ( data ) => {
+            console.log("UPDATE GAME MODEL");
+            let playerId = data.playerId;
+            let gameId = data.gameId;
+            console.log(gameId,playerId);
+            try {
+                await client.connect();
+                const db = client.db();
+                console.log('Received request to update game model:', );
+                let game = await db.collection('games').findOne({ _id: gameId });
+                console.log("game found :",game);
+
+                if (game) {
+                    const gameState = JSON.parse(savedGame.gameState); // Assurez-vous que l'état du jeu est enregistré sous forme de chaîne JSON
+                    gameModel = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
+                    actionController = new ActionController(gameModel); // Réinitialisez votre contrôleur avec le nouveau modèle
+                    socket.emit('updateGameModelResponse', JSON.stringify(gameModel)); // Envoyez le modèle de jeu reconstruit au client
+                } else {
+                    console.log('No saved game found for this user');
+                    socket.emit('error', 'No saved game found for this user.');
+                }
+            } catch (error) {
+                console.error('Error loading saved game', error);
+                socket.emit('error', 'Error loading the game.');
+            }
+        });
     });
 
     return io;

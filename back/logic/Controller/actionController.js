@@ -16,25 +16,15 @@ class ActionController {
     }
 
     placeWall(walls) {
-        console.log("--------------PLACEWALLS----------");
-        let wallToEdit = null;
         let wallBack = null;
-        //console.log("wallList",walls.wallList.length);
         for (let i = 0; i < walls.wallList.length; i++) {
             let wall = walls.wallList[i];
             let wallInformations = wall.split("X");
-            console.log(wallInformations);
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
-                if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {
-                    return false;
-                }
-                if (wallBack.isPresent === false) {
-                    wallBack.setPresent();
-                }
-            } else {
-                return false;
-            }
+                if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
+                if (wallBack.isPresent === false) {wallBack.setPresent();}
+            } else {return false;}
         }
         this.model.setNextPlayer();
         return true;

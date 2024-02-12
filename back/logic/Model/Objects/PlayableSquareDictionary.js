@@ -11,7 +11,6 @@ class PlayableSquareDictionary{
 
     getAllPlayableSquares(){
         return this.playableSquares;
-
     }
 
     toString(){
