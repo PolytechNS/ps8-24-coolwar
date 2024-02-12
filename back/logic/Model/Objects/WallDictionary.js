@@ -15,11 +15,11 @@ class WallDictionary{
         return this.wallList;
     }
 
-    getWall(row,col){
-        //TODO: VERIFIER S'IL EXISTE
+    getWall(row,col,type){
+        console.log("GET WALL : "+row,col);
         let wallToReturn=null;
         this.wallList.forEach(function (wall){
-            if(wall.equals(row,col)){wallToReturn=wall;}
+            if(wall.equals(row,col,type)){wallToReturn=wall;}
         });
         return wallToReturn;
     }

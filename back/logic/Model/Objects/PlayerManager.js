@@ -5,7 +5,7 @@ class PlayerManager {
     }
 
     getPlayer(index){
-        return this.players[index];
+        return this.players[index-1];
     }
 
     getAllPlayers(){
@@ -31,7 +31,7 @@ class PlayerManager {
     }
 
     getPlayerPosition(id){
-        if(this.players[id]!=null){return this.players[id].position;}
+        if(this.players[id-1]!=null){return this.players[id-1].position;}
         console.log("NULL ELEMENT!");
         return null;
     }

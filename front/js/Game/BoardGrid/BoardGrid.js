@@ -52,7 +52,6 @@ export class BoardGrid{
     }
 
     deletePlayer(row,col,id){
-        console.log("DELETE PLAYER !");
         row = Math.max(0, Math.min(row, 8));
         col = Math.max(0, Math.min(col, 8));
         let items = document.getElementsByClassName('playable_square');

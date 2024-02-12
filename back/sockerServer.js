@@ -69,11 +69,9 @@ module.exports = (server) => {
                     player_array: gameModel.player_array.getAllPlayers(),
                     horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                     vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                    playable_squares: gameModel.playable_squares.getAllPlayableSquares()
-
-
-
-
+                    playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                    currentPlayer: gameModel.currentPlayer,
+                    roundCounter: gameModel.roundCounter
                 }));
             } catch (error) {
                 console.error('Error creating game model', error);
@@ -108,8 +106,6 @@ module.exports = (server) => {
                 }
 
         });
-
-
 
         socket.on('save game', async (data) => {
             try {
@@ -157,8 +153,6 @@ module.exports = (server) => {
             }
         });
 
-
-
         socket.on('joinGame', () => {
             let responseBoolean = gameController.join()
 
@@ -167,13 +161,27 @@ module.exports = (server) => {
 
         socket.on('placewall', (wallData) => {
             let wallDataDeserialized = JSON.parse(wallData);
+            console.log(wallDataDeserialized);
             let actionController = new ActionController();
             let responseBoolean = actionController.placeWall(wallDataDeserialized);
             socket.emit('placewallResponse',responseBoolean);
         });
 
-        socket.on('moveCharacter', ()=>{
+        socket.on('movecharactere', (data)=>{
+            const datas = JSON.parse(data);
+            let responseBoolean = actionController.moveCharacter(datas.id,datas.row,datas.col);
+            socket.emit('movecharactereresponse',responseBoolean);
+        });
 
+        socket.on('getplayerposition',(id)=>{
+            let idplayer = JSON.parse(id);
+            let response = actionController.getPlayerPosition(idplayer);
+            socket.emit('getplayerpositionresponse',response);
+        });
+
+        socket.on('updateGameInformation',()=>{
+            let gameInformation = actionController.updateGameInformation();
+            socket.emit('updateGameInformationResponse',gameInformation);
         });
     });
 

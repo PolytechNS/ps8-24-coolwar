@@ -29,12 +29,8 @@ class GameModel {
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;
-        //INITIALISATION DES JOUEURS
-
-
-        //INIT DU MODEL
         this.currentPlayer = 1;
-        this.roundCounter = 0;
+        this.roundCounter = 1;
         if(!config.horizontal_Walls){
             this.horizontal_Walls = new WallDictionary();
         }else {
@@ -119,12 +115,10 @@ class GameModel {
     }
 
     setNextPlayer(){
-       /* if(this.currentPlayer===1){this.currentPlayer=2;}
+        if(this.currentPlayer===1){this.currentPlayer=2;}
         else if(this.currentPlayer===2){this.currentPlayer=1;}
         else{}
         this.roundCounter+=1;
-        console.log("After next Player : "+this.currentPlayer);
-        */
     }
 
     isPlayerAtCoordinates(row,col){
@@ -141,6 +135,78 @@ class GameModel {
             if(wall.isPresent){occupied++;}
         }
         return occupied >= this.nbColonnes-1;
+    }
+
+    isNeighboorhoodFromPlayer(row, col, player_position) {
+        let availableMovesPosition = [
+            [parseInt(player_position.row),parseInt(player_position.col)+1],
+            [parseInt(player_position.row),parseInt(player_position.col)-1],
+            [parseInt(player_position.row)+1,parseInt(player_position.col)],
+            [parseInt(player_position.row)-1,parseInt(player_position.col)]
+        ];
+
+        availableMovesPosition = availableMovesPosition.filter(position => {
+            return position[0] >= 0 && position[1] >= 0 && position[0]<9 && position[1]<9;
+        });
+
+        for(let i=0;i<availableMovesPosition.length;i++){
+            let position = availableMovesPosition[i];
+            if(position[0]===parseInt(row) && position[1]===parseInt(col)){return true;}
+        }
+        return false;
+    }
+
+    //COORDONNEES BONNES EN ENTREE
+    isWallBlock(row,col,player_position){
+        let rowDiff = parseInt(row)-parseInt(player_position.row);
+        let colDiff = parseInt(col)-parseInt(player_position.col);
+        let wallToAnalys=null;
+        //LA CASE EST AU-DESSUS DU PERSONNAGE
+        if(rowDiff<0){
+            console.log("CASE AU DESSUS");
+            wallToAnalys = this.horizontal_Walls.getWall(row,col,'H');
+        }
+        //LA CASE EST EN-DESSOUS DU PERSONNAGE
+        else if(rowDiff>0){
+            console.log("CASE DU DESSOUS !");
+            wallToAnalys = this.horizontal_Walls.getWall(player_position.row,player_position.col,'H');
+        }
+        //LA CASE EST A GAUCHE
+        if(colDiff<0){
+            console.log("CASE A GAUCHE");
+            wallToAnalys = this.vertical_Walls.getWall(row,col,'V');
+        }
+        //LA CASE EST A DROITE
+        else if(colDiff>0){
+            console.log("CASE A DROITE");
+            wallToAnalys = this.vertical_Walls.getWall(player_position.row,player_position.col,'V');
+        }
+        return wallToAnalys.isPresent;
+    }
+
+    checkWinner(){
+        let valueToReturn = -1;
+        if(this.roundCounter>=200){console.log("STOP GAME !");valueToReturn = 0;}
+        else{
+            let p1 = this.player_array.getPlayerPosition(1);
+            let p2 = this.player_array.getPlayerPosition(2);
+
+            console.log(p1.row);
+            console.log(p2.row);
+
+            //APRES LE DERNIER COUP DE B
+            if(this.lastChance>0){
+                //SI B N'A PAS REUSSI A AVANCER
+                if(p2.row!==0){valueToReturn= 1;}
+                else{valueToReturn = 0;}
+            }
+            //SI B EST SUR 0 EN PREMIER
+            else if(p2.row===0){valueToReturn=2;}
+            //si A est sur la derniere ligne en premier
+            else if(p1.row===8 && p2.row!==0){this.lastChance++;}
+        }
+        this.winner = valueToReturn;
+        return valueToReturn;
     }
 }
 

@@ -40,9 +40,6 @@ export const actionGameService = {
             callback(gameModel);
         });
     },
-
-
-
     placeWall(wallList,callback){
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
@@ -56,6 +53,48 @@ export const actionGameService = {
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('placewallResponse', (res) => {
+            callback(res);
+        });
+    },
+    moveCharacter(id,row,col,callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return
+        }
+        let req = {id,row,col};
+        let reqSerialized = JSON.stringify(req);
+        socketManager.socket.emit('movecharactere',reqSerialized);
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('movecharactereresponse', (res) => {
+            callback(res);
+        });
+    },
+    getPlayerPosition(idPlayer,callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return
+        }
+
+        socketManager.socket.emit('getplayerposition',JSON.stringify(idPlayer));
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('getplayerpositionresponse', (res) => {
+            callback(res);
+        });
+    },
+    updateGameInformation(callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return
+        }
+        socketManager.socket.emit('updateGameInformation');
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('updateGameInformationResponse', (res) => {
             callback(res);
         });
     }
