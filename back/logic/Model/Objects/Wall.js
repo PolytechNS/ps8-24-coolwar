@@ -7,7 +7,9 @@ class Wall{
         this.type = type;
     }
 
-    equals(row,col,type){return this.position.row.toString() === row.toString() && this.position.col.toString() === col.toString() && this.type===type ;}
+    equals(row,col,type){
+        return this.position.row.toString() === row.toString() && this.position.col.toString() === col.toString() && this.type===type ;
+    }
 
     setPresent(){this.isPresent = true;}
 }

@@ -253,7 +253,6 @@ export class GamePresenter {
         actionGameService.updateWalls((callback)=>{
             this.model.horizontal_Walls = callback[0];
             this.model.vertical_Walls = callback[1];
-            console.log(callback);
         })
         this.checkEndGame();
         this.updateInformations();

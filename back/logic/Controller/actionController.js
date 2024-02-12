@@ -16,11 +16,14 @@ class ActionController {
     }
 
     placeWall(walls) {
+        console.log("--------------PLACEWALLS----------");
         let wallToEdit = null;
         let wallBack = null;
-        for (let i = 0; i < walls.length; i++) {
-            let wall = walls[i];
+        //console.log("wallList",walls.wallList.length);
+        for (let i = 0; i < walls.wallList.length; i++) {
+            let wall = walls.wallList[i];
             let wallInformations = wall.split("X");
+            console.log(wallInformations);
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
                 if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {
@@ -37,15 +40,13 @@ class ActionController {
         return true;
     }
 
-    characterCanBeMoved(row, col, player_position) {
+    characterCanBeMoved(row,col,player_position){
         //SI LA CASE EST VOISINE CARDINALEMENT
-        if (this.model.isNeighboorhoodFromPlayer(row, col, player_position)) {
+        if(this.model.isNeighboorhoodFromPlayer(row,col,player_position)){
             //SI UN MUR NE BLOQUE PAS
-            if (!this.model.isWallBlock(row, col, player_position)) {
+            if(!this.model.isWallBlock(row,col,player_position)){
                 //SI UN JOUEUR EST DEJA DESSUS
-                if (!this.model.isPlayerAtCoordinates(row, col)) {
-                    return true;
-                }
+                if(!this.model.isPlayerAtCoordinates(row,col)){return true;}
             }
         }
         return false;

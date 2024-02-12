@@ -110,8 +110,8 @@ class GameModel {
     }
 
     getWallByCoordinates(type,row,col){
-        if(type==='H'){return this.horizontal_Walls.getWall(row,col);}
-        else if(type==='V'){return this.vertical_Walls.getWall(row,col);}
+        if(type==='H'){return this.horizontal_Walls.getWall(row,col,type);}
+        else if(type==='V'){return this.vertical_Walls.getWall(row,col,type);}
         else{return null;}
     }
 
@@ -145,10 +145,11 @@ class GameModel {
             [parseInt(player_position.row)+1,parseInt(player_position.col)],
             [parseInt(player_position.row)-1,parseInt(player_position.col)]
         ];
-
         availableMovesPosition = availableMovesPosition.filter(position => {
             return position[0] >= 0 && position[1] >= 0 && position[0]<9 && position[1]<9;
         });
+
+        console.log("CASES VOISINES DE :"+row+"|"+col+" => "+availableMovesPosition);
 
         for(let i=0;i<availableMovesPosition.length;i++){
             let position = availableMovesPosition[i];
@@ -182,6 +183,7 @@ class GameModel {
             console.log("CASE A DROITE");
             wallToAnalys = this.vertical_Walls.getWall(player_position.row,player_position.col,'V');
         }
+        console.log("WALL FIND : "+wallToAnalys.position.row+"|"+wallToAnalys.position.col+"|"+wallToAnalys.isPresent);
         return wallToAnalys.isPresent;
     }
 
