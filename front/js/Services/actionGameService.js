@@ -123,5 +123,27 @@ export const actionGameService = {
         socketManager.socket.once('checkWinnerResponse', (res) => {
             callback(res);
         });
-    }
+    },
+
+    updateGameModel: function(informationsData) {
+        console.log("UPDATE GAME MODEL");
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return;
+        }
+        // Supposons que gameState contient déjà l'ID du jeu 'gameId' et l'état à sauvegarder
+        const dataToParse = { gameId: informationsData[1], playerId: informationsData[0] };
+        //Stringify data to save
+        const dataToSend = JSON.stringify(dataToParse);
+        console.log("data Sent : ",dataToSend);
+
+        // Envoyer la demande de sauvegarde au serveur
+        socketManager.socket.emit('updateGameModel', dataToSend);
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('updateGameModelResponse', (response) => {
+          console.log(response);
+        });
+    },
 };
