@@ -134,6 +134,7 @@ export class GamePresenter {
     constructor(model, view) {
         this.view = view;
         this.model = model;
+        console.log("le model donné au presenter",this.model);
         this.init_behaviour();
         this.updateInformations();
         this.gameBehaviour = new GameBehaviour();
@@ -221,8 +222,10 @@ export class GamePresenter {
                     wallListObj.push(neighborhood);
                 }
 
+                console.log(this.model);
+                const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq};
                 //CALL BD -
-                actionGameService.placeWall(wallListReq, (res)=>{
+                actionGameService.placeWall(dataToSend, (res)=>{
                     wallListObj.forEach((wallToEdit) => {
                         this.view.displayWall(wallToEdit, 1);
                         let replaceOBJ = wallToEdit.cloneNode(true);
@@ -262,7 +265,7 @@ export class GamePresenter {
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let winner_HTML = document.querySelectorAll('#winner');
-        winner_HTML.item(0).innerHTML = "Winner = "+this.model.winner;
+        winner_HTML.item(0).innerHTML = "Winner = "+this.model.winner.toString();
         rounds.item(0).innerHTML = "Rounds : "+this.roundCounter;
         curplayer_HTML.item(0).innerHTML = "Current Player : "+this.currentPlayer;
     }

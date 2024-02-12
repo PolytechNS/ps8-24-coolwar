@@ -71,7 +71,8 @@ module.exports = (server) => {
                     vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
                     currentPlayer: gameModel.currentPlayer,
-                    roundCounter: gameModel.roundCounter
+                    roundCounter: gameModel.roundCounter,
+
                 }));
             } catch (error) {
                 console.error('Error creating game model', error);
@@ -79,20 +80,40 @@ module.exports = (server) => {
             }
         });
 
+        socket.on('placewall', async(wallData) => {
+            try {
+                let wallDataDeserialized = JSON.parse(wallData);
+                console.log("data received :" ,wallDataDeserialized);
+                let actionController = new ActionController(gameModel);
+                let responseBoolean = actionController.placeWall(wallDataDeserialized);
+
+
+
+                await client.connect();
+                const db = client.db();
+                const game = await db.collection('games').findOne({data: wallData.gameId});
+                const gameBoard = await db.collection('gameboards').findOne({data: game.gameId});
+                const walls = await db.collection('walls').findOne({data: gameBoard.gameBoardId});
+                //update wall isPresent = true
+                await db.collection('walls').updateOne({data: walls._id}, {$set: {isPresent: true}});
+                console.log("wall updated for this game : ", game.gameId);
+                // Envoyer l'état initial du jeu au client
+                socket.emit('placewallResponse', responseBoolean);
+
+
+            }
+            catch (error) {
+                console.error('Error placing wall', error);
+                socket.emit('placewallResponse', false);
+            }
+
+        });
+
         socket.on('placewall', async (data) => {
             try {
                 try {
                     let responseBoolean = actionController.placeWall(data);
-                    await client.connect();
-                    const db = client.db();
-                    const game = await db.collection('games').findOne({data: data.gameId});
-                    const gameBoard = await db.collection('gameboards').findOne({data: game.gameId});
-                    const walls = await db.collection('walls').findOne({data: gameBoard.gameBoardId});
-                    //update wall isPresent = true
-                    await db.collection('walls').updateOne({data: walls._id}, {$set: {isPresent: true}});
 
-                    // Envoyer l'état initial du jeu au client
-                    socket.emit('placewallResponse', responseBoolean);
 
                 } catch (error) {
                     console.error('Error updating wall', error);
@@ -160,13 +181,7 @@ module.exports = (server) => {
             socket.emit('placewallResponse',responseBoolean);
         });
 
-        socket.on('placewall', (wallData) => {
-            let wallDataDeserialized = JSON.parse(wallData);
-            console.log(wallDataDeserialized);
-            let actionController = new ActionController(gameModel);
-            let responseBoolean = actionController.placeWall(wallDataDeserialized);
-            socket.emit('placewallResponse',responseBoolean);
-        });
+
 
         socket.on('movecharactere', (data)=>{
             const datas = JSON.parse(data);
