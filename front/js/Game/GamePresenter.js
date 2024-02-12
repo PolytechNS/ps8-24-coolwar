@@ -194,7 +194,6 @@ export class GamePresenter {
                 }
                 wall.children.item(0).style.opacity = "0.8";
             };
-
             const leaveHoverHandler = () => {
                 let neighborhood = getWallNeighborhood(wall);
                 if(!this.gameBehaviour.isPresentWall(neighborhood)){
@@ -208,7 +207,6 @@ export class GamePresenter {
                 }
                 wall.children.item(0).style.opacity = "0";
             };
-
             const clickHandler = () => {
                 let neighborhood = getWallNeighborhood(wall);
                 if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
@@ -223,11 +221,14 @@ export class GamePresenter {
 
                 //CALL BD -
                 actionGameService.placeWall(wallListReq, (res)=>{
-                    wallListObj.forEach((wallToEdit) => {
-                        this.view.displayWall(wallToEdit, 1);
-                        let replaceOBJ = wallToEdit.cloneNode(true);
-                        wallToEdit.replaceWith(replaceOBJ);
-                    });
+                    console.log("RESULT OF WALL",res);
+                    if(res){
+                        wallListObj.forEach((wallToEdit) => {
+                            this.view.displayWall(wallToEdit, 1);
+                            let replaceOBJ = wallToEdit.cloneNode(true);
+                            wallToEdit.replaceWith(replaceOBJ);
+                        });
+                    }
                     this.updatePage();
                 });
             };
@@ -245,6 +246,11 @@ export class GamePresenter {
         });
     }
     updatePage() {
+        console.log("UPDATE AFTER PLACING WALL !!");
+        let informationsData = [this.model.currentPlayer,this.model.gameId];
+        actionGameService.updateGameModel(informationsData,(callback)=>{
+            console.log("UPDATE GAMEMODEL RESPONSE : ",callback);
+        });
         actionGameService.updateGameInformation((callback)=>{
             console.log(callback);
             this.currentPlayer = callback[0];
