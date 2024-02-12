@@ -81,27 +81,25 @@ module.exports = (server) => {
             }
         });
 
-        socket.on('update wall', async (data) => {
+        socket.on('placewall', async (data) => {
             try {
                 try {
-                    let actionController = new ActionController();
                     let responseBoolean = actionController.placeWall(data);
+                    await client.connect();
+                    const db = client.db();
+                    const game = await db.collection('games').findOne({data: data.gameId});
+                    const gameBoard = await db.collection('gameboards').findOne({data: game.gameId});
+                    const walls = await db.collection('walls').findOne({data: gameBoard.gameBoardId});
+                    //update wall isPresent = true
+                    await db.collection('walls').updateOne({data: walls._id}, {$set: {isPresent: true}});
+
+                    // Envoyer l'état initial du jeu au client
+                    socket.emit('placewallResponse', responseBoolean);
 
                 } catch (error) {
                     console.error('Error updating wall', error);
-
+                    socket.emit('placewallResponse', false);
                 }
-                await client.connect();
-                const db = client.db();
-                const game = await db.collection('games').findOne({data: data.gameId});
-                const gameBoard = await db.collection('gameboards').findOne({data: game.gameId});
-                const walls = await db.collection('walls').findOne({data: gameBoard.gameBoardId});
-                //update wall isPresent = true
-                await db.collection('walls').updateOne({data: walls._id}, {$set: {isPresent: true}});
-
-                // Envoyer l'état initial du jeu au client
-
-
             }catch (error) {
                 console.error('Error updating wall', error);
 
@@ -141,19 +139,23 @@ module.exports = (server) => {
             try {
                 await client.connect();
                 const db = client.db();
+                console.log('Received request to load saved game:', userId);
                 let user = await db.collection('users').findOne({ userId });
                 const savedGame = await db.collection('savedGames').findOne({ user });
-                console.log('Saved game:', savedGame);
+
+
                 if (savedGame) {
-                    // Assumer que savedGame.gameState contient l'état du jeu sauvegardé
-                    const gameState = savedGame.gameState;
-                    socket.emit('loaded game', gameState);
+                    const gameState = JSON.parse(savedGame.gameState); // Assurez-vous que l'état du jeu est enregistré sous forme de chaîne JSON
+                    gameModel = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
+                    actionController = new ActionController(gameModel); // Réinitialisez votre contrôleur avec le nouveau modèle
+                    socket.emit('loaded game', JSON.stringify(gameModel)); // Envoyez le modèle de jeu reconstruit au client
                 } else {
-                    socket.emit('error', 'Aucune partie sauvegardée trouvée.');
+                    console.log('No saved game found for this user');
+                    socket.emit('error', 'No saved game found for this user.');
                 }
             } catch (error) {
-                console.error('Erreur lors du chargement de la partie sauvegardée', error);
-                socket.emit('error', 'Erreur lors du chargement de la partie.');
+                console.error('Error loading saved game', error);
+                socket.emit('error', 'Error loading the game.');
             }
         });
 
