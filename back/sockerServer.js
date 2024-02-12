@@ -37,7 +37,6 @@ module.exports = (server) => {
 
                 // Créer un nouveau GameModel
                 gameModel = new GameModel();
-                console.log("Game model created", gameModel);
                 actionController = new ActionController(gameModel);
                 // Persister le plateau de jeu
                 const gameBoard = await db.collection('gameboards').insertOne({
