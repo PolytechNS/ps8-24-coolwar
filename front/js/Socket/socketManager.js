@@ -1,4 +1,5 @@
-
+import "../socket.io.js";
+// socketManager.js
 export const socketManager = {
     socket: null,
     initializeSocket(token) {
@@ -9,12 +10,17 @@ export const socketManager = {
         this.socket.on('connect', () => {
             console.log('Connected to the server');
             console.log('Socket id:', this.socket.id);
-            this.socket.emit('start game', { /* game options */ });
+            // Peut-être déclencher un événement personnalisé ou exécuter un callback ici pour indiquer que la socket est prête
         });
 
         this.socket.on('connect_error', (err) => {
             console.log('Connection failed', err.message);
         });
+    },
 
+    // Ajoutez une méthode pour vérifier si la socket est initialisée
+    isSocketInitialized() {
+        return this.socket !== null && this.socket.connected;
     },
 };
+

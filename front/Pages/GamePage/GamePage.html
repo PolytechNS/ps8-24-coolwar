@@ -7,11 +7,14 @@
     </head>
     <body>
     <div>
+        <button id="save">sauvegarder</button>
         <button id="validateTurn">valider</button>
+
+
         <div class="modal" id="modal">
             <div class="modal-back"></div>
             <div class="modal-container">
-                Player<br />
+                GamePlayer<br />
                 Your turn<br />
                 Ready ?<br />
                 <button id="modalClose">Play</button>
@@ -20,9 +23,12 @@
     </div>
 
         <div id="plate" class="plate"></div>
+
+        <div id="rounds"></div>
+        <div id="curplayer"></div>
+        <div id="winner"></div>
     </body>
 </html>
 
 <script src="../../js/socket.io.js"></script>
-<script type="module" src="../../js/index.js"></script>
-<script type="module" src="../../js/Game/GamePresenter.js"></script>
+<script type="module" src="../../js/Game/GameIndex.js"></script>
