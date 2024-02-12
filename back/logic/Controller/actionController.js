@@ -19,7 +19,7 @@ class ActionController {
         let wallToEdit = null;
         let wallBack = null;
         for (let i = 0; i < walls.length; i++) {
-            let wall = walls.wallList[i];
+            let wall = walls[i];
             let wallInformations = wall.split("X");
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
@@ -91,6 +91,13 @@ class ActionController {
 
     updateGameInformation(){
         return [this.model.currentPlayer,this.model.roundCounter];
+    }
+    updateWalls(){
+        return [this.model.horizontal_Walls, this.model.vertical_Walls];
+    }
+
+    checkWinner(){
+        return this.model.checkWinner();
     }
 }
 

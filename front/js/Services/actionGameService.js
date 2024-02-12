@@ -97,5 +97,31 @@ export const actionGameService = {
         socketManager.socket.once('updateGameInformationResponse', (res) => {
             callback(res);
         });
+    },
+    updateWalls(callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return
+        }
+        socketManager.socket.emit('updateWalls');
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('updateWallsResponse', (res) => {
+            callback(res);
+        });
+    },
+    checkWinner(callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return
+        }
+        socketManager.socket.emit('checkWinner');
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('checkWinnerResponse', (res) => {
+            callback(res);
+        });
     }
 };

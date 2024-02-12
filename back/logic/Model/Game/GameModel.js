@@ -31,6 +31,7 @@ class GameModel {
         this.nbPlayers = 2;
         this.currentPlayer = 1;
         this.roundCounter = 1;
+        this.lastChance=0;
         if(!config.horizontal_Walls){
             this.horizontal_Walls = new WallDictionary();
         }else {

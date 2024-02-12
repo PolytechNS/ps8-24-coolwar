@@ -30,18 +30,18 @@ const getWallNeighborhood = (wall) => {
         //SI DES MURS PEUVEENT ETRE EENCORE POSES
         for(let i=0;i<hWalls.length;i++){
             let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if (xToFind === parseInt(coordinates[0]) && yToFind === parseInt(coordinates[1])) {
+            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
                 wallToReturn = hWalls.item(i);
             }
         }
     }
     //autre cas PAR DEFAUT
-    if (wall.classList.contains('horizontal_hitbox')) {
+    if(wall.classList.contains('horizontal_hitbox')){
         let hWalls = document.querySelectorAll('.horizontal_hitbox');
         let xToFind = parseInt(wallPosition[0]);
-        let yToFind = parseInt(wallPosition[1]) + 1;
+        let yToFind = parseInt(wallPosition[1])+1;
         //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for (let i = 0; i < hWalls.length; i++) {
+        for(let i=0;i<hWalls.length;i++){
             let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
             if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
                 wallToReturn = hWalls.item(i);
@@ -121,7 +121,6 @@ const getWallNeighborhood_Invert = (wall) => {
     }
     return wallToReturn;
 }
-
 const getCaseFromCoordinates = (row, col) => {
     let toSend = null;
     document.querySelectorAll('.playable_square').forEach((playable_case)=>{
@@ -224,7 +223,6 @@ export class GamePresenter {
 
                 //CALL BD -
                 actionGameService.placeWall(wallListReq, (res)=>{
-                    console.log(res);
                     wallListObj.forEach((wallToEdit) => {
                         this.view.displayWall(wallToEdit, 1);
                         let replaceOBJ = wallToEdit.cloneNode(true);
@@ -241,8 +239,10 @@ export class GamePresenter {
     }
 
     checkEndGame(){
-        let res = this.model.checkWinner();
-        if(res!==-1){this.cancel_behaviour();}
+        actionGameService.checkWinner((callback)=>{
+            console.log(callback);
+            if(callback!==-1){this.cancel_behaviour();}
+        });
     }
     updatePage() {
         actionGameService.updateGameInformation((callback)=>{
@@ -250,8 +250,12 @@ export class GamePresenter {
             this.currentPlayer = callback[0];
             this.roundCounter = callback[1];
         });
-        //this.checkEndGame();
-
+        actionGameService.updateWalls((callback)=>{
+            this.model.horizontal_Walls = callback[0];
+            this.model.vertical_Walls = callback[1];
+            console.log(callback);
+        })
+        this.checkEndGame();
         this.updateInformations();
     }
     updateInformations(){

@@ -139,7 +139,6 @@ module.exports = (server) => {
                 let user = await db.collection('users').findOne({ userId });
                 const savedGame = await db.collection('savedGames').findOne({ user });
 
-
                 if (savedGame) {
                     const gameState = JSON.parse(savedGame.gameState); // Assurez-vous que l'état du jeu est enregistré sous forme de chaîne JSON
                     gameModel = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
@@ -164,7 +163,7 @@ module.exports = (server) => {
         socket.on('placewall', (wallData) => {
             let wallDataDeserialized = JSON.parse(wallData);
             console.log(wallDataDeserialized);
-            let actionController = new ActionController();
+            let actionController = new ActionController(gameModel);
             let responseBoolean = actionController.placeWall(wallDataDeserialized);
             socket.emit('placewallResponse',responseBoolean);
         });
@@ -185,6 +184,14 @@ module.exports = (server) => {
             let gameInformation = actionController.updateGameInformation();
             socket.emit('updateGameInformationResponse',gameInformation);
         });
+        socket.on('updateWalls',()=>{
+            let wallsList = actionController.updateWalls();
+            socket.emit('updateWallsResponse',wallsList);
+        });
+        socket.on('checkWinner',()=>{
+            let response = actionController.checkWinner();
+            socket.emit('checkWinnerResponse',response);
+        })
     });
 
     return io;
