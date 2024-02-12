@@ -36,12 +36,18 @@ class GameModel {
         if(!config.horizontal_Walls){
             this.horizontal_Walls = new WallDictionary();
         }else {
-            this.horizontal_Walls = horizontal_Walls;
+            this.horizontal_Walls = new WallDictionary();
+            config.horizontal_Walls.wallList.forEach(wall => {
+                this.horizontal_Walls.addWall(wall.position.row, wall.position.col, wall.type);
+            });
         }
         if(!config.vertical_Walls){
             this.vertical_Walls = new WallDictionary();
         }else {
-            this.vertical_Walls = vertical_Walls;
+            this.vertical_Walls = new WallDictionary();
+            config.vertical_Walls.wallList.forEach(wall => {
+                this.vertical_Walls.addWall(wall.position.row, wall.position.col, wall.type);
+            });
         }
         if(!config.playable_squares){
             this.playable_squares = new PlayableSquareDictionary();
@@ -49,15 +55,23 @@ class GameModel {
 
         }
         else {
-            this.playable_squares = playable_squares;
+            this.playable_squares = new PlayableSquareDictionary();
+            config.playable_squares.forEach(square => {
+                this.playable_squares.addPlayableSquare(square.position.row, square.position.col, square.player, square.isPlayable);
+            });
         }
         if(!config.player_array){
             this.player_array = new PlayerManager();
             this.initPlayers();
+            console.log("array when init",this.player_array);
+
 
 
         }else {
             this.player_array = player_array;
+            this.player_array = new PlayerManager();
+            this.player_array.createPlayFromArray(player_array);
+            console.log("player array : ",this.player_array);
         }
 
 
@@ -192,6 +206,9 @@ class GameModel {
         let valueToReturn = -1;
         if(this.roundCounter>=200){console.log("STOP GAME !");valueToReturn = 0;}
         else{
+            console.log("CHECK WINNER");
+            console.log("array player in check winner",this.player_array);
+
             let p1 = this.player_array.getPlayerPosition(1);
             let p2 = this.player_array.getPlayerPosition(2);
 

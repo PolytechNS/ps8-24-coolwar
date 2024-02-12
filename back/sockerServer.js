@@ -71,6 +71,7 @@ module.exports = (server) => {
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
                     currentPlayer: gameModel.currentPlayer,
                     roundCounter: gameModel.roundCounter,
+                    winner : gameModel.winner
 
                 }));
             } catch (error) {
@@ -163,7 +164,20 @@ module.exports = (server) => {
                     const gameState = JSON.parse(savedGame.gameState); // Assurez-vous que l'état du jeu est enregistré sous forme de chaîne JSON
                     gameModel = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
                     actionController = new ActionController(gameModel); // Réinitialisez votre contrôleur avec le nouveau modèle
-                    socket.emit('loaded game', JSON.stringify(gameModel)); // Envoyez le modèle de jeu reconstruit au client
+                    socket.emit('loaded game', JSON.stringify({
+                        gameId: savedGame.gameState.gameId, // ID de la partie
+                        gameBoardId: savedGame.gameState.gameBoardId, // ID du plateau de jeu
+                        nbLignes: gameModel.nbLignes, // Nombre de lignes
+                        nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
+                        player_array: gameModel.player_array.getAllPlayers(),
+                        horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
+                        vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
+                        playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                        currentPlayer: gameModel.currentPlayer,
+                        roundCounter: gameModel.roundCounter,
+                        winner : gameModel.winner
+
+                    }));
                 } else {
                     console.log('No saved game found for this user');
                     socket.emit('error', 'No saved game found for this user.');

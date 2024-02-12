@@ -1,3 +1,5 @@
+const {Position} = require("./Position");
+const {GamePlayer} = require("./GamePlayer");
 
 class PlayerManager {
     constructor() {
@@ -10,6 +12,14 @@ class PlayerManager {
 
     getAllPlayers(){
         return this.players;
+    }
+
+    createPlayFromArray(array){
+        for(let i=0;i<array.length;i++){
+            let player = new GamePlayer(array[i].name,new Position(array[i].position.row,array[i].position.col));
+            console.log("PLAYER CREATED: ",player);
+            this.players.push(player);
+        }
     }
 
     addPlayer(player){
