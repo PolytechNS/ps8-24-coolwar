@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 console.log('Signup success:', data);
                 localStorage.setItem('token', data.token);
+                console.log(data.token);
                 //window.location.href = '/login.html'; // Redirigez vers la page après inscription
             })
             .catch(error => {

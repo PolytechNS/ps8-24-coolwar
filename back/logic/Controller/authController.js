@@ -1,6 +1,6 @@
 // controllers/authController.js
 const { generateToken } = require('../Authentification/authentication');
-const { parseJSON } = require('../Utils/utils'); // Ensure you have a utility to parse JSON
+const { parseJSON } = require('../Utils/utils');
 
 function signup(req, res, db) {
     parseJSON(req, async (err, { username, password }) => {
@@ -13,10 +13,13 @@ function signup(req, res, db) {
         }
         // Insérer un nouvel utilisateur
         try {
-            const result = await db.collection('users').insertOne({ username, password });
+            const token = generateToken(username);
+
+            const result = await db.collection('users').insertOne({ username, password, token});
             console.log('Utilisateur créé', result);
+
             res.writeHead(201, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: 'Utilisateur créé' }));
+            res.end(JSON.stringify({ token }));
         } catch (error) {
             res.writeHead(500, { 'Content-Type': 'text/plain' });
             res.end('Erreur lors de la création de l’utilisateur');
@@ -36,7 +39,9 @@ function login(req, res, db) {
         try {
             const user = await db.collection('users').findOne({ username });
             if (user && user.password === password) {
-                const token = generateToken(user.email);
+                const token = generateToken(user.username);
+                //const result = await db.collection('users').updateOne({ username, password }, { $set: { token } });
+
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ token }));
             } else {
