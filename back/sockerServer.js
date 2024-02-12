@@ -96,7 +96,7 @@ module.exports = (server) => {
                 const walls = await db.collection('walls').findOne({data: gameBoard.gameBoardId});
                 //update wall isPresent = true
                 await db.collection('walls').updateOne({data: walls._id}, {$set: {isPresent: true}});
-                console.log("wall updated for this game : ", game.gameId);
+                console.log("wall updated for this game : ", game);
                 // Envoyer l'état initial du jeu au client
                 socket.emit('placewallResponse', responseBoolean);
 
@@ -109,22 +109,6 @@ module.exports = (server) => {
 
         });
 
-        socket.on('placewall', async (data) => {
-            try {
-                try {
-                    let responseBoolean = actionController.placeWall(data);
-
-
-                } catch (error) {
-                    console.error('Error updating wall', error);
-                    socket.emit('placewallResponse', false);
-                }
-            }catch (error) {
-                console.error('Error updating wall', error);
-
-                }
-
-        });
 
         socket.on('save game', async (data) => {
             try {
