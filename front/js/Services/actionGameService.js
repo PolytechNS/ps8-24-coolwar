@@ -33,7 +33,7 @@ export const actionGameService = {
         }
 
         // Demander le modèle de jeu en utilisant la socket de socketManager
-        socketManager.socket.emit('get game model');
+        socketManager.socket.emit('get game model', localStorage.getItem('token'));
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('game model', (gameModel) => {
@@ -47,8 +47,8 @@ export const actionGameService = {
             return
         }
 
-        let req = {wallList};
-        let reqSerialized = JSON.stringify(req);
+        let reqSerialized = JSON.stringify(wallList);
+        console.log("reqSerialized",reqSerialized);
         socketManager.socket.emit('placewall',reqSerialized);
 
         // Écouter la réponse du serveur sur la même socket

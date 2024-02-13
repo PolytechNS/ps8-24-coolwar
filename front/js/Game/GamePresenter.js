@@ -2,6 +2,7 @@ import {actionGameService} from "../Services/actionGameService.js";
 import {gameService} from "../Services/gameService.js";
 import {Utils} from "../Utils/utils.js";
 import {GameBehaviour} from "./GameBehaviour.js";
+import {GameView} from "./GameView.js";
 
 const getWallNeighborhood = (wall) => {
     let nbColonnes = 9;
@@ -134,12 +135,47 @@ export class GamePresenter {
     constructor(model, view) {
         this.view = view;
         this.model = model;
-        this.init_behaviour();
+        this.view.initializeBoardGrid(model); //création de l'objet
+        this.view.initializeGrid(model); //création du plateau
+        this.eventHandlers = {};
+        this.init_behaviour(this.model);
         this.updateInformations();
         this.gameBehaviour = new GameBehaviour();
         this.attachSaveHandler();
+        this.detachHandlerFromWalls();
+
         this.currentPlayer = this.model.currentPlayer;
         this.roundCounter = this.model.roundCounter;
+
+
+
+    }
+
+    detachHandlerFromWalls() {
+        // Suppression des gestionnaires d'événements pour les murs horizontaux
+        this.model.horizontal_Walls.forEach((wall) => {
+            if (wall.isPresent) {
+                const wallId = wall.position.row.toString() + "X" + wall.position.col.toString() + "X" + 'H';
+                this.replaceWallElement(wallId);
+            }
+        });
+
+        // Suppression des gestionnaires d'événements pour les murs verticaux
+        this.model.vertical_Walls.forEach((wall) => {
+            if (wall.isPresent) {
+                const wallId = wall.position.row.toString() + "X" + wall.position.col.toString() + "X" + 'V';
+                this.replaceWallElement(wallId);
+            }
+        });
+    }
+
+    replaceWallElement(wallId) {
+        const wallHTML = document.getElementById(wallId);
+        if (wallHTML) {
+            console.log('Replacing wall element with id: ' + wallId);
+            const clone = wallHTML.cloneNode(true);
+            wallHTML.replaceWith(clone);
+        }
     }
 
     attachSaveHandler() {
@@ -152,13 +188,13 @@ export class GamePresenter {
         });
     }
 
-    init_behaviour() {
+    init_behaviour(model) {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square')
 
-       this.init_walls(horizontal_walls_HTML);
-       this.init_walls(vertical_walls_HTML);
+       this.init_walls(horizontal_walls_HTML, model);
+       this.init_walls(vertical_walls_HTML,model);
        this.init_playable_case(playable_case_HTML);
     }
 
@@ -179,66 +215,110 @@ export class GamePresenter {
         cancel_behaviour_func(playable_case_HTML);
     }
 
-    init_walls(list){
+    init_walls(list, model){
+
         list.forEach((wall)=> {
-            const hoverHandler = () => {
-                let neighborhood = getWallNeighborhood(wall);
-                if(!this.gameBehaviour.isPresentWall(neighborhood)){
-                    neighborhood.children.item(0).style.opacity = "0.8";
-                }
-                else {
-                    neighborhood = getWallNeighborhood_Invert(wall);
-                    if (!this.gameBehaviour.isPresentWall(neighborhood)) {
-                        neighborhood.children.item(0).style.opacity = "0.8";
-                    }
-                }
-                wall.children.item(0).style.opacity = "0.8";
-            };
+            let wallModel = null;
 
-            const leaveHoverHandler = () => {
-                let neighborhood = getWallNeighborhood(wall);
-                if(!this.gameBehaviour.isPresentWall(neighborhood)){
-                    neighborhood.children.item(0).style.opacity = "0";
+            model.horizontal_Walls.forEach((wallModelToCheck)=>{
+                let idWallHTML = wall.children.item(0).id;
+                let idWallModel = wallModelToCheck.position.row.toString() + "X" + wallModelToCheck.position.col.toString() + "X" + 'H';
+                if(idWallHTML === idWallModel){
+                    wallModel = wallModelToCheck;
                 }
-                else{
-                    neighborhood = getWallNeighborhood_Invert(wall);
-                    if(!this.gameBehaviour.isPresentWall(neighborhood)){
-                        neighborhood.children.item(0).style.opacity = "0";
-                    }
+            });
+            model.vertical_Walls.forEach((wallModelToCheck)=>{
+                let idWallHTML = wall.children.item(0).id;
+                let idWallModel = wallModelToCheck.position.row.toString() + "X" + wallModelToCheck.position.col.toString() + "X" + 'V';
+                if(idWallHTML === idWallModel){
+                    wallModel = wallModelToCheck;
                 }
-                wall.children.item(0).style.opacity = "0";
-            };
+            });
+            console.log("WALL MODEL : ",wallModel);
 
-            const clickHandler = () => {
-                let neighborhood = getWallNeighborhood(wall);
-                if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
-                    neighborhood = getWallNeighborhood_Invert(wall);
-                }
-                let wallListReq = [wall.children.item(0).id];
-                let wallListObj = [wall];
-                if (!this.gameBehaviour.isPresentWall(neighborhood)) {
-                    wallListReq.push(neighborhood.children.item(0).id);
-                    wallListObj.push(neighborhood);
-                }
+            // Crée les gestionnaires d'événements
+            console.log("WALL init : ",wall);
 
-                console.log(this.model);
-                const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq};
-                //CALL BD -
-                actionGameService.placeWall(dataToSend, (res)=>{
-                    wallListObj.forEach((wallToEdit) => {
-                        this.view.displayWall(wallToEdit, 1);
-                        let replaceOBJ = wallToEdit.cloneNode(true);
-                        wallToEdit.replaceWith(replaceOBJ);
-                    });
-                    this.updatePage();
-                });
-            };
+            if(!wallModel.isPresent){
+                const hoverHandler = this.hoverHandler(wall);
+                const leaveHoverHandler = this.leaveHoverHandler(wall);
+                const clickHandler = this.clickHandler(wall);
 
-            wall.addEventListener('mouseenter', hoverHandler);
-            wall.addEventListener('mouseleave', leaveHoverHandler);
-            wall.addEventListener('click', clickHandler);
+                // Attache les gestionnaires d'événements
+                wall.addEventListener('mouseenter', hoverHandler);
+                wall.addEventListener('mouseleave', leaveHoverHandler);
+                wall.addEventListener('click', clickHandler);
+
+                // Stocke les références pour pouvoir les supprimer plus tard
+                this.eventHandlers[wall.id] = { hoverHandler, leaveHoverHandler, clickHandler };
+            }
+
         });
     }
+
+     hoverHandler = (wall) => {
+         return () => {
+             let neighborhood = getWallNeighborhood(wall);
+             if(!this.gameBehaviour.isPresentWall(neighborhood)){
+                 neighborhood.children.item(0).style.opacity = "0.8";
+             }
+             else {
+                 neighborhood = getWallNeighborhood_Invert(wall);
+                 if (!this.gameBehaviour.isPresentWall(neighborhood)) {
+                     neighborhood.children.item(0).style.opacity = "0.8";
+                 }
+             }
+             wall.children.item(0).style.opacity = "0.8";
+         }
+
+    };
+
+     leaveHoverHandler = (wall) => {
+         return () => {
+             let neighborhood = getWallNeighborhood(wall);
+             if(!this.gameBehaviour.isPresentWall(neighborhood)){
+                 neighborhood.children.item(0).style.opacity = "0";
+             }
+             else{
+                 neighborhood = getWallNeighborhood_Invert(wall);
+                 if(!this.gameBehaviour.isPresentWall(neighborhood)){
+                     neighborhood.children.item(0).style.opacity = "0";
+                 }
+             }
+             wall.children.item(0).style.opacity = "0";
+         }
+
+    };
+
+    clickHandler = (wall) => {
+        return () => {
+            let neighborhood = getWallNeighborhood(wall);
+            if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
+                neighborhood = getWallNeighborhood_Invert(wall);
+            }
+            let wallListReq = [wall.children.item(0).id];
+            let wallListObj = [wall];
+            if (!this.gameBehaviour.isPresentWall(neighborhood)) {
+                wallListReq.push(neighborhood.children.item(0).id);
+                wallListObj.push(neighborhood);
+            }
+
+            console.log(this.model);
+            const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq};
+            //CALL BD -
+            actionGameService.placeWall(dataToSend, (res)=>{
+                wallListObj.forEach((wallToEdit) => {
+                    this.view.displayWall(wallToEdit, 1);
+                    let replaceOBJ = wallToEdit.cloneNode(true);
+                    wallToEdit.replaceWith(replaceOBJ);
+                });
+                this.updatePage();
+            });
+        }
+
+    };
+
+
 
     checkEndGame(){
         actionGameService.checkWinner((callback)=>{

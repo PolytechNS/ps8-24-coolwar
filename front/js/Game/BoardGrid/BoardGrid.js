@@ -1,6 +1,7 @@
 const separator = "X";
 export class BoardGrid{
     constructor(model) {
+
         this.plateElement = this.getPlate();
         this.nbLignes = model.nbLignes;
         this.nbColonnes = model.nbColonnes;
@@ -10,8 +11,8 @@ export class BoardGrid{
     createGrid(model) {
         //définit l'emplacement des éléments
         var Y_plate_count = 0;
-
-        for(var lignes=0;lignes<this.nbLignes*2;lignes++) {
+        console.log("model createGrid",model);
+        for(var lignes=0;lignes<this.nbLignes*2;lignes++) { // car une ligne de case et une ligne de mur
             if (lignes === 0 || lignes === this.nbLignes * 2) {
             } else {
                 if (lignes % 2 === 0) {
@@ -21,13 +22,31 @@ export class BoardGrid{
                     this.buildLineWithPlayableSquare(Y_plate_count, this.nbColonnes);
                 }
             }
+
         }
+        this.updateOpacityWall(model);
+
         this.openPopUp();
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
         console.log("model",model);
         model.player_array.forEach((player, iteration) => {
             this.displayPlayer(player.position.row, player.position.col, iteration + 1);
+        });
+    }
+
+    updateOpacityWall(model){
+        model.horizontal_Walls.forEach(wall => {
+            let wallElement = document.getElementById(wall.position.row + separator + wall.position.col + separator + 'H');
+            if (wallElement) {
+                wallElement.style.opacity = wall.isPresent ? 1 : 0;
+            }
+        });
+        model.vertical_Walls.forEach(wall => {
+            let wallElement = document.getElementById(wall.position.row + separator + wall.position.col + separator + 'V');
+            if (wallElement) {
+                wallElement.style.opacity = wall.isPresent ? 1 : 0;
+            }
         });
     }
 

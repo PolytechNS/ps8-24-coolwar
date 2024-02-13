@@ -12,33 +12,22 @@ class GameModel {
     CREATION DES JOUEURS ET NOTION DE TOUR ✅
     */
     constructor(config = {}) {
-        const {
-            idGame = uuidv4(),
-            nbLignes = 9,
-            nbColonnes = 9,
-            nbPlayers = 2,
-            horizontal_Walls = new WallDictionary(),
-            vertical_Walls = new WallDictionary(),
-            playable_squares = new PlayableSquareDictionary(),
-            player_array = new PlayerManager(),
-            currentPlayer = 1,
-            roundCounter = 0
-        } = config;
-
+        console.log("CONFIG : ");
         this.idGame = uuidv4();
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;
-        this.currentPlayer = 1;
-        this.roundCounter = 1;
         this.lastChance=0;
-        this.winner = -1;
         if(!config.horizontal_Walls){
             this.horizontal_Walls = new WallDictionary();
+            console.log("j'instancie de nouveaux walls !");
         }else {
+            console.log("je charge des nouveaux walls !");
+
             this.horizontal_Walls = new WallDictionary();
             config.horizontal_Walls.forEach(wall => {
-                this.horizontal_Walls.addWall(wall.position.row, wall.position.col, wall.type);
+                console.log("WALL : "+wall.position.row+"|"+wall.position.col+"|"+wall.type+"|"+wall.isPresent);
+                this.horizontal_Walls.addWallWithType(wall.position.row, wall.position.col, wall.type, wall.isPresent);
             });
         }
         if(!config.vertical_Walls){
@@ -46,7 +35,8 @@ class GameModel {
         }else {
             this.vertical_Walls = new WallDictionary();
             config.vertical_Walls.forEach(wall => {
-                this.vertical_Walls.addWall(wall.position.row, wall.position.col, wall.type);
+
+                this.vertical_Walls.addWallWithType(wall.position.row, wall.position.col, wall.type, wall.isPresent);
             });
         }
         if(!config.playable_squares){
@@ -63,14 +53,32 @@ class GameModel {
         if(!config.player_array){
             this.player_array = new PlayerManager();
             this.initPlayers();
-
-
-
         }else {
-            this.player_array = player_array;
+            this.player_array = config.player_array;
             this.player_array = new PlayerManager();
-            this.player_array.createPlayFromArray(player_array);
+            this.player_array.createPlayFromArray(config.player_array);
         }
+
+        if(!config.currentPlayer){
+            this.currentPlayer = 1;
+        }
+        else {
+            this.currentPlayer = config.currentPlayer;
+        }
+        if(!config.roundCounter){
+            this.roundCounter = 0;
+        }
+        else {
+            this.roundCounter = config.roundCounter;
+        }
+        if(!config.winner){
+            this.winner = -1;
+
+        }
+        else{
+            this.winner = config.winner;
+        }
+
 
 
     }
@@ -106,7 +114,7 @@ class GameModel {
      init_model() {
         var nbLignes = this.nbLignes;
         var nbColonnes = this.nbColonnes;
-
+        console.log("j'instancie de nouveaux walls !");
         for (let i = 0; i < nbLignes; i++) {
             for (let j = 0; j < nbColonnes; j++) {
                 this.horizontal_Walls.addWall(i, j,'H');

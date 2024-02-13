@@ -11,6 +11,10 @@ class WallDictionary{
         this.wallList.push(new Wall(row,col,false,type));
     }
 
+    addWallWithType(row,col,type,isPresent){
+        this.wallList.push(new Wall(row,col,isPresent,type));
+    }
+
     getAllWalls(){
         return this.wallList;
     }

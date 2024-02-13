@@ -2,11 +2,11 @@
 const socketIo = require('socket.io');
 const {GameModel} = require('./logic/Model/Game/GameModel.js');
 const {ActionController} = require("./logic/Controller/actionController.js");
-const { MongoClient } = require('mongodb');
+const { MongoClient,ObjectId } = require('mongodb');
 const {MONGO_URL} = require("./logic/Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-let gameModel = null;
+let gameModelGlobal = null;
 let actionController = null;
 
 module.exports = (server) => {
@@ -24,55 +24,79 @@ module.exports = (server) => {
             console.log('Client disconnected');
         });
 
-        socket.on('get game model', async () => {
+        socket.on('get game model', async (userToken) => {
             try {
                 // Créer une nouvelle partie dans la base de données
                 await client.connect();
                 const db = client.db();
+                const user = await db.collection('users').findOne({ token: userToken });
                 const newGame = await db.collection('games').insertOne({
                     fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
+                    creator_id: user.username , // ID de l'utilisateur qui a créé la partie
                     game_name: 'New Game' // Nom de la partie, peut-être fourni par l'utilisateur
                 });
                 const gameId = newGame.insertedId;
+                console.log('New game created with ID:', gameId);
 
                 // Créer un nouveau GameModel
-                gameModel = new GameModel();
-                actionController = new ActionController(gameModel);
+                gameModelGlobal = new GameModel();
+                actionController = new ActionController(gameModelGlobal);
                 // Persister le plateau de jeu
                 const gameBoard = await db.collection('gameboards').insertOne({
                     gameId: gameId, // Lier le plateau de jeu à la partie
-                    nbJoueursMax: gameModel.nbPlayers // Nombre maximum de joueurs
+                    nbJoueursMax: gameModelGlobal.nbPlayers, // Nombre maximum de joueurs
+                    roundCounter: gameModelGlobal.roundCounter, // Compteur de tours
+                    currentPlayer: gameModelGlobal.currentPlayer, // Joueur actuel
+                    winner : gameModelGlobal.winner
                     // autres données du plateau de jeu
                 });
                 const gameBoardId = gameBoard.insertedId;
 
-                // Persister les murs et les cases en référençant l'ID du plateau de jeu
-                const walls = [...gameModel.horizontal_Walls.getAllWalls(), ...gameModel.vertical_Walls.getAllWalls()];
-                await db.collection('walls').insertMany(walls.map(wall => ({
-                    ...wall,
+                //persister la position des joueurs
+                const players = gameModelGlobal.player_array.getAllPlayers();
+                await db.collection('character').insertMany(players.map(player => ({
+                    ...player,
                     gameBoardId: gameBoardId
                 })));
 
-                const squares = gameModel.playable_squares;
+
+                // Persister les murs et les cases en référençant l'ID du plateau de jeu
+
+                const horizontalWalls = gameModelGlobal.horizontal_Walls.getAllWalls();
+                await db.collection('walls').insertMany(horizontalWalls.map(wall => ({
+                    ...wall,
+                    gameBoardId: gameBoardId,
+                    type: 'H' // Ajout d'une propriété pour indiquer l'orientation du mur
+                })));
+
+                const verticalWalls = gameModelGlobal.vertical_Walls.getAllWalls();
+                await db.collection('walls').insertMany(verticalWalls.map(wall => ({
+                    ...wall,
+                    gameBoardId: gameBoardId,
+                    type: 'V' // Ajout d'une propriété pour indiquer l'orientation du mur
+                })));
+
+                const squares = gameModelGlobal.playable_squares;
                 const squaresList = [...squares.getAllPlayableSquares()];
                 await db.collection('squares').insertMany(squaresList.map(square => ({
                     ...square,
                     gameBoardId: gameBoardId
                 })));
 
+
                 // Envoyer l'état initial du jeu au client
                 socket.emit('game model', JSON.stringify({
                     gameId: gameId, // ID de la partie
                     gameBoardId: gameBoardId, // ID du plateau de jeu
-                    nbLignes: gameModel.nbLignes, // Nombre de lignes
-                    nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                    player_array: gameModel.player_array.getAllPlayers(),
-                    horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
-                    vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                    playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
-                    currentPlayer: gameModel.currentPlayer,
-                    roundCounter: gameModel.roundCounter,
-                    winner : gameModel.winner
+                    nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
+                    nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
+                    player_array: gameModelGlobal.player_array.getAllPlayers(),
+                    horizontal_Walls: gameModelGlobal.horizontal_Walls.getAllWalls(),
+                    vertical_Walls: gameModelGlobal.vertical_Walls.getAllWalls(),
+                    playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
+                    currentPlayer: gameModelGlobal.currentPlayer,
+                    roundCounter: gameModelGlobal.roundCounter,
+                    winner : gameModelGlobal.winner
 
                 }));
             } catch (error) {
@@ -81,53 +105,40 @@ module.exports = (server) => {
             }
         });
 
-        socket.on('placewall', async(wallData) => {
-            try {
-                let wallDataDeserialized = JSON.parse(wallData);
-                console.log("data received :" ,wallDataDeserialized);
-                let actionController = new ActionController(gameModel);
-                let responseBoolean = actionController.placeWall(wallDataDeserialized);
-
-
-
-                await client.connect();
-                const db = client.db();
-                const game = await db.collection('games').findOne({data: wallData.gameId});
-                const gameBoard = await db.collection('gameboards').findOne({data: game.gameId});
-                const walls = await db.collection('walls').findOne({data: gameBoard.gameBoardId});
-                //update wall isPresent = true
-                await db.collection('walls').updateOne({data: walls._id}, {$set: {isPresent: true}});
-                console.log("wall updated for this game : ", game);
-                // Envoyer l'état initial du jeu au client
-                socket.emit('placewallResponse', responseBoolean);
-
-
-            }
-            catch (error) {
-                console.error('Error placing wall', error);
-                socket.emit('placewallResponse', false);
-            }
-
-        });
-
-
         socket.on('save game', async (data) => {
             try {
                 console.log('Received request to save game:');
-                const userToken = data.token; // Utilisez le token pour identifier l'utilisateur
-                const gameState = data.gameState; // L'état du jeu à sauvegarder
+                console.log('Received request to save game:', data);
 
                 // Récupérer l'ID de l'utilisateur à partir du token
                 await client.connect();
                 const db = client.db();
-                const userId = await db.collection('users').findOne({ data: userToken});
+                let userToken = data.userToken;
+                console.log('User token:', userToken);
+                const userId = await db.collection('users').findOne({ token: userToken});
+                console.log('User to save game:', userId);
+                const gameDb = await db.collection('games').findOne({ _id: new ObjectId(data.gameId), creator_id: userId.username});
+                console.log('Game to save gameDB:', gameDb);
+                const gameBoardId = await db.collection('gameboards').findOne({ gameId: gameDb._id });
+                console.log('Game to save gameBoardId:', gameBoardId);
 
+                //show walls from games retrieved
+                console.log('show all walls from bd when saving game :', await db.collection('walls').find({gameBoardId: gameBoardId._id}).toArray( function(err, result) {
+                    if (err) throw err;
+                    else console.log(result);
+                }));
                 // Sauvegarder l'état du jeu avec l'ID de l'utilisateur
                 await db.collection('savedGames').insertOne({
                     userId,
-                    gameState, // Assurez-vous que gameState est un objet sérialisable
+                    gameId:gameDb._id, // Assurez-vous que gameState est un objet sérialisable
+                    gameBoardId: gameBoardId._id,
                     createdAt: new Date()
                 });
+
+                console.log('show all walls from bd WHEN SAVING \n \n :', await db.collection('walls').find({gameBoardId: gameBoardId._id}).toArray( function(err, result) {
+                    if (err) throw err;
+                    else console.log(result);
+                }));
 
                 // Confirmer la sauvegarde au client
                 socket.emit('game saved', { success: true });
@@ -146,32 +157,118 @@ module.exports = (server) => {
                 const savedGame = await db.collection('savedGames').findOne({ user });
 
                 if (savedGame) {
-                    const gameState = JSON.parse(savedGame.gameState); // Assurez-vous que l'état du jeu est enregistré sous forme de chaîne JSON
-                    gameModel = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
-                    actionController = new ActionController(gameModel); // Réinitialisez votre contrôleur avec le nouveau modèle
+                    const gameBoardSaved = await db.collection('gameboards').findOne({ _id: savedGame.gameBoardId });
+                    //get all walls from gameBoardSaved
+                    const wallsHorizontal = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'H'}).toArray();
+                    const wallsVertical = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'V'}).toArray();
+                    const playableSquares = await db.collection('squares').find({gameBoardId: gameBoardSaved._id}).toArray();
+                    const players_array = await db.collection('character').find({gameBoardId: gameBoardSaved._id}).toArray();
+                    const config = {
+                        horizontal_Walls: wallsHorizontal,
+                        vertical_Walls: wallsVertical,
+                        playable_squares: playableSquares,
+                        player_array: players_array,
+                        currentPlayer: gameBoardSaved.currentPlayer,
+                        roundCounter: gameBoardSaved.roundCounter,
+                        winner : gameBoardSaved.winner
+                    };
+
+                    gameModelGlobal = new GameModel(config);
+                    actionController = new ActionController(gameModelGlobal);
+
+                    //show walls from savedGame bd
+                    console.log('show all walls from bd when loading saved game :\n\n', await db.collection('walls').find({gameBoardId: gameBoardSaved._id}).toArray( function(err, result) {
+                        if (err) throw err;
+                        else console.log(result);
+                    }));
+
+                    //show horizontal walls from savedGame gameModel
+                    console.log('show all horizontal walls from gameModel when loading saved game :\n', gameModelGlobal.horizontal_Walls.getAllWalls());
+
                     socket.emit('loaded game', JSON.stringify({
-                        gameId: savedGame.gameState.gameId, // ID de la partie
-                        gameBoardId: savedGame.gameState.gameBoardId, // ID du plateau de jeu
-                        nbLignes: gameModel.nbLignes, // Nombre de lignes
-                        nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                        player_array: gameModel.player_array.getAllPlayers(),
-                        horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
-                        vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                        playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
-                        currentPlayer: gameModel.currentPlayer,
-                        roundCounter: gameModel.roundCounter,
-                        winner : gameModel.winner
+                        gameId: savedGame.gameId, // ID de la partie
+                        gameBoardId: savedGame.gameBoardId, // ID du plateau de jeu
+                        nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
+                        nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
+                        player_array: gameModelGlobal.player_array.getAllPlayers(),
+                        horizontal_Walls: gameModelGlobal.horizontal_Walls.getAllWalls(),
+                        vertical_Walls: gameModelGlobal.vertical_Walls.getAllWalls(),
+                        playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
+                        currentPlayer: gameModelGlobal.currentPlayer,
+                        roundCounter: gameModelGlobal.roundCounter,
+                        winner : gameModelGlobal.winner
 
                     }));
-                } else {
+                }
+                else {
                     console.log('No saved game found for this user');
                     socket.emit('error', 'No saved game found for this user.');
+
+
+
+            }
+        } catch (error) {
+            console.error('Error loading saved game', error);
+            socket.emit('error', 'Error loading the game.');
+        }
+    });
+
+        socket.on('placewall', async (wallData) => {
+            try {
+                let wallDataDeserialized = JSON.parse(wallData);
+                console.log("data received :", wallDataDeserialized);
+
+                let actionController = new ActionController(gameModelGlobal);
+                let responseBoolean = actionController.placeWall(wallDataDeserialized);
+
+                await client.connect();
+                const db = client.db();
+                console.log('Game ID from wallData:', wallDataDeserialized.gameId);
+                const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
+                console.log('Game ID from DB:', gameIdDb);
+                const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+                // Boucle sur chaque élément de wallList pour traiter et mettre à jour les murs
+                for (let wallString of wallDataDeserialized.wallList) {
+                    // Extrait la ligne, la colonne et le type à partir de la chaîne de caractères
+                    let [row, col, type] = wallString.split('X');
+                    // Convertit les valeurs de la ligne et de la colonne en nombres
+                    row = parseInt(row, 10);
+                    col = parseInt(col, 10);
+
+                    // Recherche le mur correspondant dans la base de données
+                    const wall = await db.collection('walls').findOne({
+                        "position.row": row,
+                        "position.col": col,
+                        "gameBoardId": gameBoardIdDb._id,
+                        type: type
+                    });
+
+                    if (wall) {
+                        // Met à jour le mur pour définir isPresent à true
+                        await db.collection('walls').updateOne({_id: wall._id}, {$set: {isPresent: true}});
+                        const wallUpdated = await db.collection('walls').findOne({_id: wall._id});
+                        console.log("Wall updated: ", wallUpdated);
+                    } else {
+                        console.log("Wall not found or already present");
+                    }
                 }
-            } catch (error) {
-                console.error('Error loading saved game', error);
-                socket.emit('error', 'Error loading the game.');
+
+                console.log('show all walls from bd when placing walls :', await db.collection('walls').find({}).toArray( function(err, result) {
+                    if (err) throw err;
+                    else console.log(result);
+                }));
+
+                // Envoyer la réponse au client
+                socket.emit('placewallResponse', responseBoolean);
+            }
+            catch (error) {
+                console.error('Error placing wall', error);
+                socket.emit('placewallResponse', false);
             }
         });
+
+
+
 
         socket.on('joinGame', () => {
             let responseBoolean = gameController.join()
@@ -215,24 +312,21 @@ module.exports = (server) => {
          */
 
         socket.on('updateGameModel', async ( data ) => {
-            console.log("UPDATE GAME MODEL");
             let playerId = data.playerId;
             let gameId = data.gameId;
             console.log(gameId,playerId);
             try {
                 await client.connect();
                 const db = client.db();
-                console.log('Received request to update game model:', );
                 let game = await db.collection('games').findOne({ _id: gameId });
-                console.log("game found :",game);
 
                 if (game) {
                     const gameState = JSON.parse(savedGame.gameState); // Assurez-vous que l'état du jeu est enregistré sous forme de chaîne JSON
-                    gameModel = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
-                    actionController = new ActionController(gameModel); // Réinitialisez votre contrôleur avec le nouveau modèle
-                    socket.emit('updateGameModelResponse', JSON.stringify(gameModel)); // Envoyez le modèle de jeu reconstruit au client
+                    gameModelGlobal = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
+                    actionController = new ActionController(gameModelGlobal); // Réinitialisez votre contrôleur avec le nouveau modèle
+                    socket.emit('updateGameModelResponse', JSON.stringify(gameModelGlobal)); // Envoyez le modèle de jeu reconstruit au client
                 } else {
-                    console.log('No saved game found for this user');
+                    console.log(' UPDATE GAME MODEL No saved game found for this user');
                     socket.emit('error', 'No saved game found for this user.');
                 }
             } catch (error) {
