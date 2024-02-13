@@ -9,37 +9,39 @@ export class GraphNode {
         this.rightLink = null;
     }
 
-    //TODO : PAS TOUJOURS AJOUTE
-    addLink(wall,nodeToAdd){
-        console.log("----------ADD LINK----------");
-        // 7-6
-        // 8-6
 
+    addLink(wall,nodeToAdd){
+        let verticesToReturn = null;
         //UPLINK OU DOWNLINK
         if(wall.type==='H'){
             //DOWNLINK
             if(wall.position.col === this.position.col && wall.position.row===this.position.row){
-                console.log("DOWNLINK");
-                this.downLink = new GraphVertices(nodeToAdd);
+                //console.log("DOWNLINK");
+                verticesToReturn = new GraphVertices(this,nodeToAdd);
+                this.downLink = verticesToReturn;
             }
             //UPLINK
             if(wall.position.col === this.position.col && wall.position.row+1 === this.position.row){
-                console.log("UPLINK");
-                this.upLink = new GraphVertices(nodeToAdd);
+                //console.log("UPLINK");
+                verticesToReturn = new GraphVertices(this,nodeToAdd);
+                this.upLink = verticesToReturn;
             }
         }
         //LEFTLINK OU RIGHTLINK
         if(wall.type==='V'){
             //RIGHT LINK
             if(wall.position.col === this.position.col && wall.position.row===this.position.row){
-                console.log("RIGHTLINK");
-                this.rightLink = new GraphVertices(nodeToAdd);
+                //console.log("RIGHTLINK");
+                verticesToReturn = new GraphVertices(this,nodeToAdd);
+                this.rightLink = verticesToReturn;
             }
             //LEFT LINK
             if(wall.position.col+1 === this.position.col && wall.position.row===this.position.row ){
-                console.log("LEFTLINK");
-                this.leftLink = new GraphVertices(nodeToAdd);
+                //console.log("LEFTLINK");
+                verticesToReturn = new GraphVertices(this,nodeToAdd);
+                this.leftLink = verticesToReturn;
             }
         }
+        return verticesToReturn;
     }
 }

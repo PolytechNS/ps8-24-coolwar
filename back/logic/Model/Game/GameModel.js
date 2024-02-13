@@ -27,6 +27,7 @@ export class GameModel {
         this.winner = null;
         this.lastChance = 0;
         this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
+        this.wallGroup = [];
     }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
@@ -179,5 +180,97 @@ export class GameModel {
         }
         this.winner = valueToReturn;
         return valueToReturn;
+    }
+
+    //RECEPTION -> wall du back
+    isCuttingWallGroup(wallList){
+        console.log("----------IS CUTTING WALL GROUP-----------");
+        let neighborhoodList = [];
+        let wallBackList = [];
+        for(let i=0;i<wallList.length;i++){
+            let wallToEdit = wallList[i];
+            let wallInformations = wallToEdit.children.item(0).id.split("X");
+            let wallBack=null;
+            if(wallToEdit.classList.contains("horizontal_hitbox")){
+                wallBackList.push(this.getWallByCoordinates('H',wallInformations[0],wallInformations[1]));
+            }
+            else if(wallToEdit.classList.contains("vertical_hitbox")){
+                wallBackList.push(this.getWallByCoordinates('V',wallInformations[0],wallInformations[1]));
+            }
+            neighborhoodList.push(this.getWallNeighborhood(wallBackList[i]));
+        }
+
+
+        console.log(neighborhoodList);
+
+        //SI LA SELECTION EST UN ENSEMBLE DE MURS HORIZONTAUX
+        if(wallList[0].classList.contains("horizontal_hitbox")){
+            console.log("SELECTION HORIZONTALE");
+
+            //SI TOUS LES ELEMENTS DE COMPARAISON EXISTENT
+            if(neighborhoodList[0].upRight!==null && neighborhoodList[1].upLeft!==null && neighborhoodList[0].downRight !==null && neighborhoodList[1].downLeft !=null){
+                if(neighborhoodList[0].upRight.wallGroup!==null && neighborhoodList[1].upLeft.wallGroup!==null && neighborhoodList[0].downRight.wallGroup!==null && neighborhoodList[1].downLeft.wallGroup!==null){
+                    if(neighborhoodList[0].upRight.wallGroup === neighborhoodList[1].upLeft.wallGroup && neighborhoodList[0].downRight.wallGroup === neighborhoodList[1].downLeft.wallGroup){
+                        return true;
+                    }
+                }
+            }
+        }
+        if(wallList[0].classList.contains("vertical_hitbox")){
+            if(neighborhoodList[0].downLeft!==null && neighborhoodList[1].upLeft!==null && neighborhoodList[0].downRight !==null && neighborhoodList[1].upRight !=null){
+                if(neighborhoodList[0].downLeft.wallGroup!==null && neighborhoodList[1].upLeft.wallGroup!==null && neighborhoodList[0].downRight.wallGroup!==null && neighborhoodList[1].upRight.wallGroup!==null){
+                    if(neighborhoodList[0].downLeft.wallGroup === neighborhoodList[1].upLeft.wallGroup && neighborhoodList[0].downRight.wallGroup === neighborhoodList[1].upRight.wallGroup){
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    getWallNeighborhood(wall){
+        let wallsNeighborhood = {
+            upLeft: null,
+            upRight: null,
+            downLeft: null,
+            downRight: null
+        }
+        if(wall.type==='H'){
+                //EXTREMITE GAUCHE DE MAP
+                if(wall.position.col === 0){
+                    wallsNeighborhood.upRight = this.getWallByCoordinates('V',wall.position.row,wall.position.col);
+                    wallsNeighborhood.downRight = this.getWallByCoordinates('V',wall.position.row+1,wall.position.col);
+                }
+                //EXTREMITE DROITE DE MAP
+                else if(wall.position.col === 8){
+                    wallsNeighborhood.upLeft = this.getWallByCoordinates('V',wall.position.row,wall.position.col-1);
+                    wallsNeighborhood.downLeft = this.getWallByCoordinates('V',wall.position.row+1,wall.position.col-1);
+                }
+                //AU MILIEU
+                else{
+                    wallsNeighborhood.upLeft = this.getWallByCoordinates('V',wall.position.row,wall.position.col-1);
+                    wallsNeighborhood.upRight = this.getWallByCoordinates('V',wall.position.row,wall.position.col);
+                    wallsNeighborhood.downLeft = this.getWallByCoordinates('V',wall.position.row+1,wall.position.col-1);
+                    wallsNeighborhood.downRight = this.getWallByCoordinates('V',wall.position.row+1,wall.position.col);
+                }
+        }
+        if(wall.type==='V'){
+            //EXTREMITE GAUCHE DE MAP
+            if(wall.position.row === 0){
+                wallsNeighborhood.downLeft = this.getWallByCoordinates('H',wall.position.row,wall.position.col);
+                wallsNeighborhood.downRight = this.getWallByCoordinates('H',wall.position.row,wall.position.col+1);
+            }
+            else if(wall.position.row >= 8){
+                wallsNeighborhood.upLeft = this.getWallByCoordinates('H',wall.position.row-1,wall.position.col);
+                wallsNeighborhood.upRight = this.getWallByCoordinates('H',wall.position.row-1,wall.position.col+1);
+            }
+            //AU MILIEU
+            else {
+                wallsNeighborhood.upLeft = this.getWallByCoordinates('H', wall.position.row - 1, wall.position.col);
+                wallsNeighborhood.upRight = this.getWallByCoordinates('H', wall.position.row - 1, wall.position.col + 1);
+                wallsNeighborhood.downLeft = this.getWallByCoordinates('H',wall.position.row,wall.position.col);
+                wallsNeighborhood.downRight = this.getWallByCoordinates('H', wall.position.row, wall.position.col + 1);
+            }
+        }
+        return wallsNeighborhood;
     }
 }

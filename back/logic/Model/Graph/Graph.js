@@ -2,13 +2,13 @@ import {GraphNode} from "./GraphNode.js";
 export class Graph{
     constructor(playable_squares,horizontal_walls,vertical_walls) {
         this.nodes = [];
+        this.vertices = [];
         this.playable_squares = playable_squares;
         this.horizontal_walls = horizontal_walls;
         this.vertical_walls = vertical_walls;
         console.log("-------------GRAPH MODELISATION-------------");
         this.init_nodes();
         this.init_vertices();
-        console.log(this.nodes);
         console.log("-------------END  MODELISATION-------------");
     }
 
@@ -28,12 +28,10 @@ export class Graph{
         return null;
     }
 
-    //TODO : REPRENDRE LA FONCTION
+    //INITIALISE LES LIENS
     init_vertices() {
         for(let i=0;i<this.nodes.length;i++){
             let node = this.nodes[i];
-            console.log("--------------------NODE----------------------");
-            console.log(node.position);
             let wallsNeighborhood = this.getWallsNeighborhood(node.position);
 
             for(let j=0;j<wallsNeighborhood.length;j++){
@@ -59,14 +57,21 @@ export class Graph{
                     //wall de la même position que le wall
                     else{nodeToLookingFor = this.getNodeFromCoordinates(wall.position.row,wall.position.col);}
                     //console.log("ADD LINK : WALL -> ",wall, " ON NODE ",nodeToLookingFor);
-                    node.addLink(wall,nodeToLookingFor);
+
+                    this.vertices.push(node.addLink(wall,nodeToLookingFor));
                 }
             }
-            console.log(node);
         }
     }
 
+    getVerticesFromCoordinates(row,col){
+        for(let i=0;i<this.vertices.length;i++){
+            let vertice = this.vertices[i];
+            if(vertice.parentNode.position.col === col && vertice.parentNode.position.row===col){
 
+            }
+        }
+    }
 
     getWallsNeighborhood(position){
         let availableCardinalPosition = [

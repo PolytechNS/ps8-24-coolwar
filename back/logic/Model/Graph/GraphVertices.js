@@ -1,5 +1,6 @@
 export class GraphVertices{
-    constructor(destinationNode) {
+    constructor(parentNode,destinationNode) {
+        this.parentNode = parentNode;
         this.destinationNode = destinationNode;
     }
 

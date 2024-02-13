@@ -19,6 +19,13 @@ export class ActionController{
         if (!this.checkCurrentPlayer(id)) {return null;}
         let wallToEdit = null;
         let wallBack = null;
+
+        let wallGroupId = this.getRandomArbitrary(0,60);
+
+        while(this.model.wallGroup.includes(wallGroupId)){wallGroupId = this.getRandomArbitrary(0,60);}
+
+        if(this.model.isCuttingWallGroup(walls)){console.log("COUPAGE ENTRE MURS !");return false;}
+
         for(let i=0;i<walls.length;i++){
             let wall = walls[i];
             if (wall.classList.contains("horizontal_hitbox") || wall.classList.contains("vertical_hitbox")) {
@@ -26,22 +33,21 @@ export class ActionController{
                 let coordinates = wallToEdit.id.split('X');
                 if (wall.classList.contains("horizontal_hitbox")) {
                     //SI LE DERNIER SUR LA LIGNE
-                    wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1])
-                    if(this.model.isLastWallOnTheLine('H',wallBack.position.row,wallBack.position.col)){
-                        return false;
-                    }
-                } else {
+                    wallBack = this.model.getWallByCoordinates('H', coordinates[0], coordinates[1]);
+                }
+                else {
                     wallBack = this.model.getWallByCoordinates('V', coordinates[0], coordinates[1]);
-                    if(this.model.isLastWallOnTheLine('V',wallBack.position.row,wallBack.position.col)){
-                        return false;
-                    }
                 }
                 if (wallBack.isPresent === false) {
                     wallBack.setPresent();
+                    wallBack.setWallGroup(wallGroupId);
+                    this.model.wallGroup.push(wallGroupId);
+                    console.log(wallBack);
                 }
             }
             else{return false;}
         }
+        console.log("WALLGROUPID",wallGroupId);
         this.model.setNextPlayer();
         return true;
     }
@@ -89,6 +95,10 @@ export class ActionController{
         else{
             console.log("AUCUN MUR TROUVE A CETTE POSITION !\n ["+coordinates[0]+"|"+coordinates[1]+"]");
             return null;}
+    }
+
+    getRandomArbitrary(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
     }
 
 }
