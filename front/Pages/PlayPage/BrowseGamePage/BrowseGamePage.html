@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../../../style.css">
-    <link rel="stylesheet" href="./FriendRequestPageStyle.css">
-    <title>Friend Request Page</title>
+    <link rel="stylesheet" href="./BrowseGamePageStyle.css">
+    <title>Browse Game Page</title>
 </head>
 
 <body>
@@ -23,29 +23,26 @@
 <main class="grid">
     <div></div>
     <div class="cadre">
-        <h2>Friend Request</h2>
-        <div class="listFriendRequest">
-            <div class="friendRequest">
-                <div class="banner">
+        <h2>Browse Game</h2>
+        <div class="listBrowseGame">
+            <div class="browseGame">
                     <div class="leftSide">
                         <p>1.</p>
+                        <p>Name of saved game</p>
+                    </div>
+                    <div class="middleSide">
+                        <p>VS</p>
                         <img class="profilePic" src="../../../assets/profilePicture.png">
                         <p>Nom</p>
                     </div>
                     <div class="rightSide">
-                        <p>En ligne il y a 14h...</p>
-                        <img class="levelPic" src="../../../assets/level99.png">
+                        <p>15.01.2024</p>
                     </div>
-                </div>
-                <div class="footer">
-                    <button class="reject">Reject</button>
-                    <button class="accept">Accept</button>
-                </div>
             </div>
         </div>
-        <button class="sentFriendRequest">Sent</button>
+        <button class="joinGame">Join</button>
     </div>
-    <button id="backButton" onclick="location.href='../NotificationPage.html'"> < Back</button>
+    <button id="backButton" onclick="location.href='../PlayPage.html'"> < Back</button>
 </main>
 </body>
 </html>

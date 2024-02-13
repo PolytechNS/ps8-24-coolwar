@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="./JoinGamePageStyle.css">
+    <title>Join Game Page</title>
+</head>
+
+<body>
+<header class="head">
+    <img class="logo" src="../../../assets/logo.png"/>
+    <h1>CoolWar</h1>
+    <div class="user">
+        <img class="profilePicture" src="../../../assets/profilePicture.png">
+        <div class="nameAndLogout">
+            <p class="username">Nom</p>
+            <button class="logout" onclick="location.href='../../../js/Login/login.html'">Logout</button>
+        </div>
+        <img class="level" src="../../../assets/level.png">
+    </div>
+</header>
+<main class="grid">
+    <div></div>
+    <div class="cadre">
+        <h2 class="join">Join Game</h2>
+        <h2 class="joining">Joining game</h2>
+        <div class="searchGame">
+            <img src="../../../assets/game.png" class="gameImg"/>
+            <input type="text" id="gameName" name="gameName"/>
+        </div>
+        <button class="joinGame">Join</button>
+        <h2 class="loading">Loading...</h2>
+    </div>
+    <button id="backButton" onclick="location.href='../PlayPage.html'"> < Back</button>
+</main>
+</body>
+</html>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>
+
+<script src="JoinGamePageScript.js"></script>

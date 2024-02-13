@@ -4,7 +4,7 @@
     position: relative;
 }
 
-.searchFriend{
+.searchGame{
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -14,11 +14,11 @@
     margin: 40px;
 }
 
-.friend{
-    max-height: 100px;
+.gameImg{
+    max-width: 100px;
 }
 
-#friendName{
+#gameName{
     border-radius: 8px;
     font-size: 25px;
     padding: 8px;
@@ -28,8 +28,14 @@
 }
 
 
-.addFriend{
+.joinGame{
     min-width: max-content;
-    padding: 5px 20px;
+    padding: 10px 30px;
     margin-top: 30px;
+}
+
+
+.loading{
+    position: absolute;
+    bottom: 20px;
 }

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="LoadGamePageStyle.css">
+    <title>Game Request Page</title>
+</head>
+
+<body>
+<header class="head">
+    <img class="logo" src="../../../assets/logo.png"/>
+    <h1>CoolWar</h1>
+    <div class="user">
+        <img class="profilePicture" src="../../../assets/profilePicture.png">
+        <div class="nameAndLogout">
+            <p class="username">Nom</p>
+            <button class="logout" onclick="location.href='../../../js/Login/login.html'">Logout</button>
+        </div>
+        <img class="level" src="../../../assets/level.png">
+    </div>
+</header>
+<main class="grid">
+    <div></div>
+    <div class="cadre">
+        <h2>Game Request</h2>
+        <div class="listGameRequest">
+            <div class="gameRequest">
+                    <div class="leftSide">
+                        <p>1.</p>
+                        <p>Name of saved game</p>
+                    </div>
+                    <div class="middleSide">
+                        <p>VS</p>
+                        <img class="profilePic" src="../../../assets/profilePicture.png">
+                        <p>Nom</p>
+                    </div>
+                    <div class="rightSide">
+                        <p>15.01.2024</p>
+                    </div>
+            </div>
+        </div>
+        <button class="deleteGame">Delete</button>
+        <button class="loadGame">Load</button>
+    </div>
+    <button id="backButton" onclick="location.href='../PlayPage.html'"> < Back</button>
+</main>
+</body>
+</html>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>

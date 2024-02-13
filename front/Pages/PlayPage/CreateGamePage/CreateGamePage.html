@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="./CreateGamePageStyle.css">
+    <title>Create Game Page</title>
+</head>
+
+<body>
+<header class="head">
+    <img class="logo" src="../../../assets/logo.png"/>
+    <h1>CoolWar</h1>
+    <div class="user">
+        <img class="profilePicture" src="../../../assets/profilePicture.png">
+        <div class="nameAndLogout">
+            <p class="username">Nom</p>
+            <button class="logout" onclick="location.href='../../../js/Login/login.html'">Logout</button>
+        </div>
+        <img class="level" src="../../../assets/level.png">
+    </div>
+</header>
+<main class="grid">
+    <div></div>
+    <div class="cadre">
+        <h2>Create online game</h2>
+        <div class="gameCreation">
+            <div class="aline">
+                <h3>Game title:</h3>
+                <div class="gameName">
+                    <img src="../../../assets/gameName.png">
+                    <div class="line"></div>
+                    <input type="text" id="gameName" name="gameName"/>
+                </div>
+            </div>
+            <div class="aline">
+                <h3>Fog of war:</h3>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <button class="createGame" onclick="location.href='./GameReadyPage/GameReadyPage.html'">Create</button>
+    </div>
+    <button id="backButton" onclick="location.href='../PlayPage.html'"> < Back</button>
+</main>
+</body>
+</html>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>
