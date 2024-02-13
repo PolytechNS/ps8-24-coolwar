@@ -3,6 +3,7 @@ import {PlayableSquareDictionary} from "../Objects/PlayableSquareDictionary.js";
 import {PlayerManager} from "../Objects/PlayerManager.js";
 import {GamePlayer} from "../Objects/GamePlayer.js";
 import {Position} from "../Objects/Position.js";
+import {Graph} from "../Graph/Graph.js";
 
 export class GameModel {
 
@@ -25,6 +26,7 @@ export class GameModel {
         this.roundCounter = 0;
         this.winner = null;
         this.lastChance = 0;
+        this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
     }
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
@@ -61,10 +63,14 @@ export class GameModel {
 
         for (let i = 0; i < nbLignes; i++) {
             for (let j = 0; j < nbColonnes; j++) {
-                this.horizontal_Walls.addWall(i, j);
-                this.vertical_Walls.addWall(i, j);
+                this.horizontal_Walls.addWall(i, j,'H');
             }
         }
+         for (let i = 0; i < nbLignes; i++) {
+             for (let j = 0; j < nbColonnes-1; j++) {
+                 this.vertical_Walls.addWall(i, j,'V');
+             }
+         }
         for (let i = 0; i < nbLignes; i++) {
             for (let j = 0; j < nbColonnes; j++) {
                 this.playable_squares.addPlayableSquare(i, j, null, false);
@@ -83,6 +89,7 @@ export class GameModel {
         else if(this.currentPlayer===2){this.currentPlayer=1;}
         else{}
         this.roundCounter+=1;
+        this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
         console.log("After next Player : "+this.currentPlayer);
     }
 

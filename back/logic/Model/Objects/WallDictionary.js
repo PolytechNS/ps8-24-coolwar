@@ -6,9 +6,9 @@ export class WallDictionary{
         this.wallList = [];
     }
 
-    addWall(row,col){
+    addWall(row,col,type){
         //TODO: VERIFIER SI L'INDEX EXISTE DEJA
-        this.wallList.push(new Wall(row,col,false));
+        this.wallList.push(new Wall(row,col,false,type));
     }
 
     getWall(row,col){
