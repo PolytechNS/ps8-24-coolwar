@@ -1,6 +1,5 @@
 // AJOUTER ICI CHAQUES ROUTER
 const authRouter = require('./authRouter');
-const gameRouter = require('./gameRouter');
 function mainRouter(req, res,db) {
     console.log('Main router called');
     console.log(req.url);
@@ -19,9 +18,6 @@ function mainRouter(req, res,db) {
     //UN IF = UN DEBUT DE LIEN DIFFERENT
     if (req.url.startsWith('/api/auth')) {
         authRouter(req, res,db);
-    }
-    else if(req.url.startsWith('/api/game')){
-        gameRouter(req,res,db);
     }
     else {
         // Handle other routes or return 404

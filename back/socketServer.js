@@ -216,7 +216,7 @@ module.exports = (server) => {
         socket.on('placewall', async (wallData) => {
             try {
                 let wallDataDeserialized = JSON.parse(wallData);
-                console.log("data received :", wallDataDeserialized);
+                console.log("data received placewall :", wallDataDeserialized);
 
                 let actionController = new ActionController(gameModelGlobal);
                 let responseBoolean = actionController.placeWall(wallDataDeserialized);
@@ -247,16 +247,16 @@ module.exports = (server) => {
                         // Met à jour le mur pour définir isPresent à true
                         await db.collection('walls').updateOne({_id: wall._id}, {$set: {isPresent: true}});
                         const wallUpdated = await db.collection('walls').findOne({_id: wall._id});
-                        console.log("Wall updated: ", wallUpdated);
+                        //console.log("Wall updated: ", wallUpdated);
                     } else {
-                        console.log("Wall not found or already present");
+                        //console.log("Wall not found or already present");
                     }
                 }
 
-                console.log('show all walls from bd when placing walls :', await db.collection('walls').find({}).toArray( function(err, result) {
+                /*console.log('show all walls from bd when placing walls :', await db.collection('walls').find({}).toArray( function(err, result) {
                     if (err) throw err;
                     else console.log(result);
-                }));
+                }));*/
 
                 // Envoyer la réponse au client
                 socket.emit('placewallResponse', responseBoolean);

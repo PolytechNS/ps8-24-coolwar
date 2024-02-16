@@ -20,7 +20,6 @@ class WallDictionary{
     }
 
     getWall(row,col,type){
-        console.log("GET WALL : "+row,col);
         let wallToReturn=null;
         this.wallList.forEach(function (wall){
             if(wall.equals(row,col,type)){wallToReturn=wall;}

@@ -11,7 +11,7 @@ Both folders contain a README with more details.
 
 ## Requirements to run the project
 
-* [Node.js](https://nodejs.org/) should be installed.
+* [GraphNode.js](https://nodejs.org/) should be installed.
 * The repo should have been cloned.
 
 ---

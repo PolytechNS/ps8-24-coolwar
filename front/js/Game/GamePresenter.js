@@ -306,12 +306,14 @@ export class GamePresenter {
             console.log(this.model);
             const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq};
             //CALL BD -
-            actionGameService.placeWall(dataToSend, (res)=>{
-                wallListObj.forEach((wallToEdit) => {
-                    this.view.displayWall(wallToEdit, 1);
-                    let replaceOBJ = wallToEdit.cloneNode(true);
-                    wallToEdit.replaceWith(replaceOBJ);
-                });
+            actionGameService.placeWall(dataToSend, (isAuthorized)=>{
+                if(isAuthorized){
+                    wallListObj.forEach((wallToEdit) => {
+                        this.view.displayWall(wallToEdit, 1);
+                        let replaceOBJ = wallToEdit.cloneNode(true);
+                        wallToEdit.replaceWith(replaceOBJ);
+                    });
+                }
                 this.updatePage();
             });
         }

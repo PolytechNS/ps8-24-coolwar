@@ -5,7 +5,10 @@ class Wall{
         this.position = new Position(row,col);
         this.isPresent = isPresent;
         this.type = type;
+        this.wallGroup = null;
     }
+
+    setWallGroup(wallGroup){this.wallGroup = wallGroup;}
 
     equals(row,col,type){
         return this.position.row.toString() === row.toString() && this.position.col.toString() === col.toString() && this.type===type ;
