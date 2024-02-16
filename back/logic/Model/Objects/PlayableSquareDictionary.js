@@ -5,8 +5,8 @@ class PlayableSquareDictionary{
         this.playableSquares = [];
     }
 
-    addPlayableSquare(row,col,player,isVisible){
-        this.playableSquares.push(new PlayableSquare(row,col,player,isVisible));
+    addPlayableSquare(row,col,player,isVisible,visibility){
+        this.playableSquares.push(new PlayableSquare(row,col,player,isVisible,parseInt(visibility)));
     }
 
     getAllPlayableSquares(){

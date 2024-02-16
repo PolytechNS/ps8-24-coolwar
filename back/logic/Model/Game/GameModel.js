@@ -48,7 +48,7 @@ class GameModel {
         else {
             this.playable_squares = new PlayableSquareDictionary();
             config.playable_squares.forEach(square => {
-                this.playable_squares.addPlayableSquare(square.position.row, square.position.col, square.player, square.isPlayable);
+                this.playable_squares.addPlayableSquare(square.position.row, square.position.col, square.player, square.isPlayable,square.visibility);
             });
         }
         if(!config.player_array){
@@ -81,6 +81,8 @@ class GameModel {
         }
         this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
         this.wallGroup = [];
+
+        console.log(this.playable_squares);
     }
 
     initPlayers(){
@@ -114,20 +116,19 @@ class GameModel {
      init_model() {
         var nbLignes = this.nbLignes;
         var nbColonnes = this.nbColonnes;
-        console.log("j'instancie de nouveaux walls !");
         for (let i = 0; i < nbLignes; i++) {
-            for (let j = 0; j < nbColonnes; j++) {
-                this.horizontal_Walls.addWall(i, j,'H');
-            }
+            for (let j = 0; j < nbColonnes; j++) {this.horizontal_Walls.addWall(i, j,'H');}
         }
+
          for (let i = 0; i < nbLignes; i++) {
-             for (let j = 0; j < nbColonnes-1; j++) {
-                 this.vertical_Walls.addWall(i, j,'V');
-             }
+             for (let j = 0; j < nbColonnes-1; j++) {this.vertical_Walls.addWall(i, j,'V');}
          }
+
         for (let i = 0; i < nbLignes; i++) {
             for (let j = 0; j < nbColonnes; j++) {
-                this.playable_squares.addPlayableSquare(i, j, null, false);
+                if(i<4) {this.playable_squares.addPlayableSquare(i, j, null, false, parseInt("-1"));}
+                else if(i===4){this.playable_squares.addPlayableSquare(i, j, null, false, parseInt("0"));}
+                else if(i<=9){this.playable_squares.addPlayableSquare(i, j, null, false, parseInt("1"));}
             }
         }
     }
