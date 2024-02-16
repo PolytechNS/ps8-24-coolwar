@@ -82,7 +82,7 @@ class GameModel {
         this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
         this.wallGroup = [];
 
-        //COMPUTE SQUARES
+        //COMPUTE SQUARES VISIBILITY
         this.computeSquaresVisibility();
     }
 
@@ -345,6 +345,9 @@ class GameModel {
                 if(i===0){caseToEdit.visibility += -1;}
                 if(i===1){caseToEdit.visibility += 1;}
             }
+            if(i===0){ this.playable_squares.getPlayableSquare(position.row,position.col).visibility += -1;}
+            if(i===1){ this.playable_squares.getPlayableSquare(position.row,position.col).visibility += 1;}
+
         }
         this.playable_squares.playableSquares.forEach(square=>{
            console.log("SQUARE: ",square.position," | ",square.visibility);
