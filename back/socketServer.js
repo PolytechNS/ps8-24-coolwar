@@ -126,6 +126,10 @@ module.exports = (server) => {
                 console.log('Game to save gameBoardId:', gameBoardId);
 
                 //show walls from games retrieved
+                console.log('show all walls from bd when saving game :', await db.collection('walls').find({gameBoardId: gameBoardId._id}).toArray( function(err, result) {
+                    if (err) throw err;
+                    else console.log(result);
+                }));
                 // Sauvegarder l'état du jeu avec l'ID de l'utilisateur
                 await db.collection('savedGames').insertOne({
                     userId,

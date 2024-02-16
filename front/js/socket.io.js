@@ -2602,7 +2602,7 @@
   /**
    * These strings must not be used as event names, as they have a special meaning.
    */
-  var RESERVED_EVENTS$1 = ["connect", "connect_error", "disconnect", "disconnecting", "newListener", "removeListener" // used by the Node.js EventEmitter
+  var RESERVED_EVENTS$1 = ["connect", "connect_error", "disconnect", "disconnecting", "newListener", "removeListener" // used by the GraphNode.js EventEmitter
   ];
   /**
    * Protocol version.

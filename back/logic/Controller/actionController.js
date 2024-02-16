@@ -16,14 +16,27 @@ class ActionController {
     }
 
     placeWall(walls) {
+        //if (!this.checkCurrentPlayer(id)) {return null;}
+        let wallToEdit = null;
         let wallBack = null;
+
+        let wallGroupId = this.getRandomArbitrary(0,60);
+
+        while(this.model.wallGroup.includes(wallGroupId)){wallGroupId = this.getRandomArbitrary(0,60);}
+
+        if(this.model.isCuttingWallGroup(walls)){console.log("COUPAGE ENTRE MURS !");return false;}
+
         for (let i = 0; i < walls.wallList.length; i++) {
             let wall = walls.wallList[i];
             let wallInformations = wall.split("X");
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
                 if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
-                if (wallBack.isPresent === false) {wallBack.setPresent();}
+                if (wallBack.isPresent === false) {
+                    wallBack.setPresent();
+                    wallBack.setWallGroup(wallGroupId);
+                    this.model.wallGroup.push(wallGroupId);
+                }
             } else {return false;}
         }
         this.model.setNextPlayer();
@@ -41,6 +54,7 @@ class ActionController {
         }
         return false;
     }
+
 
     moveCharacter(id,row,col) {
         if (this.checkCurrentPlayer(id)) {
@@ -87,9 +101,13 @@ class ActionController {
         return [this.model.horizontal_Walls, this.model.vertical_Walls];
     }
 
+    getRandomArbitrary(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
     checkWinner(){
         return this.model.checkWinner();
     }
+
 }
 
 module.exports = { ActionController};
