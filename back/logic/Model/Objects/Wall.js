@@ -5,6 +5,7 @@ class Wall{
         this.position = new Position(row,col);
         this.isPresent = isPresent;
         this.type = type;
+        this.idPlayer = null;
     }
 
     equals(row,col,type){

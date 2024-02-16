@@ -361,7 +361,8 @@ export class GamePresenter {
                     actionGameService.getPlayerPosition(this.currentPlayer,(res)=>{
                         oldPosition = res;
                     });
-                    actionGameService.moveCharacter(this.currentPlayer, tab[0], tab[1],(res)=>{
+                    //token
+                    actionGameService.moveCharacter(this.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
                         if(res){
                             this.view.boardGrid.displayPlayer(tab[0], tab[1], this.currentPlayer);
                             //ON RETIRE L'ANCIEN STYLE

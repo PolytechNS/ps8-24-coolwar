@@ -56,13 +56,14 @@ export const actionGameService = {
             callback(res);
         });
     },
-    moveCharacter(id,row,col,callback){
+    moveCharacter(id,row,col,gameId,token,callback){
+        console.log("gameId moveCharacter : ",gameId);
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return
         }
-        let req = {id,row,col};
+        let req = {id,row,col,gameId,token};
         let reqSerialized = JSON.stringify(req);
         socketManager.socket.emit('movecharactere',reqSerialized);
 
