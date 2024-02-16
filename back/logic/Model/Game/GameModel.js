@@ -82,7 +82,8 @@ class GameModel {
         this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
         this.wallGroup = [];
 
-        console.log(this.playable_squares);
+        //COMPUTE SQUARES
+        this.computeSquaresVisibility();
     }
 
     initPlayers(){
@@ -328,6 +329,26 @@ class GameModel {
             }
         }
         return wallsNeighborhood;
+    }
+
+
+    computeSquaresVisibility(){
+        console.log("COMPUTE VISIBILITY");
+        //POSITION DES JOUEURS
+        for(let i=0;i<this.player_array.players.length;i++){
+            let position = this.player_array.players[i].position;
+            let cardinalSquares = this.playable_squares.getCardinalSquares(position.row,position.col);
+            console.log(cardinalSquares);
+            for(let j=0;j<cardinalSquares.length;j++){
+                let caseToEdit = this.playable_squares.getPlayableSquare(cardinalSquares[j][0],cardinalSquares[j][1]);
+                console.log(caseToEdit);
+                if(i===0){caseToEdit.visibility += -1;}
+                if(i===1){caseToEdit.visibility += 1;}
+            }
+        }
+        this.playable_squares.playableSquares.forEach(square=>{
+           console.log("SQUARE: ",square.position," | ",square.visibility);
+        });
     }
 }
 
