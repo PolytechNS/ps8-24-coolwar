@@ -23,8 +23,10 @@ class ActionController {
 
         let wallGroupId = this.getRandomArbitrary(0,60);
 
+        //VERIFIE QU'IL Y A TOUJOURS UN ID DE GROUPE DE MUR DISPONIBLE
         while(this.model.wallGroup.includes(wallGroupId)){wallGroupId = this.getRandomArbitrary(0,60);}
 
+        //VERIFIE QUE LES MURS NE COUPENT PAS UN GROUPE DE MURS
         if(this.model.isCuttingWallGroup(walls)){console.log("COUPAGE ENTRE MURS !");return false;}
 
         for (let i = 0; i < walls.wallList.length; i++) {
@@ -34,6 +36,7 @@ class ActionController {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
                 if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
                 if (wallBack.isPresent === false) {
+                    console.log("MUR PLACABLE !");
                     wallBack.setOwner(playerID);
                     wallBack.setPresent();
                     wallBack.setWallGroup(wallGroupId);
@@ -42,7 +45,6 @@ class ActionController {
             } else {return false;}
         }
         this.model.setNextPlayer();
-        this.model.computeSquaresVisibility();
         return true;
     }
 

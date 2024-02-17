@@ -1,12 +1,12 @@
 const {Position} = require("./Position.js");
 
 class Wall{
-    constructor(row,col,isPresent,type) {
+    constructor(row,col,isPresent,type,owner,wallGroup) {
         this.position = new Position(row,col);
         this.isPresent = isPresent;
         this.type = type;
-        this.idPlayer = null;
-        this.wallGroup = null;
+        this.idPlayer = owner;
+        this.wallGroup = wallGroup;
     }
 
     setWallGroup(wallGroup){this.wallGroup = wallGroup;}
@@ -18,7 +18,11 @@ class Wall{
     setPresent(){this.isPresent = true;}
 
     setOwner(playerId){
-        if(this.idPlayer===null){this.idPlayer = playerId;}
+        this.idPlayer = playerId;
+    }
+
+    toString(){
+        return "WALL : "+this.position.toString()+" - "+this.isPresent+" - "+this.type+" - "+this.idPlayer+" - "+this.wallGroup;
     }
 }
 

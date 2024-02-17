@@ -122,14 +122,6 @@ const getWallNeighborhood_Invert = (wall) => {
     }
     return wallToReturn;
 }
-const getCaseFromCoordinates = (row, col) => {
-    let toSend = null;
-    document.querySelectorAll('.playable_square').forEach((playable_case)=>{
-        let coordinates = Utils.prototype.getCoordinatesFromID(playable_case.id);
-        if(parseInt(coordinates[0])===parseInt(row) && parseInt(coordinates[1])===parseInt(col)){toSend=playable_case;}
-    });
-    return toSend;
-};
 
 export class GamePresenter {
     constructor(model, view) {
@@ -293,7 +285,6 @@ export class GamePresenter {
                 wallListObj.push(neighborhood);
             }
 
-            console.log(this.model);
             const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq};
             //CALL BD -
             actionGameService.placeWall(dataToSend, (isAuthorized)=>{
@@ -303,8 +294,9 @@ export class GamePresenter {
                         let replaceOBJ = wallToEdit.cloneNode(true);
                         wallToEdit.replaceWith(replaceOBJ);
                     });
+                    this.updatePage();
                 }
-                this.updatePage();
+
             });
         }
 
@@ -317,7 +309,7 @@ export class GamePresenter {
         });
     }
     updatePage() {
-        console.log("UPDATE AFTER MOVE  !!");
+        console.log("UPDATE AFTER ACTION  !!");
         let informationsData = [this.model.currentPlayer,this.model.gameId];
         actionGameService.updateGameModel(informationsData,(newModel)=>{
             this.model = JSON.parse(newModel);
@@ -327,12 +319,14 @@ export class GamePresenter {
         });
     }
     updateInformations(){
+        console.log("-----UPDATE INFORMATIONS-----");
         let playable_case_HTML = document.querySelectorAll('.playable_square');
         playable_case_HTML.forEach(playable_case => {
             let position = playable_case.id.split('X');
             for(let i=0;i<this.model.playable_squares.length;i++){
                 let backSquare = this.model.playable_squares[i];
                 if(parseInt(backSquare.position.row)===parseInt(position[0]) && parseInt(backSquare.position.col)===parseInt(position[1])) {
+                    console.log("VISIBILITY FOR :",backSquare.position, "-->",backSquare.visibility);
                     playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
                     playable_case.style.color = "white";
                 }
@@ -349,7 +343,6 @@ export class GamePresenter {
 
     init_playable_case(playable_case_HTML) {
         playable_case_HTML.forEach(playable_case => {
-
             const clickHandler = () => {
                 //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);

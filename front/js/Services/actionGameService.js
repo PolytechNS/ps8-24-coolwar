@@ -48,11 +48,12 @@ export const actionGameService = {
         }
 
         let reqSerialized = JSON.stringify(datas);
-        console.log("reqSerialized",reqSerialized);
+        console.log("reqSerialized FOR PLACEWALL : ",reqSerialized);
         socketManager.socket.emit('placewall',reqSerialized);
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('placewallResponse', (res) => {
+            console.log("PLACE WALL REPSONSE --> ",res);
             callback(res);
         });
     },
@@ -142,7 +143,8 @@ export const actionGameService = {
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('updateGameModelResponse', (response) => {
-          callback(response);
+            console.log("NEW MODEL RECEIVED : ",response);
+            callback(response);
         });
     },
 };

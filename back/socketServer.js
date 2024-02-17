@@ -85,7 +85,6 @@ module.exports = (server) => {
                     gameBoardId: gameBoardId
                 })));
 
-
                 // Envoyer l'état initial du jeu au client
                 socket.emit('game model', JSON.stringify({
                     gameId: gameId, // ID de la partie
@@ -260,6 +259,9 @@ module.exports = (server) => {
                 let playerID = gameModelGlobal.currentPlayer;
 
                 let actionController = new ActionController(gameModelGlobal);
+
+                console.log("WALLLIST BEFORE PLACEWALL : ",gameModelGlobal.horizontal_Walls.wallList);
+                console.log("-------------------");
                 let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
 
                 await client.connect();
@@ -284,10 +286,29 @@ module.exports = (server) => {
                     });
 
                     if (wall) {
-                        // Met à jour le mur pour définir isPresent à true
-                        await db.collection('walls').updateOne({_id: wall._id}, {$set: {isPresent: true, visibility: wall.visibility}});
-                        const wallUpdated = await db.collection('walls').findOne({_id: wall._id});
+                        let wallToCopy = null;
+                        //CHERCHER LES VALEURS A UPDATE
+                        if(type === 'H'){
+                            for(let j=0;j<gameModelGlobal.horizontal_Walls.wallList.length;j++){
+                                let wall = gameModelGlobal.horizontal_Walls.wallList[j];
+                                if(wall.position.row === row && wall.position.col === col){
+                                    wallToCopy = wall;break;
+                                }
+                            }
+                        }
+                        else if(type === 'V'){
+                            for(let j=0;j<gameModelGlobal.vertical_Walls.wallList.length;j++){
+                                let wall = gameModelGlobal.vertical_Walls.wallList[j];
+                                if(wall.position.row === row && wall.position.col === col){
+                                    wallToCopy = wall;break;
+                                }
+                            }
+                        }
 
+
+                        // Met à jour le mur pour définir isPresent à true
+                        await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
+                        const wallUpdated = await db.collection('walls').findOne({_id: new ObjectId(wall._id)});
 
                         let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
                         for (let square of squareGameModel) {
@@ -302,15 +323,10 @@ module.exports = (server) => {
 
                 }
 
-              /*  console.log('show all walls from bd when placing walls :', await db.collection('walls').find({}).toArray( function(err, result) {
-                    if (err) throw err;
-                    else console.log(result);
-                }));*/
-
                 // Envoyer la réponse au client
-                await db.collection('gameboards').updateOne({ _id: gameBoardIdDb._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
-                const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: gameBoardIdDb._id });
-                console.log('Current player db  updated', gameBoardUpdated.currentPlayer);
+                await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoardIdDb._id) }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
+                const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: new ObjectId(gameBoardIdDb._id) });
+                console.log('Current player db updated', gameBoardUpdated.currentPlayer);
                 socket.emit('placewallResponse', responseBoolean);
             }
             catch (error) {
@@ -361,14 +377,13 @@ module.exports = (server) => {
 
         socket.on('updateGameModel', async ( data ) => {
             let datas = JSON.parse(data);
-            let playerId = datas[0];
             let gameId = datas[1];
             console.log("GAME ID FOR UPDATE GAME MODEL :",gameId);
             try {
                 await client.connect();
                 const db = client.db();
                 let game = await db.collection('games').findOne({ _id: new ObjectId(gameId) });
-                console.log("GAME FOUND ?: " + game);
+                console.log("GAME FOUND ?: " + game._id);
 
                 if (game) {
                     const gameBoardSaved = await db.collection('gameboards').findOne({ gameId: game._id });
@@ -396,7 +411,7 @@ module.exports = (server) => {
 
                     socket.emit('updateGameModelResponse', JSON.stringify({
                         gameId: gameBoardSaved.gameId, // ID de la partie
-                        gameBoardId: gameBoardSaved.gameBoardId, // ID du plateau de jeu
+                        gameBoardId: gameBoardSaved._id, // ID du plateau de jeu
                         nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
                         nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
                         player_array: gameModelGlobal.player_array.getAllPlayers(),

@@ -6,13 +6,8 @@ class WallDictionary{
         this.wallList = [];
     }
 
-    addWall(row,col,type){
-        //TODO: VERIFIER SI L'INDEX EXISTE DEJA
-        this.wallList.push(new Wall(row,col,false,type));
-    }
-
-    addWallWithType(row,col,type,isPresent){
-        this.wallList.push(new Wall(row,col,isPresent,type));
+    addWall(row,col,type,isPresent,owner,wallGroup){
+        this.wallList.push(new Wall(row,col,isPresent,type,owner,wallGroup));
     }
 
     getAllWalls(){
