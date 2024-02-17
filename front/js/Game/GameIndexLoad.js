@@ -24,9 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     const model = JSON.parse(serializedGameModel); // Assurez-vous que ce modèle est correctement formaté
                     const view = new GameView(model);
                     const presenter = new GamePresenter(model, view);
-                    console.log("MODELLL:");
-
-                    console.log(model);
                     console.log("Game initialized with game model");
                 });
             }

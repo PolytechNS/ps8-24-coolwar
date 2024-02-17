@@ -1,7 +1,24 @@
 class GamePlayer {
-    constructor(name,position) {
+    constructor(name,position,remainingWalls) {
+        console.log("REMAINING WALL IN CONSTRUCTOR : "+remainingWalls);
         this.name=name;
+        this.nbWalls = remainingWalls;
         this.position = position;
+    }
+    getRemainingWalls(){
+        return this.nbWalls;
+    }
+    setWalls(nbWalls){
+        this.nbWalls = nbWalls;
+    }
+
+    minusWall(){
+        console.log("MINUS WALL : "+this.nbWalls);
+        if(this.nbWalls>0){
+            this.nbWalls--;
+        }else{
+            console.log("Le joueur "+this.name+" a plus de walls : "+parseInt(this.nbWalls));
+        }
     }
 }
 

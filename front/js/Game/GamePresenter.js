@@ -326,7 +326,6 @@ export class GamePresenter {
             for(let i=0;i<this.model.playable_squares.length;i++){
                 let backSquare = this.model.playable_squares[i];
                 if(parseInt(backSquare.position.row)===parseInt(position[0]) && parseInt(backSquare.position.col)===parseInt(position[1])) {
-                    console.log("VISIBILITY FOR :",backSquare.position, "-->",backSquare.visibility);
                     playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
                     playable_case.style.color = "white";
                 }

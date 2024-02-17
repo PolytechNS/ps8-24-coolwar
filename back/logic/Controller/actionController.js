@@ -17,7 +17,7 @@ class ActionController {
 
     placeWall(walls,playerID) {
         console.log("WHO PLAY ?",playerID);
-        //if (!this.checkCurrentPlayer(id)) {return null;}
+        if (!this.checkCurrentPlayer(playerID)) {return false;}
         let wallToEdit = null;
         let wallBack = null;
 
@@ -28,6 +28,8 @@ class ActionController {
 
         //VERIFIE QUE LES MURS NE COUPENT PAS UN GROUPE DE MURS
         if(this.model.isCuttingWallGroup(walls)){console.log("COUPAGE ENTRE MURS !");return false;}
+        console.log("REMAINING WALL",this.model.player_array.getPlayer(playerID).getRemainingWalls());
+        if(this.model.player_array.getPlayer(playerID).getRemainingWalls()<=0){console.log("PAS DE MURS DISPONIBLES !");return false;}
 
         for (let i = 0; i < walls.wallList.length; i++) {
             let wall = walls.wallList[i];
@@ -37,13 +39,14 @@ class ActionController {
                 if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
                 if (wallBack.isPresent === false) {
                     console.log("MUR PLACABLE !");
-                    wallBack.setOwner(playerID);
+                    wallBack.setOwner(this.model.currentPlayer);
                     wallBack.setPresent();
                     wallBack.setWallGroup(wallGroupId);
                     this.model.wallGroup.push(wallGroupId);
                 }
             } else {return false;}
         }
+        this.model.player_array.getPlayer(this.model.currentPlayer).minusWall();
         this.model.setNextPlayer();
         return true;
     }

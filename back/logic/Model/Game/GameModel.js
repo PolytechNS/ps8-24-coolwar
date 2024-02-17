@@ -13,6 +13,7 @@ class GameModel {
     CREATION DES JOUEURS ET NOTION DE TOUR ✅
     */
     constructor(config = {}) {
+        console.log("CONFIG INIT PLAYER ARRAY : "+config.player_array);
         this.idGame = uuidv4();
         this.nbLignes = 9;
         this.nbColonnes = 9;
@@ -41,7 +42,6 @@ class GameModel {
         if(!config.playable_squares){
             this.playable_squares = new PlayableSquareDictionary();
             this.init_model();
-
         }
         else {
             this.playable_squares = new PlayableSquareDictionary();
@@ -53,11 +53,10 @@ class GameModel {
             this.player_array = new PlayerManager();
             this.initPlayers();
         }else {
-            this.player_array = config.player_array;
+            console.log("CONFIG PLAYER ARRAY : "+config.player_array[0].nbWalls);
             this.player_array = new PlayerManager();
             this.player_array.createPlayFromArray(config.player_array);
         }
-
         if(!config.currentPlayer){
             this.currentPlayer = 1;
         }
@@ -72,7 +71,6 @@ class GameModel {
         }
         if(!config.winner){
             this.winner = -1;
-
         }
         else{
             this.winner = config.winner;
@@ -88,12 +86,12 @@ class GameModel {
         let index1 = this.generateRandom(0,this.nbColonnes);
         let index2 = this.generateRandom(0,this.nbColonnes);
         if(this.generateRandom(0,1)===0){
-            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index1)));
-            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index2)));
+            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index1),10));
+            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index2),10));
         }
         else{
-            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index2)));
-            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1)));
+            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index2),10));
+            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1),10));
         }
     }
 
@@ -322,7 +320,6 @@ class GameModel {
                 wallsNeighborhood.downRight = this.getWallByCoordinates('H', wall.position.row, wall.position.col + 1);
             }
         }
-        console.log(wallsNeighborhood);
         return wallsNeighborhood;
     }
 
@@ -367,7 +364,7 @@ class GameModel {
             }
         }
         if(wall.type==='V'){
-            if(wall.position.col === 0){
+            if(parseInt(wall.position.col) === 0){
                 //LEFT
                 playableSquare.push(this.playable_squares.getPlayableSquare(wall.position.row,wall.position.col));
                 //RIGHT
@@ -377,7 +374,7 @@ class GameModel {
                 //RIGHT RIGHT
                 playableSquare.push(this.playable_squares.getPlayableSquare(wall.position.row,wall.position.col+2));
             }
-            if(wall.position.col === 7){
+            else if(parseInt(wall.position.col) === 7){
                 //LEFT
                 playableSquare.push(this.playable_squares.getPlayableSquare(wall.position.row,wall.position.col));
                 //RIGHT
@@ -398,7 +395,6 @@ class GameModel {
                 playableSquare.push(this.playable_squares.getPlayableSquare(wall.position.row,wall.position.col+2));
             }
         }
-        console.log(playableSquare);
         return playableSquare;
     }
 
@@ -413,7 +409,7 @@ class GameModel {
     }
 
     computeSquaresVisibility(){
-        console.log("-----COMPUTE VISIBILITY-----");
+        //console.log("-----COMPUTE VISIBILITY-----");
 
         for(let i=0;i<this.player_array.players.length;i++){
             let position = this.player_array.players[i].position;
@@ -430,7 +426,7 @@ class GameModel {
         }
 
         for(let i=0;i<this.horizontal_Walls.wallList.length;i++){
-            console.log("COMPUTE HORIZONTAL WALLS");
+            //console.log("COMPUTE HORIZONTAL WALLS");
             let wall = this.horizontal_Walls.wallList[i];
             if(wall.isPresent){
                 let neighborhood = this.getPlayableSquareNeighborhoodFromWall(wall);
@@ -452,7 +448,7 @@ class GameModel {
             }
         }
         for(let i=0;i<this.vertical_Walls.wallList.length;i++){
-            console.log("COMPUTE VERTICAL WALLS");
+            //console.log("COMPUTE VERTICAL WALLS");
             let wall = this.vertical_Walls.wallList[i];
             if(wall.isPresent){
                 let neighborhood = this.getPlayableSquareNeighborhoodFromWall(wall);

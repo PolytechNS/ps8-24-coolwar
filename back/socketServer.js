@@ -85,6 +85,9 @@ module.exports = (server) => {
                     gameBoardId: gameBoardId
                 })));
 
+                console.log("GAME MODEL GLOBAL PLAYER ARRAY: ",gameModelGlobal.player_array);
+
+
                 // Envoyer l'état initial du jeu au client
                 socket.emit('game model', JSON.stringify({
                     gameId: gameId, // ID de la partie
@@ -98,7 +101,6 @@ module.exports = (server) => {
                     currentPlayer: gameModelGlobal.currentPlayer,
                     roundCounter: gameModelGlobal.roundCounter,
                     winner : gameModelGlobal.winner
-
                 }));
             } catch (error) {
                 console.error('Error creating game model', error);
@@ -257,76 +259,82 @@ module.exports = (server) => {
             try {
                 let wallDataDeserialized = JSON.parse(datas);
                 let playerID = gameModelGlobal.currentPlayer;
-
-                let actionController = new ActionController(gameModelGlobal);
-
-                console.log("WALLLIST BEFORE PLACEWALL : ",gameModelGlobal.horizontal_Walls.wallList);
-                console.log("-------------------");
-                let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
-
+                //get player from bd
                 await client.connect();
                 const db = client.db();
-                const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
-                console.log('Game ID from DB:', gameIdDb);
-                const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
-                // Boucle sur chaque élément de wallList pour traiter et mettre à jour les murs
-                for (let wallString of wallDataDeserialized.wallList) {
-                    // Extrait la ligne, la colonne et le type à partir de la chaîne de caractères
-                    let [row, col, type] = wallString.split('X');
-                    // Convertit les valeurs de la ligne et de la colonne en nombres
-                    row = parseInt(row, 10);
-                    col = parseInt(col, 10);
+                const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
+                let actionController = new ActionController(gameModelGlobal);
+                console.log("player bddddddd : " + playerBd);
+                //console.log("WALLLIST BEFORE PLACEWALL : ",gameModelGlobal.horizontal_Walls.wallList);
+                console.log("-------------------");
 
-                    // Recherche le mur correspondant dans la base de données
-                    const wall = await db.collection('walls').findOne({
-                        "position.row": row,
-                        "position.col": col,
-                        "gameBoardId": gameBoardIdDb._id,
-                        type: type
-                    });
+                let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
+                if(responseBoolean){
+                    let nbWalls = playerBd.nbWalls - 1;
+                    console.log("NBWALLS BEFORE NEXT PLAYER : ",nbWalls);
+                    db.collection('character').updateOne({ _id: new ObjectId(playerBd._id) }, { $set: { nbWalls : nbWalls } });
 
-                    if (wall) {
-                        let wallToCopy = null;
-                        //CHERCHER LES VALEURS A UPDATE
-                        if(type === 'H'){
-                            for(let j=0;j<gameModelGlobal.horizontal_Walls.wallList.length;j++){
-                                let wall = gameModelGlobal.horizontal_Walls.wallList[j];
-                                if(wall.position.row === row && wall.position.col === col){
-                                    wallToCopy = wall;break;
+                    console.log("GAME MODEL GLOBAL PLAYER ARRAY: ",gameModelGlobal.player_array);
+
+                    const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
+                    console.log('Game ID from DB:', gameIdDb);
+                    const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+                    // Boucle sur chaque élément de wallList pour traiter et mettre à jour les murs
+                    for (let wallString of wallDataDeserialized.wallList) {
+                        // Extrait la ligne, la colonne et le type à partir de la chaîne de caractères
+                        let [row, col, type] = wallString.split('X');
+                        // Convertit les valeurs de la ligne et de la colonne en nombres
+                        row = parseInt(row, 10);
+                        col = parseInt(col, 10);
+
+                        // Recherche le mur correspondant dans la base de données
+                        const wall = await db.collection('walls').findOne({
+                            "position.row": row,
+                            "position.col": col,
+                            "gameBoardId": gameBoardIdDb._id,
+                            type: type
+                        });
+
+                        if (wall) {
+                            let wallToCopy = null;
+                            //CHERCHER LES VALEURS A UPDATE
+                            if(type === 'H'){
+                                for(let j=0;j<gameModelGlobal.horizontal_Walls.wallList.length;j++){
+                                    let wall = gameModelGlobal.horizontal_Walls.wallList[j];
+                                    if(wall.position.row === row && wall.position.col === col){
+                                        wallToCopy = wall;break;
+                                    }
                                 }
                             }
-                        }
-                        else if(type === 'V'){
-                            for(let j=0;j<gameModelGlobal.vertical_Walls.wallList.length;j++){
-                                let wall = gameModelGlobal.vertical_Walls.wallList[j];
-                                if(wall.position.row === row && wall.position.col === col){
-                                    wallToCopy = wall;break;
+                            else if(type === 'V'){
+                                for(let j=0;j<gameModelGlobal.vertical_Walls.wallList.length;j++){
+                                    let wall = gameModelGlobal.vertical_Walls.wallList[j];
+                                    if(wall.position.row === row && wall.position.col === col){
+                                        wallToCopy = wall;break;
+                                    }
                                 }
                             }
+
+                            // Met à jour le mur pour définir isPresent à true
+                            await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
+                            const wallUpdated = await db.collection('walls').findOne({_id: new ObjectId(wall._id)});
+
+                            let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
+                            for (let square of squareGameModel) {
+                                //update db
+                                await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
+                            }
                         }
-
-
-                        // Met à jour le mur pour définir isPresent à true
-                        await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
-                        const wallUpdated = await db.collection('walls').findOne({_id: new ObjectId(wall._id)});
-
-                        let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
-                        for (let square of squareGameModel) {
-                            //update db
-                            await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
+                        else {
+                            console.log("Wall not found or already present");
                         }
-
-                    } else {
-                        console.log("Wall not found or already present");
                     }
-
-
+                    await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoardIdDb._id) }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
+                    const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: new ObjectId(gameBoardIdDb._id) });
+                    console.log('Current player db updated', gameBoardUpdated.currentPlayer);
                 }
-
                 // Envoyer la réponse au client
-                await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoardIdDb._id) }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
-                const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: new ObjectId(gameBoardIdDb._id) });
-                console.log('Current player db updated', gameBoardUpdated.currentPlayer);
+
                 socket.emit('placewallResponse', responseBoolean);
             }
             catch (error) {
@@ -392,6 +400,7 @@ module.exports = (server) => {
                     const wallsVertical = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'V'}).toArray();
                     const playableSquares = await db.collection('squares').find({gameBoardId: gameBoardSaved._id}).toArray();
                     const players_array = await db.collection('character').find({gameBoardId: gameBoardSaved._id}).toArray();
+                    console.log("PLAYER ARRAY ON UPDATE",players_array);
                     const config = {
                         horizontal_Walls: wallsHorizontal,
                         vertical_Walls: wallsVertical,
