@@ -15,7 +15,8 @@ class ActionController {
         }
     }
 
-    placeWall(walls) {
+    placeWall(walls,playerID) {
+        console.log("WHO PLAY ?",playerID);
         //if (!this.checkCurrentPlayer(id)) {return null;}
         let wallToEdit = null;
         let wallBack = null;
@@ -33,6 +34,7 @@ class ActionController {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
                 if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
                 if (wallBack.isPresent === false) {
+                    wallBack.setOwner(playerID);
                     wallBack.setPresent();
                     wallBack.setWallGroup(wallGroupId);
                     this.model.wallGroup.push(wallGroupId);
@@ -40,6 +42,7 @@ class ActionController {
             } else {return false;}
         }
         this.model.setNextPlayer();
+        this.model.computeSquaresVisibility();
         return true;
     }
 
@@ -62,31 +65,16 @@ class ActionController {
             let player_position = this.model.player_array.getPlayerPosition(id);
             if(this.characterCanBeMoved(row,col,player_position)){
                 console.log("JOUEUR DEPLACABLE !");
+                this.model.resetSquaresVisibility();
                 //TODO : VERIFIER SI MOUVEMENT POSSIBLE (pas de sauts)
                 let playerToMove = this.model.player_array.getPlayer(id);
                 playerToMove.position = new Position(row,col);
                 this.model.setNextPlayer();
                 return true;
             }
-            else{
-                console.log("JOUEUR NON DEPLACABLE !");
-            }
+            else{console.log("JOUEUR NON DEPLACABLE !");}
         }
         return false;
-    }
-
-    isPresentWall(wall) {
-        let coordinates = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id);
-
-        if (wall.children.item(0).classList.contains("horizontal_wall")) {
-            return this.model.horizontal_Walls.getWall(parseInt(coordinates[0]), parseInt(coordinates[1])).isPresent;
-        }
-        if (wall.children.item(0).classList.contains("vertical_wall")) {
-            return this.model.vertical_Walls.getWall(parseInt(coordinates[0]), parseInt(coordinates[1])).isPresent;
-        } else {
-            console.log("AUCUN MUR TROUVE A CETTE POSITION !\n [" + coordinates[0] + "|" + coordinates[1] + "]");
-            return null;
-        }
     }
 
 

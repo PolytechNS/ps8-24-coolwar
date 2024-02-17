@@ -16,6 +16,10 @@ class Wall{
     }
 
     setPresent(){this.isPresent = true;}
+
+    setOwner(playerId){
+        if(this.idPlayer===null){this.idPlayer = playerId;}
+    }
 }
 
 module.exports = { Wall };

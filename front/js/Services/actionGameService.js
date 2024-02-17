@@ -40,14 +40,14 @@ export const actionGameService = {
             callback(gameModel);
         });
     },
-    placeWall(wallList,callback){
+    placeWall(datas,callback){
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return
         }
 
-        let reqSerialized = JSON.stringify(wallList);
+        let reqSerialized = JSON.stringify(datas);
         console.log("reqSerialized",reqSerialized);
         socketManager.socket.emit('placewall',reqSerialized);
 
@@ -63,6 +63,8 @@ export const actionGameService = {
             console.error('Socket not initialized or not connected.');
             return
         }
+
+        console.log("CURR PLAYER FOR MOVECHARACTER : ",id);
         let req = {id,row,col,gameId,token};
         let reqSerialized = JSON.stringify(req);
         socketManager.socket.emit('movecharactere',reqSerialized);
@@ -126,25 +128,21 @@ export const actionGameService = {
         });
     },
 
-    updateGameModel: function(informationsData) {
+    updateGameModel: function(informationsData,callback) {
         console.log("UPDATE GAME MODEL");
+        console.log(informationsData);
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return;
         }
-        // Supposons que gameState contient déjà l'ID du jeu 'gameId' et l'état à sauvegarder
-        const dataToParse = { gameId: informationsData[1], playerId: informationsData[0] };
-        //Stringify data to save
-        const dataToSend = JSON.stringify(dataToParse);
-        console.log("data Sent : ",dataToSend);
 
         // Envoyer la demande de sauvegarde au serveur
-        socketManager.socket.emit('updateGameModel', dataToSend);
+        socketManager.socket.emit('updateGameModel', JSON.stringify(informationsData));
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('updateGameModelResponse', (response) => {
-          console.log(response);
+          callback(response);
         });
     },
 };

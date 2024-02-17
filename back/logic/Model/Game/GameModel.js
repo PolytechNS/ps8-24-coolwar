@@ -27,7 +27,7 @@ class GameModel {
 
             this.horizontal_Walls = new WallDictionary();
             config.horizontal_Walls.forEach(wall => {
-                console.log("WALL : "+wall.position.row+"|"+wall.position.col+"|"+wall.type+"|"+wall.isPresent);
+                //console.log("WALL : "+wall.position.row+"|"+wall.position.col+"|"+wall.type+"|"+wall.isPresent);
                 this.horizontal_Walls.addWallWithType(wall.position.row, wall.position.col, wall.type, wall.isPresent);
             });
         }
@@ -36,7 +36,6 @@ class GameModel {
         }else {
             this.vertical_Walls = new WallDictionary();
             config.vertical_Walls.forEach(wall => {
-
                 this.vertical_Walls.addWallWithType(wall.position.row, wall.position.col, wall.type, wall.isPresent);
             });
         }
@@ -83,6 +82,7 @@ class GameModel {
         this.wallGroup = [];
 
         //COMPUTE SQUARES VISIBILITY
+        this.resetSquaresVisibility();
         this.computeSquaresVisibility();
     }
 
@@ -117,7 +117,7 @@ class GameModel {
      init_model() {
         var nbLignes = this.nbLignes;
         var nbColonnes = this.nbColonnes;
-        for (let i = 0; i < nbLignes; i++) {
+        for (let i = 0; i < nbLignes-1; i++) {
             for (let j = 0; j < nbColonnes; j++) {this.horizontal_Walls.addWall(i, j,'H');}
         }
 
@@ -175,8 +175,6 @@ class GameModel {
             return position[0] >= 0 && position[1] >= 0 && position[0]<9 && position[1]<9;
         });
 
-        console.log("CASES VOISINES DE :"+row+"|"+col+" => "+availableMovesPosition);
-
         for(let i=0;i<availableMovesPosition.length;i++){
             let position = availableMovesPosition[i];
             if(position[0]===parseInt(row) && position[1]===parseInt(col)){return true;}
@@ -191,25 +189,25 @@ class GameModel {
         let wallToAnalys=null;
         //LA CASE EST AU-DESSUS DU PERSONNAGE
         if(rowDiff<0){
-            console.log("CASE AU DESSUS");
+            //console.log("CASE AU DESSUS");
             wallToAnalys = this.horizontal_Walls.getWall(row,col,'H');
         }
         //LA CASE EST EN-DESSOUS DU PERSONNAGE
         else if(rowDiff>0){
-            console.log("CASE DU DESSOUS !");
+            //console.log("CASE DU DESSOUS !");
             wallToAnalys = this.horizontal_Walls.getWall(player_position.row,player_position.col,'H');
         }
         //LA CASE EST A GAUCHE
         if(colDiff<0){
-            console.log("CASE A GAUCHE");
+            //console.log("CASE A GAUCHE");
             wallToAnalys = this.vertical_Walls.getWall(row,col,'V');
         }
         //LA CASE EST A DROITE
         else if(colDiff>0){
-            console.log("CASE A DROITE");
+            //console.log("CASE A DROITE");
             wallToAnalys = this.vertical_Walls.getWall(player_position.row,player_position.col,'V');
         }
-        console.log("WALL FIND : "+wallToAnalys.position.row+"|"+wallToAnalys.position.col+"|"+wallToAnalys.isPresent);
+        //console.log("WALL FIND : "+wallToAnalys.position.row+"|"+wallToAnalys.position.col+"|"+wallToAnalys.isPresent);
         return wallToAnalys.isPresent;
     }
 
@@ -220,10 +218,6 @@ class GameModel {
 
             let p1 = this.player_array.getPlayerPosition(1);
             let p2 = this.player_array.getPlayerPosition(2);
-
-            console.log(p1.row);
-            console.log(p2.row);
-
             //APRES LE DERNIER COUP DE B
             if(this.lastChance>0){
                 //SI B N'A PAS REUSSI A AVANCER
@@ -332,26 +326,88 @@ class GameModel {
     }
 
 
+    /*
+     [UP/DOWN], [UP-UP/DOWN-DOWN]
+     [LEFT/RIGHT], [LEFT-LEFT/RIGHT-RIGHT]
+     */
+    getPlayableSquareNeighborhoodFromWall(wall){
+
+        let node = this.graph.getNodeFromCoordinates(wall.position.row,wall.position.col);
+        let datasToReturn = [];
+
+        //SI MUR HORIZONTAL SUR LA LIGNE 0
+        if(wall.type==='H' && wall.position.row === 0){datasToReturn = [[node.position,node.downLink.destinationNode.position],[null,node.downLink.destinationNode.downLink.destinationNode.position]];}
+        //SI MUR HORIZONTAL SUR LA LIGNE 8
+        else if(wall.type==='H' && wall.position.row === 7){datasToReturn = [[node.position,node.downLink.destinationNode.position],[node.upLink.destinationNode.position,null]];}
+
+        //SI MUR VERTICAL SUR LA COLONNE 0
+        else if(wall.type==='V' && wall.position.col === 0){datasToReturn = [[node.position,node.rightLink.destinationNode.position],[null, node.rightLink.destinationNode.rightLink.destinationNode.position]];}
+        //SI MUR VERTICAL SUR LA COLONNE 7
+        else if(wall.type==='V' && wall.position.col === 7){datasToReturn = [[node.position,node.rightLink.destinationNode.position], [node.leftLink.destinationNode.position,null]];}
+        else{
+            //ON RETOURNE LES DEUX CASES VOISINES
+            if(wall.type==='H'){datasToReturn = [[node.position,node.downLink.destinationNode.position],[node.upLink.destinationNode.position, node.downLink.destinationNode.downLink.destinationNode.position]];}
+            if(wall.type==='V'){datasToReturn = [[node.position,node.rightLink.destinationNode.position],[node.leftLink.destinationNode.position, node.rightLink.destinationNode.rightLink.destinationNode.position]];
+            }
+        }
+        return datasToReturn;
+    }
+
+    resetSquaresVisibility(){
+        console.log("-----RESET SQUARES VISIBILITY-----");
+        for(let i=0;i<this.playable_squares.playableSquares.length;i++){
+            let currCase = this.playable_squares.playableSquares[i];
+            if(currCase.position.row<4) {currCase.visibility=parseInt("-1")}
+            else if(currCase.position.row===4){currCase.visibility=parseInt("0");}
+            else if(currCase.position.row<=9){currCase.visibility=parseInt("1")}
+        }
+    }
+
     computeSquaresVisibility(){
-        console.log("COMPUTE VISIBILITY");
+        console.log("-----COMPUTE VISIBILITY-----");
         //POSITION DES JOUEURS
+        let player  = this.player_array.getPlayer(this.currentPlayer);
+        console.log("PLAYER TO COMPUTE VISIBILTY",player);
+
         for(let i=0;i<this.player_array.players.length;i++){
             let position = this.player_array.players[i].position;
             let cardinalSquares = this.playable_squares.getCardinalSquares(position.row,position.col);
             console.log(cardinalSquares);
             for(let j=0;j<cardinalSquares.length;j++){
                 let caseToEdit = this.playable_squares.getPlayableSquare(cardinalSquares[j][0],cardinalSquares[j][1]);
-                console.log(caseToEdit);
+                //console.log(caseToEdit);
                 if(i===0){caseToEdit.visibility += -1;}
                 if(i===1){caseToEdit.visibility += 1;}
             }
             if(i===0){ this.playable_squares.getPlayableSquare(position.row,position.col).visibility += -1;}
             if(i===1){ this.playable_squares.getPlayableSquare(position.row,position.col).visibility += 1;}
+        }
+
+        for(let i=0;i<this.horizontal_Walls.wallList.length;i++){
+            let wall = this.horizontal_Walls.wallList[i];
+            let neighborhood = this.getPlayableSquareNeighborhoodFromWall(wall);
+
+            for(let j=0;j<neighborhood.length;j++){
+                // [PREMIER INDEX][DEUXIEME INDEX]
+                for(let k=0;k<neighborhood[j].length;k++){
+                    if(neighborhood[j][k]===null){continue;}
+                    // [P1,P2]
+                    let caseToEdit = this.playable_squares.getPlayableSquare(neighborhood[j][k].row,neighborhood[j][k].col);
+                    if(caseToEdit!==null){
+                        // J === 0 -> COLLEE AU MUR
+                        if(j===0){
+                            if(wall.idPlayer===0){caseToEdit.visibility += -2;}
+                            if(wall.idPlayer===1){caseToEdit.visibility += 2;}
+                        }
+                        if(j===1){
+                            if(wall.idPlayer===0){caseToEdit.visibility += -1;}
+                            if(wall.idPlayer===1){caseToEdit.visibility += 1;}
+                        }
+                    }
+                }
+            }
 
         }
-        this.playable_squares.playableSquares.forEach(square=>{
-           console.log("SQUARE: ",square.position," | ",square.visibility);
-        });
     }
 }
 

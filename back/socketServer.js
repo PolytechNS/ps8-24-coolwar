@@ -224,14 +224,14 @@ module.exports = (server) => {
                 const currentPlayer = gameBoard.currentPlayer;
                 let playerCharacter = await db.collection('character').findOne({ gameBoardId: gameBoard._id, currentPlayerIndex: currentPlayer });
 
-                console.log('Current turn', gameBoard.currentPlayer+ " "+ playerCharacter.name);
-                console.log("current position", playerCharacter.position.row + " " + playerCharacter.position.col);
+                //console.log('Current turn', gameBoard.currentPlayer+ " "+ playerCharacter.name);
+                //console.log("current position", playerCharacter.position.row + " " + playerCharacter.position.col);
                 //find square where is the player
                 let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
 
                 for (let square of squareGameModel) {
-                    console.log("square position", square.position.row + " " + square.position.col);
-                    console.log("player position", playerCharacter.position.row + " " + playerCharacter.position.col);
+                    //console.log("square position", square.position.row + " " + square.position.col);
+                    //console.log("player position", playerCharacter.position.row + " " + playerCharacter.position.col);
                     if(parseInt(square.position.row) === parseInt(playerCharacter.position.row) && parseInt(square.position.col) === parseInt(playerCharacter.position.col)){
                         console.log("user found");
                         //update db
@@ -244,9 +244,6 @@ module.exports = (server) => {
                 const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: gameBoard._id });
                 console.log('Current player db  updated', gameBoardUpdated.currentPlayer);
 
-
-
-
                 socket.emit('movecharactereresponse',responseBoolean);
 
             }
@@ -257,12 +254,13 @@ module.exports = (server) => {
 
         });
 
-        socket.on('placewall', async (wallData) => {
+        socket.on('placewall', async (datas) => {
             try {
-                let wallDataDeserialized = JSON.parse(wallData);
+                let wallDataDeserialized = JSON.parse(datas);
+                let playerID = gameModelGlobal.currentPlayer;
 
                 let actionController = new ActionController(gameModelGlobal);
-                let responseBoolean = actionController.placeWall(wallDataDeserialized);
+                let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
 
                 await client.connect();
                 const db = client.db();
@@ -287,11 +285,21 @@ module.exports = (server) => {
 
                     if (wall) {
                         // Met à jour le mur pour définir isPresent à true
-                        await db.collection('walls').updateOne({_id: wall._id}, {$set: {isPresent: true}});
+                        await db.collection('walls').updateOne({_id: wall._id}, {$set: {isPresent: true, visibility: wall.visibility}});
                         const wallUpdated = await db.collection('walls').findOne({_id: wall._id});
+
+
+                        let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
+                        for (let square of squareGameModel) {
+                            //update db
+                            await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
+                        }
+
                     } else {
                         console.log("Wall not found or already present");
                     }
+
+
                 }
 
               /*  console.log('show all walls from bd when placing walls :', await db.collection('walls').find({}).toArray( function(err, result) {
@@ -352,20 +360,55 @@ module.exports = (server) => {
          */
 
         socket.on('updateGameModel', async ( data ) => {
-            let playerId = data.playerId;
-            let gameId = data.gameId;
+            let datas = JSON.parse(data);
+            let playerId = datas[0];
+            let gameId = datas[1];
+            console.log("GAME ID FOR UPDATE GAME MODEL :",gameId);
             try {
                 await client.connect();
                 const db = client.db();
-                let game = await db.collection('games').findOne({ _id: gameId });
+                let game = await db.collection('games').findOne({ _id: new ObjectId(gameId) });
+                console.log("GAME FOUND ?: " + game);
 
                 if (game) {
-                    const gameState = JSON.parse(savedGame.gameState); // Assurez-vous que l'état du jeu est enregistré sous forme de chaîne JSON
-                    gameModelGlobal = new GameModel(gameState); // Assurez-vous que le constructeur de GameModel accepte un paramètre pour l'initialisation
-                    actionController = new ActionController(gameModelGlobal); // Réinitialisez votre contrôleur avec le nouveau modèle
-                    socket.emit('updateGameModelResponse', JSON.stringify(gameModelGlobal)); // Envoyez le modèle de jeu reconstruit au client
+                    const gameBoardSaved = await db.collection('gameboards').findOne({ gameId: game._id });
+                    //get all walls from gameBoardSaved
+                    const wallsHorizontal = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'H'}).toArray();
+                    const wallsVertical = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'V'}).toArray();
+                    const playableSquares = await db.collection('squares').find({gameBoardId: gameBoardSaved._id}).toArray();
+                    const players_array = await db.collection('character').find({gameBoardId: gameBoardSaved._id}).toArray();
+                    const config = {
+                        horizontal_Walls: wallsHorizontal,
+                        vertical_Walls: wallsVertical,
+                        playable_squares: playableSquares,
+                        player_array: players_array,
+                        currentPlayer: gameBoardSaved.currentPlayer,
+                        roundCounter: gameBoardSaved.roundCounter,
+                        winner : gameBoardSaved.winner
+                    };
+
+                    gameModelGlobal = new GameModel(config);
+                    actionController = new ActionController(gameModelGlobal);
+
+                    //show walls from savedGame bd
+
+                    //show horizontal walls from savedGame gameModel
+
+                    socket.emit('updateGameModelResponse', JSON.stringify({
+                        gameId: gameBoardSaved.gameId, // ID de la partie
+                        gameBoardId: gameBoardSaved.gameBoardId, // ID du plateau de jeu
+                        nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
+                        nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
+                        player_array: gameModelGlobal.player_array.getAllPlayers(),
+                        horizontal_Walls: gameModelGlobal.horizontal_Walls.getAllWalls(),
+                        vertical_Walls: gameModelGlobal.vertical_Walls.getAllWalls(),
+                        playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
+                        currentPlayer: gameModelGlobal.currentPlayer,
+                        roundCounter: gameModelGlobal.roundCounter,
+                        winner : gameModelGlobal.winner
+                    }));
                 } else {
-                    console.log(' UPDATE GAME MODEL No saved game found for this user');
+                    console.log(' UPDATE GAME MODEL ERROR');
                     socket.emit('error', 'No saved game found for this user.');
                 }
             } catch (error) {

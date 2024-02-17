@@ -143,12 +143,6 @@ export class GamePresenter {
         this.gameBehaviour = new GameBehaviour();
         this.attachSaveHandler();
         this.detachHandlerFromWalls();
-
-        this.currentPlayer = this.model.currentPlayer;
-        this.roundCounter = this.model.roundCounter;
-
-
-
     }
 
     detachHandlerFromWalls() {
@@ -191,7 +185,7 @@ export class GamePresenter {
     init_behaviour(model) {
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
-        let playable_case_HTML = document.querySelectorAll('.playable_square')
+        let playable_case_HTML = document.querySelectorAll('.playable_square');
 
        this.init_walls(horizontal_walls_HTML, model);
        this.init_walls(vertical_walls_HTML,model);
@@ -234,10 +228,6 @@ export class GamePresenter {
                     wallModel = wallModelToCheck;
                 }
             });
-            console.log("WALL MODEL : ",wallModel);
-
-            // Crée les gestionnaires d'événements
-            console.log("WALL init : ",wall);
 
             if(!wallModel.isPresent){
                 const hoverHandler = this.hoverHandler(wall);
@@ -320,8 +310,6 @@ export class GamePresenter {
 
     };
 
-
-
     checkEndGame(){
         actionGameService.checkWinner((callback)=>{
             console.log(callback);
@@ -329,46 +317,52 @@ export class GamePresenter {
         });
     }
     updatePage() {
-        console.log("UPDATE AFTER PLACING WALL !!");
+        console.log("UPDATE AFTER MOVE  !!");
         let informationsData = [this.model.currentPlayer,this.model.gameId];
-        actionGameService.updateGameModel(informationsData,(callback)=>{
-            console.log("UPDATE GAMEMODEL RESPONSE : ",callback);
+        actionGameService.updateGameModel(informationsData,(newModel)=>{
+            this.model = JSON.parse(newModel);
+            console.log("CURR PLAYER AFTER UPDATE MODEL : ",this.model.currentPlayer);
+            this.checkEndGame();
+            this.updateInformations();
         });
-        actionGameService.updateGameInformation((callback)=>{
-            console.log(callback);
-            this.currentPlayer = callback[0];
-            this.roundCounter = callback[1];
-        });
-        actionGameService.updateWalls((callback)=>{
-            this.model.horizontal_Walls = callback[0];
-            this.model.vertical_Walls = callback[1];
-        })
-        this.checkEndGame();
-        this.updateInformations();
     }
     updateInformations(){
+        let playable_case_HTML = document.querySelectorAll('.playable_square');
+        playable_case_HTML.forEach(playable_case => {
+            let position = playable_case.id.split('X');
+            for(let i=0;i<this.model.playable_squares.length;i++){
+                let backSquare = this.model.playable_squares[i];
+                if(parseInt(backSquare.position.row)===parseInt(position[0]) && parseInt(backSquare.position.col)===parseInt(position[1])) {
+                    playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
+                    playable_case.style.color = "white";
+                }
+            }
+        });
+
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let winner_HTML = document.querySelectorAll('#winner');
         winner_HTML.item(0).innerHTML = "Winner = "+this.model.winner.toString();
-        rounds.item(0).innerHTML = "Rounds : "+this.roundCounter;
-        curplayer_HTML.item(0).innerHTML = "Current Player : "+this.currentPlayer;
+        rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
+        curplayer_HTML.item(0).innerHTML = "Current Player : "+this.model.currentPlayer;
     }
 
     init_playable_case(playable_case_HTML) {
         playable_case_HTML.forEach(playable_case => {
+
             const clickHandler = () => {
+                //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
                 let oldPosition = null;
-                    actionGameService.getPlayerPosition(this.currentPlayer,(res)=>{
+                    actionGameService.getPlayerPosition(this.model.currentPlayer,(res)=>{
                         oldPosition = res;
                     });
                     //token
-                    actionGameService.moveCharacter(this.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
+                    actionGameService.moveCharacter(this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
                         if(res){
-                            this.view.boardGrid.displayPlayer(tab[0], tab[1], this.currentPlayer);
+                            this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                             //ON RETIRE L'ANCIEN STYLE
-                            this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.currentPlayer);
+                            this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
                             this.updatePage();
                         }
                     });
