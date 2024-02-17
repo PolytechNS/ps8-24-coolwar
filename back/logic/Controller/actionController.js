@@ -79,6 +79,7 @@ class ActionController {
             }
             else{console.log("JOUEUR NON DEPLACABLE !");}
         }
+        this.checkWinner();
         return false;
     }
 

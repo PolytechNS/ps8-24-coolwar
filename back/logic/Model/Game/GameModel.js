@@ -18,7 +18,6 @@ class GameModel {
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;
-        this.lastChance=0;
         if(!config.horizontal_Walls){
             this.horizontal_Walls = new WallDictionary();
             console.log("j'instancie de nouveaux walls !");
@@ -74,6 +73,11 @@ class GameModel {
         }
         else{
             this.winner = config.winner;
+        }
+        if(!config.lastChance){
+            this.lastChance = 0;
+        }else{
+            this.lastChance = config.lastChance;
         }
         this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
         this.wallGroup = [];
@@ -212,7 +216,6 @@ class GameModel {
         let valueToReturn = -1;
         if(this.roundCounter>=200){console.log("STOP GAME !");valueToReturn = 0;}
         else{
-
             let p1 = this.player_array.getPlayerPosition(1);
             let p2 = this.player_array.getPlayerPosition(2);
             //APRES LE DERNIER COUP DE B
@@ -224,7 +227,10 @@ class GameModel {
             //SI B EST SUR 0 EN PREMIER
             else if(p2.row===0){valueToReturn=2;}
             //si A est sur la derniere ligne en premier
-            else if(p1.row===8 && p2.row!==0){this.lastChance++;}
+            else if(p1.row===8 && p2.row!==0){
+                console.log("LAST CHANCE !!");
+                this.lastChance++;
+            }
         }
         this.winner = valueToReturn;
         return valueToReturn;

@@ -47,7 +47,8 @@ module.exports = (server) => {
                     nbJoueursMax: gameModelGlobal.nbPlayers, // Nombre maximum de joueurs
                     roundCounter: gameModelGlobal.roundCounter, // Compteur de tours
                     currentPlayer: gameModelGlobal.currentPlayer, // Joueur actuel
-                    winner : gameModelGlobal.winner
+                    winner : gameModelGlobal.winner,
+                    lastChance: gameModelGlobal.lastChance,
                     // autres données du plateau de jeu
                 });
                 const gameBoardId = gameBoard.insertedId;
@@ -170,7 +171,8 @@ module.exports = (server) => {
                         player_array: players_array,
                         currentPlayer: gameBoardSaved.currentPlayer,
                         roundCounter: gameBoardSaved.roundCounter,
-                        winner : gameBoardSaved.winner
+                        winner : gameBoardSaved.winner,
+                        lastChance: gameBoardSaved.lastChance
                     };
 
                     gameModelGlobal = new GameModel(config);
@@ -191,8 +193,8 @@ module.exports = (server) => {
                         playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
                         currentPlayer: gameModelGlobal.currentPlayer,
                         roundCounter: gameModelGlobal.roundCounter,
-                        winner : gameModelGlobal.winner
-
+                        winner : gameModelGlobal.winner,
+                        lastChance: gameModelGlobal.lastChance
                     }));
                 }
                 else {
@@ -241,7 +243,7 @@ module.exports = (server) => {
                         console.log('Player position updated', playerCharacterUpdated.position.row + " " + playerCharacterUpdated.position.col);
                     }
                 }
-                await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
+                await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer, lastChance: gameModelGlobal.lastChance, winner: gameModelGlobal.winner } });
                 const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: gameBoard._id });
                 console.log('Current player db  updated', gameBoardUpdated.currentPlayer);
 
@@ -408,7 +410,8 @@ module.exports = (server) => {
                         player_array: players_array,
                         currentPlayer: gameBoardSaved.currentPlayer,
                         roundCounter: gameBoardSaved.roundCounter,
-                        winner : gameBoardSaved.winner
+                        winner : gameBoardSaved.winner,
+                        lastChance: gameBoardSaved.lastChance
                     };
 
                     gameModelGlobal = new GameModel(config);
