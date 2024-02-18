@@ -158,7 +158,6 @@ export class GamePresenter {
     replaceWallElement(wallId) {
         const wallHTML = document.getElementById(wallId);
         if (wallHTML) {
-            console.log('Replacing wall element with id: ' + wallId);
             const clone = wallHTML.cloneNode(true);
             wallHTML.replaceWith(clone);
         }
@@ -309,11 +308,11 @@ export class GamePresenter {
         });
     }
     updatePage() {
-        console.log("UPDATE AFTER ACTION  !!");
         let informationsData = [this.model.currentPlayer,this.model.gameId];
         actionGameService.updateGameModel(informationsData,(newModel)=>{
             this.model = JSON.parse(newModel);
-            console.log("CURR PLAYER AFTER UPDATE MODEL : ",this.model.currentPlayer);
+            console.log("MODEL AFTER UPDATE",this.model);
+            this.view.updateDisplayBot(this.model.player_array[1].position.row,this.model.player_array[1].position.col);
             this.checkEndGame();
             this.updateInformations();
         });

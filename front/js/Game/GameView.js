@@ -18,6 +18,10 @@ export class GameView {
         // Mettre à jour le plateau
     }
 
+    updateDisplayBot(row,col){
+        this.boardGrid.updateBotPosition(row,col,2)
+    }
+
     displayWall(wall, opacity) {
         wall.children.item(0).style.opacity = opacity;
     }

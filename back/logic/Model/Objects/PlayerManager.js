@@ -15,12 +15,10 @@ class PlayerManager {
     }
 
     createPlayFromArray(array){
-        console.log(array[0].nbWalls);
         for(let i=0;i<array.length;i++){
             let player = new GamePlayer(array[i].name,new Position(array[i].position.row,array[i].position.col),array[i].nbWalls);
             this.players.push(player);
         }
-        console.log("PLAYERS AFTER MODEL UPDATING: "+this.players[0].name+" "+this.players[0].position.row+" "+this.players[0].position.col+" "+this.players[0].nbWalls);
     }
 
     addPlayer(player){

@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 actionGameService.getGame((serializedGameModel) => {
                     // Désérialisez le modèle de jeu JSON en objet JavaScript
                     const model = JSON.parse(serializedGameModel); // Assurez-vous que ce modèle est correctement formaté
-                    console.log("Game model received from server:", model);
                     const view = new GameView(model);
                     const presenter = new GamePresenter(model, view);
                     console.log("Game initialized with game model");

@@ -11,7 +11,6 @@ export class BoardGrid{
     createGrid(model) {
         //définit l'emplacement des éléments
         var Y_plate_count = 0;
-        console.log("model createGrid",model);
         for(var lignes=0;lignes<this.nbLignes*2;lignes++) { // car une ligne de case et une ligne de mur
             if (lignes === 0 || lignes === this.nbLignes * 2) {
             } else {
@@ -29,7 +28,6 @@ export class BoardGrid{
         this.openPopUp();
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
-        console.log("model",model);
         model.player_array.forEach((player, iteration) => {
             this.displayPlayer(player.position.row, player.position.col, iteration + 1);
         });
@@ -69,6 +67,20 @@ export class BoardGrid{
         let imgPath = '../../assets/perso'+id+'.png';
         items.item(row*9+col).style.backgroundSize = 'cover';
         items.item(row * 9 + col).style.backgroundImage = `url(${imgPath})`;
+    }
+
+    updateBotPosition(row, col, id){
+
+        //il faudrait find la case qui a le background image /perso2.png et lui enlever le background image
+        let items = document.getElementsByClassName('playable_square');
+        for(let i=0;i<items.length;i++){
+            if(items.item(i).style.backgroundImage.includes('perso2.png')){
+                items.item(i).style.backgroundSize = 'cover';
+                items.item(i).style.backgroundImage = ``;
+            }
+        }
+        this.displayPlayer(row,col,id);
+
     }
 
     deletePlayer(row,col,id){
