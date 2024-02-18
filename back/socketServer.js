@@ -273,6 +273,11 @@ module.exports = (server) => {
 
                 // Récupérer le joueur actuel à partir de la base de données
                 const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
+                const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
+                const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+                let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
+
+
                 let actionController = new ActionController(gameModelGlobal);
 
                 //on essaye de placer le mur
@@ -283,9 +288,6 @@ module.exports = (server) => {
                     //on met à jour le nombre de murs restants dans la bd pour le joueur
                     let nbWalls = playerBd.nbWalls - 1;
                     db.collection('character').updateOne({ _id: new ObjectId(playerBd._id) }, { $set: { nbWalls : nbWalls } });
-
-                    const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
-                    const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
                     for (let wallString of wallDataDeserialized.wallList) {
                         // Extrait la ligne, la colonne et le type à partir de la chaîne de caractères
                         let [row, col, type] = wallString.split('X');
@@ -326,7 +328,6 @@ module.exports = (server) => {
                             await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
                             const wallUpdated = await db.collection('walls').findOne({_id: new ObjectId(wall._id)});
 
-                            let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
                             for (let square of squareGameModel) {
                                 //update db
                                 await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
@@ -336,6 +337,26 @@ module.exports = (server) => {
                             console.log("Wall not found or already present");
                         }
                     }
+
+                    //Gestion Bot
+
+                    let botCharacter = await db.collection('character').findOne({ gameBoardId: new ObjectId(gameBoardIdDb._id), currentPlayerIndex: gameModelGlobal.currentPlayer });
+                    let botCharacterGameModel = gameModelGlobal.player_array.getPlayer(gameModelGlobal.currentPlayer);
+
+                    playBot(gameModelGlobal, actionController);
+                    for(let square of squareGameModel){
+                        if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
+
+                            //update db
+                            await db.collection('character').updateOne({ _id: botCharacter._id , gameBoardId: gameBoardIdDb._id}, { $set: { position: { row: botCharacterGameModel.position.row, col: botCharacterGameModel.position.col } } });
+                            let botCharacterUpdated = await db.collection('character').findOne({ _id: new ObjectId(botCharacter._id)});
+                            console.log('Bot position updated', botCharacterUpdated.position.row + " " + botCharacterUpdated.position.col);
+                        }
+                    }
+
+                    console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
+
+                    
 
                     //on met à jour le joueur actuel dans la bd
                     await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoardIdDb._id) }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
