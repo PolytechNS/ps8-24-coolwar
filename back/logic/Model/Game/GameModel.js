@@ -13,16 +13,13 @@ class GameModel {
     CREATION DES JOUEURS ET NOTION DE TOUR ✅
     */
     constructor(config = {}) {
-        console.log("CONFIG INIT PLAYER ARRAY : "+config.player_array);
         //this.idGame = uuidv4();
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;
         if(!config.horizontal_Walls){
             this.horizontal_Walls = new WallDictionary();
-            console.log("j'instancie de nouveaux walls !");
         }else {
-            console.log("je charge des nouveaux walls !");
             this.horizontal_Walls = new WallDictionary();
             //console.log("CONFIG : "+config.horizontal_Walls[0].position.row+"|"+config.horizontal_Walls[0].position.col+"|"+config.horizontal_Walls[0].type+"|"+config.horizontal_Walls[0].isPresent+"|"+config.horizontal_Walls[0].idPlayer+"|"+config.horizontal_Walls[0].wallGroup);
             config.horizontal_Walls.forEach(wall => {
@@ -52,7 +49,6 @@ class GameModel {
             this.player_array = new PlayerManager();
             this.initPlayers();
         }else {
-            console.log("CONFIG PLAYER ARRAY : "+config.player_array[0].nbWalls);
             this.player_array = new PlayerManager();
             this.player_array.createPlayFromArray(config.player_array);
         }
@@ -238,7 +234,6 @@ class GameModel {
 
     //RECEPTION -> wall du back
     isCuttingWallGroup(backInformations){
-        console.log("----------IS CUTTING WALL GROUP-----------");
         let neighborhoodList = [];
         let wallBackList = [];
         for(let i=0;i<backInformations.wallList.length;i++){
@@ -260,7 +255,6 @@ class GameModel {
 
         //SI LA SELECTION EST UN ENSEMBLE DE MURS HORIZONTAUX
         if(wallInformations[2]==='H'){
-            console.log("SELECTION HORIZONTALE");
             //SI TOUS LES ELEMENTS DE COMPARAISON EXISTENT
             if(neighborhoodList[0].upRight!==null && neighborhoodList[1].upLeft!==null && neighborhoodList[0].downRight !==null && neighborhoodList[1].downLeft !=null){
                 if(neighborhoodList[0].upRight.wallGroup!==null && neighborhoodList[1].upLeft.wallGroup!==null && neighborhoodList[0].downRight.wallGroup!==null && neighborhoodList[1].downLeft.wallGroup!==null){
@@ -405,7 +399,6 @@ class GameModel {
     }
 
     resetSquaresVisibility(){
-        console.log("-----RESET SQUARES VISIBILITY-----");
         for(let i=0;i<this.playable_squares.playableSquares.length;i++){
             let currCase = this.playable_squares.playableSquares[i];
             if(currCase.position.row<4) {currCase.visibility=parseInt("-1")}

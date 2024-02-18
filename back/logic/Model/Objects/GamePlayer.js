@@ -1,6 +1,5 @@
 class GamePlayer {
     constructor(name,position,remainingWalls) {
-        console.log("REMAINING WALL IN CONSTRUCTOR : "+remainingWalls);
         this.name=name;
         this.nbWalls = remainingWalls;
         this.position = position;
@@ -13,7 +12,6 @@ class GamePlayer {
     }
 
     minusWall(){
-        console.log("MINUS WALL : "+this.nbWalls);
         if(this.nbWalls>0){
             this.nbWalls--;
         }else{

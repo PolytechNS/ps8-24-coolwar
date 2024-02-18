@@ -6,10 +6,8 @@ class Graph{
         this.playable_squares = playable_squares;
         this.horizontal_walls = horizontal_walls;
         this.vertical_walls = vertical_walls;
-        console.log("-------------GRAPH MODELISATION-------------");
         this.init_nodes();
         this.init_vertices();
-        console.log("-------------END  MODELISATION-------------");
     }
 
     init_nodes(){
