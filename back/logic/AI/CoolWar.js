@@ -5,6 +5,7 @@
 gameState : {
 --------------------------------------------
 opponentWalls : une liste contenant chaque mur de l'adversaire
+ownWalls : une liste contenant chaque mur de l'IA
 board : une liste contenant 9 listes de longueur 9,
 pour laquelle board[i][j] représenter le contenu de la cellule (i+1, j+1)
 --------------------------------------------
