@@ -6,9 +6,8 @@ class WallDictionary{
         this.wallList = [];
     }
 
-    addWall(row,col,type){
-        //TODO: VERIFIER SI L'INDEX EXISTE DEJA
-        this.wallList.push(new Wall(row,col,false,type));
+    addWall(row,col,type,isPresent,owner,wallGroup){
+        this.wallList.push(new Wall(row,col,isPresent,type,owner,wallGroup));
     }
 
     getAllWalls(){
@@ -16,7 +15,6 @@ class WallDictionary{
     }
 
     getWall(row,col,type){
-        console.log("GET WALL : "+row,col);
         let wallToReturn=null;
         this.wallList.forEach(function (wall){
             if(wall.equals(row,col,type)){wallToReturn=wall;}

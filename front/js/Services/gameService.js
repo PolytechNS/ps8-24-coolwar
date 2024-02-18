@@ -8,11 +8,12 @@ export const gameService = {
             console.error('Socket not initialized or not connected.');
             return;
         }
+        console.log("gameState", gameState);
         // Supposons que gameState contient déjà l'ID du jeu 'gameId' et l'état à sauvegarder
-        const dataToSave = { gameId: gameState.idGame };
+        const dataToSave = { gameId: gameState.gameId, userToken: localStorage.getItem('token') };
         //Stringify data to save
-        dataToSave.gameState = JSON.stringify(gameState);
-
+        JSON.stringify(dataToSave);
+        console.log("dataToSave", dataToSave);
         // Envoyer la demande de sauvegarde au serveur
         socketManager.socket.emit('save game', dataToSave);
 

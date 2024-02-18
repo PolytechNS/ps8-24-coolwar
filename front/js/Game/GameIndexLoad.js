@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const checkSocketReady = setInterval(() => {
             if (socketManager.isSocketInitialized()) {
                 clearInterval(checkSocketReady);
-                console.log("ici");
                 // La socket est prête, initialisons le jeu
                 gameService.getGameWithIdUser((serializedGameModel) => {
 

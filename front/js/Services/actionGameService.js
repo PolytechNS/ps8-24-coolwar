@@ -33,36 +33,40 @@ export const actionGameService = {
         }
 
         // Demander le modèle de jeu en utilisant la socket de socketManager
-        socketManager.socket.emit('get game model');
+        socketManager.socket.emit('get game model', localStorage.getItem('token'));
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('game model', (gameModel) => {
             callback(gameModel);
         });
     },
-    placeWall(wallList,callback){
+    placeWall(datas,callback){
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return
         }
 
-        let req = {wallList};
-        let reqSerialized = JSON.stringify(req);
+        let reqSerialized = JSON.stringify(datas);
+        console.log("reqSerialized FOR PLACEWALL : ",reqSerialized);
         socketManager.socket.emit('placewall',reqSerialized);
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('placewallResponse', (res) => {
+            console.log("PLACE WALL REPSONSE --> ",res);
             callback(res);
         });
     },
-    moveCharacter(id,row,col,callback){
+    moveCharacter(id,row,col,gameId,token,callback){
+        console.log("gameId moveCharacter : ",gameId);
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return
         }
-        let req = {id,row,col};
+
+        console.log("CURR PLAYER FOR MOVECHARACTER : ",id);
+        let req = {id,row,col,gameId,token};
         let reqSerialized = JSON.stringify(req);
         socketManager.socket.emit('movecharactere',reqSerialized);
 
@@ -123,5 +127,24 @@ export const actionGameService = {
         socketManager.socket.once('checkWinnerResponse', (res) => {
             callback(res);
         });
-    }
+    },
+
+    updateGameModel: function(informationsData,callback) {
+        console.log("UPDATE GAME MODEL");
+        console.log(informationsData);
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return;
+        }
+
+        // Envoyer la demande de sauvegarde au serveur
+        socketManager.socket.emit('updateGameModel', JSON.stringify(informationsData));
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('updateGameModelResponse', (response) => {
+            console.log("NEW MODEL RECEIVED : ",response);
+            callback(response);
+        });
+    },
 };

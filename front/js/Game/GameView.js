@@ -1,14 +1,14 @@
 import { BoardGrid } from './BoardGrid/BoardGrid.js';
 export class GameView {
-    constructor(model) {
+    constructor() {
         this.plateElement = document.querySelector('.plate');
-        this.boardGrid = new BoardGrid(model);
-        this.nbLignes = this.boardGrid.nbLignes;
-        this.nbColonnes = this.boardGrid.nbColonnes;
-        this.nbPlayers = model.nbPlayers;
-        this.initializeGrid(model);
+        this.boardGrid = null;
     }
 
+    initializeBoardGrid(model) {
+        // Logique pour initialiser le plateau de jeu dans le DOM
+        this.boardGrid = new BoardGrid(model);
+    }
     initializeGrid(model) {
         // Logique pour initialiser le plateau de jeu dans le DOM
         this.boardGrid.createGrid(model);

@@ -15,41 +15,54 @@ class ActionController {
         }
     }
 
-    placeWall(walls) {
+    placeWall(walls,playerID) {
+        console.log("WHO PLAY ?",playerID);
+        if (!this.checkCurrentPlayer(playerID)) {return false;}
         let wallToEdit = null;
         let wallBack = null;
-        for (let i = 0; i < walls.length; i++) {
-            let wall = walls[i];
+
+        let wallGroupId = this.getRandomArbitrary(0,60);
+
+        //VERIFIE QU'IL Y A TOUJOURS UN ID DE GROUPE DE MUR DISPONIBLE
+        while(this.model.wallGroup.includes(wallGroupId)){wallGroupId = this.getRandomArbitrary(0,60);}
+
+        //VERIFIE QUE LES MURS NE COUPENT PAS UN GROUPE DE MURS
+        if(this.model.isCuttingWallGroup(walls)){console.log("COUPAGE ENTRE MURS !");return false;}
+        console.log("REMAINING WALL",this.model.player_array.getPlayer(playerID).getRemainingWalls());
+        if(this.model.player_array.getPlayer(playerID).getRemainingWalls()<=0){console.log("PAS DE MURS DISPONIBLES !");return false;}
+
+        for (let i = 0; i < walls.wallList.length; i++) {
+            let wall = walls.wallList[i];
             let wallInformations = wall.split("X");
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
-                if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {
-                    return false;
-                }
+                if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
                 if (wallBack.isPresent === false) {
+                    console.log("MUR PLACABLE !");
+                    wallBack.setOwner(this.model.currentPlayer);
                     wallBack.setPresent();
+                    wallBack.setWallGroup(wallGroupId);
+                    this.model.wallGroup.push(wallGroupId);
                 }
-            } else {
-                return false;
-            }
+            } else {return false;}
         }
+        this.model.player_array.getPlayer(this.model.currentPlayer).minusWall();
         this.model.setNextPlayer();
         return true;
     }
 
-    characterCanBeMoved(row, col, player_position) {
+    characterCanBeMoved(row,col,player_position){
         //SI LA CASE EST VOISINE CARDINALEMENT
-        if (this.model.isNeighboorhoodFromPlayer(row, col, player_position)) {
+        if(this.model.isNeighboorhoodFromPlayer(row,col,player_position)){
             //SI UN MUR NE BLOQUE PAS
-            if (!this.model.isWallBlock(row, col, player_position)) {
+            if(!this.model.isWallBlock(row,col,player_position)){
                 //SI UN JOUEUR EST DEJA DESSUS
-                if (!this.model.isPlayerAtCoordinates(row, col)) {
-                    return true;
-                }
+                if(!this.model.isPlayerAtCoordinates(row,col)){return true;}
             }
         }
         return false;
     }
+
 
     moveCharacter(id,row,col) {
         if (this.checkCurrentPlayer(id)) {
@@ -57,31 +70,17 @@ class ActionController {
             let player_position = this.model.player_array.getPlayerPosition(id);
             if(this.characterCanBeMoved(row,col,player_position)){
                 console.log("JOUEUR DEPLACABLE !");
+                this.model.resetSquaresVisibility();
                 //TODO : VERIFIER SI MOUVEMENT POSSIBLE (pas de sauts)
                 let playerToMove = this.model.player_array.getPlayer(id);
                 playerToMove.position = new Position(row,col);
                 this.model.setNextPlayer();
                 return true;
             }
-            else{
-                console.log("JOUEUR NON DEPLACABLE !");
-            }
+            else{console.log("JOUEUR NON DEPLACABLE !");}
         }
+        this.checkWinner();
         return false;
-    }
-
-    isPresentWall(wall) {
-        let coordinates = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id);
-
-        if (wall.children.item(0).classList.contains("horizontal_wall")) {
-            return this.model.horizontal_Walls.getWall(parseInt(coordinates[0]), parseInt(coordinates[1])).isPresent;
-        }
-        if (wall.children.item(0).classList.contains("vertical_wall")) {
-            return this.model.vertical_Walls.getWall(parseInt(coordinates[0]), parseInt(coordinates[1])).isPresent;
-        } else {
-            console.log("AUCUN MUR TROUVE A CETTE POSITION !\n [" + coordinates[0] + "|" + coordinates[1] + "]");
-            return null;
-        }
     }
 
 
@@ -96,9 +95,13 @@ class ActionController {
         return [this.model.horizontal_Walls, this.model.vertical_Walls];
     }
 
+    getRandomArbitrary(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
     checkWinner(){
         return this.model.checkWinner();
     }
+
 }
 
 module.exports = { ActionController};
