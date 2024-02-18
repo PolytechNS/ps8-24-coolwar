@@ -3,7 +3,7 @@ const {PlayableSquareDictionary} = require("../Objects/PlayableSquareDictionary.
 const {GamePlayer} = require("../Objects/GamePlayer.js");
 const {PlayerManager} = require("../Objects/PlayerManager.js");
 const {Position} = require("../Objects/Position.js");
-const { v4:uuidv4 } = require('uuid');
+//const { v4:uuidv4 } = require('uuid');
 const {Graph} = require("../Graph/Graph.js");
 
 
@@ -14,7 +14,7 @@ class GameModel {
     */
     constructor(config = {}) {
         console.log("CONFIG INIT PLAYER ARRAY : "+config.player_array);
-        this.idGame = uuidv4();
+        //this.idGame = uuidv4();
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;

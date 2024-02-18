@@ -332,6 +332,7 @@ module.exports = (server) => {
                         }
                     }
                     await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoardIdDb._id) }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
+
                     const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: new ObjectId(gameBoardIdDb._id) });
                     console.log('Current player db updated', gameBoardUpdated.currentPlayer);
                 }
