@@ -229,9 +229,10 @@ module.exports = (server) => {
 
 
                 ///GESTION BOT
-                /*
+
                 let botCharacter = await db.collection('character').findOne({ gameBoardId: new ObjectId(gameBoard._id), currentPlayerIndex: gameModelGlobal.currentPlayer });
                 let botCharacterGameModel = gameModelGlobal.player_array.getPlayer(gameModelGlobal.currentPlayer);
+
                 playBot(gameModelGlobal, actionController);
                 for(let square of squareGameModel){
                     if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
@@ -242,7 +243,10 @@ module.exports = (server) => {
                         console.log('Bot position updated', botCharacterUpdated.position.row + " " + botCharacterUpdated.position.col);
                     }
                 }
-                */
+
+                console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
+
+
 
                 //on met à jour le joueur actuel dans la bd
                 await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer, lastChance: gameModelGlobal.lastChance, winner: gameModelGlobal.winner } });
@@ -279,7 +283,6 @@ module.exports = (server) => {
                     //on met à jour le nombre de murs restants dans la bd pour le joueur
                     let nbWalls = playerBd.nbWalls - 1;
                     db.collection('character').updateOne({ _id: new ObjectId(playerBd._id) }, { $set: { nbWalls : nbWalls } });
-
 
                     const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
                     const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
@@ -422,7 +425,7 @@ module.exports = (server) => {
 
                     //show horizontal walls from savedGame gameModel
 
-                    console.log('MODEL SENT UPDATE GAME MODEL :', gameModelGlobal);
+                    console.log('--UPDATE-- CURRENT PLAYER :', gameModelGlobal.currentPlayer);
 
                     socket.emit('updateGameModelResponse', JSON.stringify({
                         gameId: gameBoardSaved.gameId, // ID de la partie

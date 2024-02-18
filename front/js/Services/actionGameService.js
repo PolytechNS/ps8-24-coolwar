@@ -48,24 +48,20 @@ export const actionGameService = {
         }
 
         let reqSerialized = JSON.stringify(datas);
-        console.log("reqSerialized FOR PLACEWALL : ",reqSerialized);
         socketManager.socket.emit('placewall',reqSerialized);
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('placewallResponse', (res) => {
-            console.log("PLACE WALL REPSONSE --> ",res);
             callback(res);
         });
     },
     moveCharacter(id,row,col,gameId,token,callback){
-        console.log("gameId moveCharacter : ",gameId);
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return
         }
 
-        console.log("CURR PLAYER FOR MOVECHARACTER : ",id);
         let req = {id,row,col,gameId,token};
         let reqSerialized = JSON.stringify(req);
         socketManager.socket.emit('movecharactere',reqSerialized);
@@ -143,7 +139,6 @@ export const actionGameService = {
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('updateGameModelResponse', (response) => {
-            console.log("NEW MODEL RECEIVED : ",response);
             callback(response);
         });
     },

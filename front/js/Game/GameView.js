@@ -19,8 +19,6 @@ export class GameView {
     }
 
     updateDisplayBot(row,col){
-        console.log("row : ",row);
-        console.log("col : ",col);
         this.boardGrid.updateBotPosition(row,col,2)
     }
 

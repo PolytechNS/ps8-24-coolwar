@@ -11,7 +11,6 @@ export class BoardGrid{
     createGrid(model) {
         //définit l'emplacement des éléments
         var Y_plate_count = 0;
-        console.log("model createGrid",model);
         for(var lignes=0;lignes<this.nbLignes*2;lignes++) { // car une ligne de case et une ligne de mur
             if (lignes === 0 || lignes === this.nbLignes * 2) {
             } else {
@@ -29,7 +28,6 @@ export class BoardGrid{
         this.openPopUp();
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
-        console.log("model",model);
         model.player_array.forEach((player, iteration) => {
             this.displayPlayer(player.position.row, player.position.col, iteration + 1);
         });
