@@ -12,8 +12,6 @@ exports.computeVisibilityPlayableSquare = function (playableSquares) {
 
 exports.getWallOpponent = function (gameModel) {
    let wallsReturn =[];
-   console.log("current player");
-    console.log(gameModel.currentPlayer);
 
     gameModel.horizontal_Walls.getAllWalls().forEach((wall) => {
         if(wall.idPlayer !== gameModel.currentPlayer){
@@ -25,8 +23,6 @@ exports.getWallOpponent = function (gameModel) {
 
 exports.getOwnWalls = function (gameModel) {
     let wallsReturn =[];
-    console.log("current player");
-     console.log(gameModel.currentPlayer);
 
      gameModel.horizontal_Walls.getAllWalls().forEach((wall) => {
           if(wall.idPlayer === gameModel.currentPlayer){
