@@ -18,4 +18,12 @@ export const AuthService = {
         })
             .then(response => response.json());
     },
+
+    getLoginPage() {
+        return fetch(`${config.API_ENDPOINT}/api/auth/login`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/html' },
+        })
+            .then(html => document.body.innerHTML = html);
+    }
 };
