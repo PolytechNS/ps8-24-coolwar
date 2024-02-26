@@ -13,7 +13,7 @@ async function startServer() {
 
         const db = client.db(); // Ajoutez la logique nécessaire pour utiliser 'db'
         const server = http.createServer((req, res) => {
-            // Vous pouvez passer 'db' à mainRouter si nécessaire
+          // Vous pouvez passer 'db' à mainRouter si nécessaire
             mainRouter.handle(req, res, db);
             console.log("j'attends les requetes");
         });

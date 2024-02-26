@@ -1,5 +1,5 @@
 // login.js
-import { AuthService } from '../Services/AuthService.js'; // Mettez à jour le chemin selon votre structure de projet
+import { AuthService } from "../Services/authService.js"; // Mettez à jour le chemin selon votre structure de projet
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 console.log('Login success:', data);
                 localStorage.setItem('token', data.token);
-                window.location.href = '../../Pages/GameMenu.html'; // Redirigez vers la page après connexion
+                window.location.pathname = '/Pages/GameMenu.html'; // Redirigez vers la page après connexion
             })
             .catch(error => {
                 console.error('Login error:', error);

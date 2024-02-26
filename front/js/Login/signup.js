@@ -1,5 +1,5 @@
 // signup.js
-import { AuthService } from '../Services/AuthService.js'; // Mettez à jour le chemin selon votre structure de projet
+import { AuthService } from '../Services/authService.js'; // Mettez à jour le chemin selon votre structure de projet
 
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signupForm');
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Signup success:', data);
                 localStorage.setItem('token', data.token);
                 console.log(data.token);
-                //window.location.href = '/login.html'; // Redirigez vers la page après inscription
+                window.location.href = './login.html'; // Redirigez apres inscription
             })
             .catch(error => {
                 console.error('Signup error:', error);
