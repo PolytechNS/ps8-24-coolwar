@@ -2,7 +2,7 @@
 import {GamePresenter} from './GamePresenter.js';
 import {actionGameService} from "../Services/actionGameService.js";
 import {GameView} from './GameView.js';
-import {socketManager} from '../socket/socketManager.js';
+import {socketManager} from '../Socket/socketManager.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     // Assurez-vous que le token est disponible
