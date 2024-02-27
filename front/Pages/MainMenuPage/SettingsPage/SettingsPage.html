@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="SettingsPageStyle.css">
+    <title>Settings Page</title>
+</head>
+
+<body>
+<header class="head">
+    <img class="logo" src="../../../assets/logo.png"/>
+    <h1>CoolWar</h1>
+    <div class="user">
+        <img class="profilePicture" src="../../../assets/profilePicture.png">
+        <div class="nameAndLogout">
+            <p class="username">Nom</p>
+            <button class="logout" onclick="location.href='../../../js/Login/login.html'">Logout</button>
+        </div>
+        <img class="level" src="../../../assets/level.png">
+    </div>
+</header>
+<main class="grid">
+    <div></div>
+    <div class="cadre">
+        <h2>Settings</h2>
+        <div class="settings">
+            <div class="aline">
+                <h3>Language</h3>
+                <div class="language">
+                    <img src="../../../assets/language.png">
+                    <div class="line"></div>
+                    <p>Language</p>
+                </div>
+            </div>
+            <div class="aline">
+                <h3>Chat</h3>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+
+            </div>
+            <div class="aline">
+                <h3>Notifications</h3>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <button id="backButton" onclick="location.href='../MainMenuPage.html'"> < Back</button>
+</main>
+</body>
+</html>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>

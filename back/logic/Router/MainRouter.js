@@ -16,7 +16,7 @@
         // Serve the index.html file for the base route
         if(req.url === '/' || req.url === '') {
             console.log('IF Request for / received');
-            fs.readFile('./front/index.html', function(err, data) {
+            fs.readFile('./front/Pages/WelcomePage/WelcomePage.html', function(err, data) {
                 if (err) {
                     res.writeHead(500);
                     res.end('Error loading index.html');

@@ -1,0 +1,42 @@
+.listOfSkin{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+}
+
+.skin{
+    background: rgba(85.1 , 85.1 , 85.1 , .5);
+    border-radius: 10%;
+    padding: 10px;
+    min-height: 200px;
+    margin-bottom: 20px;
+}
+
+.imgSkin{
+    max-height: 100px;
+}
+
+.line{
+    border: 1px solid #D9D9D9;
+}
+
+p{
+    font-size: 20px;
+}
+
+.cadre{
+    display: grid;
+    grid-template-columns: 3fr 5fr;
+    width: 1000px;
+}
+
+button{
+    min-width: fit-content;
+    padding: 10px 30px;
+}
+
+.selectedSkin{
+    max-height: 200px;
+}

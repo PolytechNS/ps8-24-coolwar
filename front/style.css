@@ -1,0 +1,123 @@
+body{
+    color: #fff;
+    font-family: 'Kumar One', serif;
+    font-size: 35px;
+    background-color: #345128;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+}
+
+.head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-image: url("assets/background.jpg");
+    background-size: cover;
+    background-position: center;
+    padding:30px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+.logo{
+    max-height: 18%;
+    object-fit: contain;
+    background-color: #345128;
+    position: absolute;
+    left: 1.15%;
+}
+
+h1{
+    color: #000;
+    margin: 0 auto 0 auto;
+}
+
+
+.cadre{
+    background-color: #22341A;
+    border: #497637 2px solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 70px;
+    margin-top: 50px;
+    text-align: center;
+    min-width: 375px;
+    min-height: 600px;
+}
+
+
+button{
+    background-color: #D9D9D9;
+    color: #000;
+    border-radius: 8px;
+    font-family: 'Kumar One', serif;
+    font-size: 20px;
+    margin: 15px;
+    text-decoration: none;
+    padding: 10px;
+    min-width: 90%;
+}
+
+
+#backButton{
+    max-height: fit-content;
+    min-width: fit-content;
+    justify-self: end;
+    align-self: start;
+    margin-top: 30px;
+}
+
+.grid{
+    display: grid;
+    grid-template-columns: 10fr 15fr 10fr;
+    align-items: center;
+}
+
+
+.user{
+    display: flex;
+    flex-direction: row;
+    background-color: #fff;
+    color: black;
+    font-size: 30px;
+    align-items: center;
+    position: absolute;
+    right: 1.15%;
+}
+
+.nameAndLogout{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.username{
+    margin: 0;
+}
+
+.logout{
+    background-color: #345128;
+    color: #fff;
+    border-radius: 20px;
+    padding: 5px;
+    font-family: 'Kumar One', serif;
+    font-size: 20px;
+    margin: 15px;
+    border: 1px solid #345128;
+}
+
+.profilePicture{
+    border-radius: 50%;
+    max-height: 70px;
+    margin-left: 10px;
+}
+
+.level{
+    max-height: 120px;
+    margin: 10px;
+}

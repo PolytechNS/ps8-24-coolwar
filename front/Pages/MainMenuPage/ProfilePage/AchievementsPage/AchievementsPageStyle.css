@@ -1,0 +1,58 @@
+.display{
+    display: grid;
+    grid-template-columns: 2fr 7fr;
+    width: 1000px;
+}
+
+.userPic{
+    border-radius: 100%;
+    max-height: 200px;
+    max-width: 200px;
+    min-height: 200px;
+    min-width: 200px;
+    margin-bottom: 30px;
+}
+
+.userInfo{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.skin{
+    max-height: 100px;
+    margin-right: 20px;
+}
+
+p{
+    font-size: 25px;
+}
+
+.achievementName{
+    margin: 0;
+    color: black;
+}
+
+
+.cadre{
+    width: min-content;
+}
+
+.line{
+    border: 1px solid black;
+}
+
+.listAchievements{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.achievement{
+    background-color: #D9D9D9;
+    border-radius: 10%;
+    padding: 10px;
+    margin: 10px;
+    max-height: fit-content;
+}
