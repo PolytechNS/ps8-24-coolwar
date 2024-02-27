@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Signup success:', data);
                 localStorage.setItem('token', data.token);
                 console.log(data.token);
-                //window.location.href = '/login.html'; // Redirigez vers la page après inscription
+                window.location.href = './login.html'; // Redirigez apres inscription
             })
             .catch(error => {
                 console.error('Signup error:', error);

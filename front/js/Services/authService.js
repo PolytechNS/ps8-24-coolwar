@@ -1,7 +1,7 @@
 // AuthService.js
 import { config } from '../Utils/config.js'; // Assurez-vous que le chemin est correct
 
-export const AuthService = {
+const AuthService = {
     login(username, password) {
         return fetch(`${config.API_ENDPOINT}/api/auth/login`, {
             method: 'POST',
@@ -27,3 +27,6 @@ export const AuthService = {
             .then(html => document.body.innerHTML = html);
     }
 };
+
+export { AuthService };
+
