@@ -327,6 +327,12 @@ export class GamePresenter {
                 if(parseInt(backSquare.position.row)===parseInt(position[0]) && parseInt(backSquare.position.col)===parseInt(position[1])) {
                     playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
                     playable_case.style.color = "white";
+                    if(backSquare.visibility <=0 && this.model.currentPlayer === 1){
+                        playable_case.style.backgroundColor = "#22341A";
+                    }
+                    if(backSquare.visibility >= 0 && this.model.currentPlayer === 2){
+                        playable_case.style.backgroundColor = "#497637";
+                    }
                 }
             }
         });
@@ -334,9 +340,13 @@ export class GamePresenter {
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let winner_HTML = document.querySelectorAll('#winner');
-        winner_HTML.item(0).innerHTML = "Winner = "+this.model.winner.toString();
+        let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
+        if(!this.model.winner === -1){
+            winner_HTML.item(0).innerHTML = "Winner = "+this.model.winner.toString();
+        }
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
-        curplayer_HTML.item(0).innerHTML = "Current Player : "+this.model.currentPlayer;
+        curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
+        nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].nbWalls + " walls left";
     }
 
     init_playable_case(playable_case_HTML) {
