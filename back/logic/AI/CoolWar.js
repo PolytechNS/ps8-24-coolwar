@@ -32,6 +32,7 @@ let previousMove = null; // le dernier mouvement de l'IA
 
 let moveCount = 0; // le nombre de mouvements effectués par l'IA
 let wallCount = 0; // le nombre de murs placés par l'IA
+let numberOfRound = 1; // le nombre de tours que nous avons fait
 
 // setup function
 /*
@@ -92,6 +93,58 @@ function Real_nextMove(gameState) {
         wallCount = 0;
         lastMove = "move";
         moveCount++;
+        numberOfRound++;
+        return moveCharacterWithDijkstra();
+    }
+
+    //SI ON EST DANS LES 6 PREMIERS TOURS ET QUE C'EST MODULO 2 (DONC UN TOUR SUR 2), ON VA POSER UN MUR POUR VOIR LE PLUS DE TERRAIN POSSIBLE
+    if(numberOfRound < 7 && numberOfRound%2 === 0){
+        //si on a commence en bas, donc en premier, on veut placer le plus haut possible
+
+        // Définir les valeurs spécifiques pour chaque condition si on commence en premier
+        const conditionsSiPremier = [
+            { round: 2, value: ["37", 1] },
+            { round: 4, value: ["77", 1] },
+            { round: 6, value: ["54", 0] }
+        ];
+
+        const conditionsSiDeuxieme = [
+            { round: 2, value: ["34", 1] },
+            { round: 4, value: ["74", 1] },
+            { round: 6, value: ["56", 0] }
+        ];
+
+        // Vérifier si la ligne d'arrivée est 9 et le numéro de tour correspond à l'une des conditions spécifiées
+        if (finishLine === 9) {
+            const condition = conditionsSiPremier.find(cond => cond.round === numberOfRound);
+            if (condition) {
+                lastMove = "wall";
+                wallCount++;
+                numberOfRound++;
+                return {
+                    action: "wall",
+                    value: condition.value
+                };
+            }
+        }
+        else if (finishLine === 1){
+            const condition = conditionsSiDeuxieme.find(cond => cond.round === numberOfRound);
+            if (condition) {
+                lastMove = "wall";
+                wallCount++;
+                numberOfRound++;
+                return {
+                    action: "wall",
+                    value: condition.value
+                };
+            }
+        }
+    }
+    //SINON ON BOUGE LE PERSONNAGE
+    else{
+        lastMove = "move";
+        moveCount++;
+        numberOfRound++;
         return moveCharacterWithDijkstra();
     }
 
@@ -118,13 +171,17 @@ function Real_nextMove(gameState) {
                         if(djikstraLeftHorizontalResult > djikstraLeftVerticalResult){
                             lastMove = "wall";
                             wallCount++;
-                            return {action: "wall",
+                            numberOfRound++;
+                            return {
+                                action: "wall",
                                 value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
                         }
                         else{
                             lastMove = "wall";
                             wallCount++;
-                            return {action: "wall",
+                            numberOfRound++;
+                            return {
+                                action: "wall",
                                 value: [leftVerticalWallPosition[0].toString()+leftVerticalWallPosition[1].toString(), 1]};
                         }
                     }
@@ -142,12 +199,15 @@ function Real_nextMove(gameState) {
                             if(djikstraRightHorizontalResult > djikstraRightVerticalResult){
                                 lastMove = "wall";
                                 wallCount++;
-                                return {action: "wall",
+                                numberOfRound++;
+                                return {
+                                    action: "wall",
                                     value: [rightHorizontalWallPosition[0].toString()+rightHorizontalWallPosition[1].toString(), 0]};
                             }
                             else{
                                 lastMove = "wall";
                                 wallCount++;
+                                numberOfRound++;
                                 return {action: "wall",
                                     value: [rightVerticalWallPosition[0].toString()+rightVerticalWallPosition[1].toString(), 1]};
                             }
@@ -155,6 +215,7 @@ function Real_nextMove(gameState) {
                         else{
                             lastMove = "move";
                             moveCount++;
+                            numberOfRound++;
                             return moveCharacterWithDijkstra();
                         }
                     }
@@ -168,13 +229,16 @@ function Real_nextMove(gameState) {
                     if (!isLeftHorizontalWallExist){
                         lastMove = "wall";
                         wallCount++;
-                            return {action: "wall",
-                                value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
+                        numberOfRound++;
+                        return {
+                            action: "wall",
+                            value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
                     }
                     //ON REGARDE S'IL EXISTE UN MUR A DROITE
                     else{
                         lastMove = "move";
                         moveCount++;
+                        numberOfRound++;
                         return moveCharacterWithDijkstra();
                     }
                 }
@@ -183,6 +247,7 @@ function Real_nextMove(gameState) {
             else {
                 lastMove = "move";
                 moveCount++;
+                numberOfRound++;
                 return moveCharacterWithDijkstra();
             }
         }
@@ -207,13 +272,17 @@ function Real_nextMove(gameState) {
                         if(djikstraLeftHorizontalResult > djikstraLeftVerticalResult){
                             lastMove = "wall";
                             wallCount++;
-                            return {action: "wall",
+                            numberOfRound++;
+                            return {
+                                action: "wall",
                                 value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
                         }
                         else{
                             lastMove = "wall";
                             wallCount++;
-                            return {action: "wall",
+                            numberOfRound++;
+                            return {
+                                action: "wall",
                                 value: [leftVerticalWallPosition[0].toString()+leftVerticalWallPosition[1].toString(), 1]};
                         }
                     }
@@ -231,19 +300,24 @@ function Real_nextMove(gameState) {
                             if(djikstraRightHorizontalResult > djikstraRightVerticalResult){
                                 lastMove = "wall";
                                 wallCount++;
-                                return {action: "wall",
+                                numberOfRound++;
+                                return {
+                                    action: "wall",
                                     value: [rightHorizontalWallPosition[0].toString()+rightHorizontalWallPosition[1].toString(), 0]};
                             }
                             else{
                                 lastMove = "wall";
                                 wallCount++;
-                                return {action: "wall",
+                                numberOfRound++;
+                                return {
+                                    action: "wall",
                                     value: [rightVerticalWallPosition[0].toString()+rightVerticalWallPosition[1].toString(), 1]};
                             }
                         }
                         else{
                             lastMove = "move";
                             moveCount++;
+                            numberOfRound++;
                             return moveCharacterWithDijkstra();
                         }
                     }
@@ -257,13 +331,16 @@ function Real_nextMove(gameState) {
                     if (!isLeftHorizontalWallExist){
                         lastMove = "wall";
                         wallCount++;
-                        return {action: "wall",
+                        numberOfRound++;
+                        return {
+                            action: "wall",
                             value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
                     }
                     //ON REGARDE S'IL EXISTE UN MUR A DROITE
                     else{
                         lastMove = "move";
                         moveCount++;
+                        numberOfRound++;
                         return moveCharacterWithDijkstra();
                     }
                 }
@@ -272,6 +349,7 @@ function Real_nextMove(gameState) {
             else {
                 lastMove = "move";
                 moveCount++;
+                numberOfRound++;
                 return moveCharacterWithDijkstra();
             }
         }
@@ -280,13 +358,14 @@ function Real_nextMove(gameState) {
     else{
         lastMove = "move";
         moveCount++;
+        numberOfRound++;
         return moveCharacterWithDijkstra();
     }
 
 
 
     // --------------------- INTERNAL FUNCTIONS ---------------------------------- //
-    
+
     function moveCharacterWithDijkstra(){
         const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
         let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
