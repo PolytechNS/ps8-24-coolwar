@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(data => {
                 console.log('Login success:', data);
                 localStorage.setItem('token', data.token);
-                window.location.href = '../../Pages/GameMenu.html'; // Redirigez vers la page après connexion
+                window.location.href = '../MainMenuPage/MainMenuPage.html'; // Redirigez vers la page après connexion
             })
             .catch(error => {
                 console.error('Login error:', error);
