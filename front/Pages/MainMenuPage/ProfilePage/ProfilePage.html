@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="../../../style.css">
+  <link rel="stylesheet" href="../../style.css">
   <link rel="stylesheet" href="ProfilePageStyle.css">
   <title>Profile Page</title>
 </head>
@@ -15,7 +15,10 @@
     <img class="profilePicture" src="../../../assets/profilePicture.png">
     <div class="nameAndLogout">
       <p class="username">Nom</p>
-      <button class="logout" onclick="location.href='../../../js/Login/login.html'">Logout</button>
+      <a href="../../../js/Login/login.html">
+        <button class="logout" >Logout</button>
+
+      </a>
     </div>
     <img class="level" src="../../../assets/level.png">
   </div>
@@ -40,11 +43,19 @@
       <img class="userLevel" src="../../../assets/level.png">
     </div>
     <div class="buttons">
-      <button onclick="location.href='AchievementsPage/AchievementsPage.html'">Achievements</button>
-      <button onclick="location.href='SkinsPage/SkinsPage.html'">Skins</button>
+      <a href="AchievementsPage/AchievementsPage.html">
+        <button>Achievements</button>
+
+      </a>
+      <a href="SkinsPage/SkinsPage.html">
+        <button>Skins</button>
+
+      </a>
     </div>
   </div>
-  <button id="backButton" onclick="location.href='../MainMenuPage.html'"> < Back</button>
+  <a href="../MainMenuPage.html">
+    <button id="backButton"> < Back</button>
+  </a>
 </main>
 </body>
 </html>

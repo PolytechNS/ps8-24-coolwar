@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="./CreateGamePageStyle.css">
     <title>Create Game Page</title>
 </head>
@@ -15,7 +15,10 @@
         <img class="profilePicture" src="../../../assets/profilePicture.png">
         <div class="nameAndLogout">
             <p class="username">Nom</p>
-            <button class="logout" onclick="location.href='../../../js/Login/login.html'">Logout</button>
+            <a href="../../../js/Login/login.html">
+                <button class="logout" >Logout</button>
+
+            </a>
         </div>
         <img class="level" src="../../../assets/level.png">
     </div>
@@ -41,9 +44,15 @@
                 </label>
             </div>
         </div>
-        <button class="createGame" onclick="location.href='./GameReadyPage/GameReadyPage.html'">Create</button>
+        <a href="./GameReadyPage/GameReadyPage.html">
+            <button class="createGame" >Create</button>
+
+        </a>
     </div>
-    <button id="backButton" onclick="location.href='../PlayPage.html'"> < Back</button>
+    <a href="../PlayPage.html">
+        <button id="backButton" > < Back</button>
+
+    </a>
 </main>
 </body>
 </html>

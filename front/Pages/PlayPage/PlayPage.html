@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="../../style.css">
+        <link rel="stylesheet" href="../style.css">
         <link rel="stylesheet" href="PlayPageStyle.css">
         <title>Play Page</title>
     </head>
@@ -15,7 +15,10 @@
                 <img class="profilePicture" src="../../assets/profilePicture.png">
                 <div class="nameAndLogout">
                     <p class="username">Nom</p>
-                    <button class="logout" onclick="location.href='../../js/Login/login.html'">Logout</button>
+                    <a href="../../../js/Login/login.html">
+                        <button class="logout" >Logout</button>
+
+                    </a>
                 </div>
                 <img class="level" src="../../assets/level.png">
             </div>
@@ -24,14 +27,15 @@
             <div></div>
             <div class="cadre">
                 <h2>Play</h2>
-                <button onclick="location.href='PlayNowPage/PlayNowPage.html'">Play now</button>
-                <button onclick="location.href='JoinGamePage/JoinGamePage.html'">Join a game</button>
-                <button onclick="location.href='BrowseGamePage/BrowseGamePage.html'">Browse game</button>
-                <button onclick="location.href='CreateGamePage/CreateGamePage.html'">Create game</button>
-                <button onclick="location.href='LoadGamePage/LoadGamePage.html'">Load game</button>
+                <a href="PlayNowPage/PlayNowPage.html" class="button"><button>Play now</button></a>
+                <a href="JoinGamePage/JoinGamePage.html" class="button"><button>Join a game</button></a>
+                <a href="BrowseGamePage/BrowseGamePage.html" class="button"><button>Browse game</button></a>
+                <a href="CreateGamePage/CreateGamePage.html" class="button"><button>Create game</button></a>
+                <a href="LoadGamePage/LoadGamePage.html" class="button"><button>Load game</button></a>
             </div>
-            <button id="backButton" onclick="location.href='../MainMenuPage/MainMenuPage.html'"> < Back</button>
+            <a href="../MainMenuPage/MainMenuPage.html" id="backButton" class="button"><button> &lt; Back</button></a>
         </main>
+
     </body>
 </html>
 

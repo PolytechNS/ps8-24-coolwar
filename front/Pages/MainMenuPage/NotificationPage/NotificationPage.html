@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="../../style.css">
     <title>Notifications Page</title>
 </head>
 
@@ -14,7 +14,10 @@
         <img class="profilePicture" src="../../../assets/profilePicture.png">
         <div class="nameAndLogout">
             <p class="username">Nom</p>
-            <button class="logout" onclick="location.href='../../../js/Login/login.html'">Logout</button>
+            <a href="../../../js/Login/login.html">
+                <button class="logout" >Logout</button>
+
+            </a>
         </div>
         <img class="level" src="../../../assets/level.png">
     </div>
@@ -23,10 +26,19 @@
     <div></div>
     <div class="cadre">
         <h2>Notification</h2>
-        <button onclick="location.href='FriendRequestPage/FriendRequestPage.html'">Friend Request</button>
-        <button onclick="location.href='GameRequestPage/GameRequestPage.html'">Game Request</button>
+        <a href="FriendRequestPage/FriendRequestPage.html">
+            <button >Friend Request</button>
+
+        </a>
+        <a href="GameRequestPage/GameRequestPage.html">
+            <button >Game Request</button>
+
+        </a>
     </div>
-    <button id="backButton" onclick="location.href='../MainMenuPage.html'"> < Back</button>
+    <a href="../MainMenuPage.html">
+        <button id="backButton"> < Back</button>
+
+    </a>
 </main>
 </body>
 </html>

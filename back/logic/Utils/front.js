@@ -35,13 +35,22 @@ const mimeTypes = {
 // Main method, exported at the end of the file. It's the one that will be called when a file is requested.
 function manageRequest(request, response) {
     // First let's parse the URL, extract the path, and parse it into an easy-to-use object.
-    // We add the baseFrontPath at the beginning to limit the places to search for files.
-    const parsedUrl = url.parse(baseFrontPath + request.url);
+    const parsedUrl = url.parse(request.url);
     let pathName = `.${parsedUrl.pathname}`;
     let extension = path.parse(pathName).ext;
-    // Uncomment the line below if you want to check in the console what url.parse() and path.parse() create.
-    //console.log(parsedUrl, pathName, path.parse(pathName));
 
+    // Check if the requested file is an HTML file
+    if (extension === '.html' || extension === '.css') {
+        // If the file requested is an HTML file, modify the baseFrontPath to include '/Pages'
+        pathName = `.${baseFrontPath}/Pages${parsedUrl.pathname}`;
+    } else {
+        // If not, just prepend the baseFrontPath as usual
+        pathName = `.${baseFrontPath}${parsedUrl.pathname}`;
+    }
+
+    // Log the pathName for debugging
+    console.log("pathName");
+    console.log(pathName);
     // Let's check if the file exists.
     fs.exists(pathName, async function (exist) {
         if (!exist) {
