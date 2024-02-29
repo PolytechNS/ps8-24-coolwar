@@ -6,7 +6,7 @@ const { MongoClient,ObjectId } = require('mongodb');
 const {MONGO_URL} = require("./logic/Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const {playBot} = require('./logic/Controller/botController.js');
-const {createGameDb} = require('./logic/Controller/gameController.js');
+const {createGameDb, saveGame, loadGameFromDb} = require('./logic/Controller/gameController.js');
 
 let gameModelGlobal = null;
 let actionController = null;
@@ -44,7 +44,7 @@ module.exports = (server) => {
                 actionController = new ActionController(gameModelGlobal);
                 // Persister le plateau de jeu
 
-                gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
+                let gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
 
                 // Envoyer l'état initial du jeu au client
                 socket.emit('game model', JSON.stringify({
@@ -73,24 +73,9 @@ module.exports = (server) => {
                 await client.connect();
                 const db = client.db();
                 let userToken = data.userToken;
-                const userId = await db.collection('users').findOne({ token: userToken});
-                const gameDb = await db.collection('games').findOne({ _id: new ObjectId(data.gameId), creator_id: userId.username});
-                const gameBoardId = await db.collection('gameboards').findOne({ gameId: gameDb._id });
 
-
-                //show walls from games retrieved
-                /*console.log('show all walls from bd when saving game :', await db.collection('walls').find({gameBoardId: gameBoardId._id}).toArray( function(err, result) {
-                    if (err) throw err;
-                    else console.log(result);
-                }));*/
-                // Sauvegarder l'état du jeu avec l'ID de l'utilisateur
-                await db.collection('savedGames').insertOne({
-                    userId,
-                    gameId:gameDb._id, // Assurez-vous que gameState est un objet sérialisable
-                    gameBoardId: gameBoardId._id,
-                    createdAt: new Date()
-                });
-
+                //Sauvegarder l'état du jeu dans la base de données
+                gameBoardId = await saveGame(userToken, db,data);
 
                 // Confirmer la sauvegarde au client
                 socket.emit('game saved', { success: true });
@@ -109,29 +94,11 @@ module.exports = (server) => {
                 const savedGame = await db.collection('savedGames').findOne({ user });
 
                 if (savedGame) {
-                    const gameBoardSaved = await db.collection('gameboards').findOne({ _id: savedGame.gameBoardId });
-                    //get all walls from gameBoardSaved
-                    const wallsHorizontal = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'H'}).toArray();
-                    const wallsVertical = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'V'}).toArray();
-                    const playableSquares = await db.collection('squares').find({gameBoardId: gameBoardSaved._id}).toArray();
-                    const players_array = await db.collection('character').find({gameBoardId: gameBoardSaved._id}).toArray();
-                    const config = {
-                        horizontal_Walls: wallsHorizontal,
-                        vertical_Walls: wallsVertical,
-                        playable_squares: playableSquares,
-                        player_array: players_array,
-                        currentPlayer: gameBoardSaved.currentPlayer,
-                        roundCounter: gameBoardSaved.roundCounter,
-                        winner : gameBoardSaved.winner,
-                        lastChance: gameBoardSaved.lastChance
-                    };
+                    const config = await loadGameFromDb(savedGame);
 
                     gameModelGlobal = new GameModel(config);
                     actionController = new ActionController(gameModelGlobal);
 
-                    //show walls from savedGame bd
-
-                    //show horizontal walls from savedGame gameModel
 
                     socket.emit('loaded game', JSON.stringify({
                         gameId: savedGame.gameId, // ID de la partie

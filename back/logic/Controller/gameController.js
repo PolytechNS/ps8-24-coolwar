@@ -1,3 +1,5 @@
+const {ObjectId} = require("mongodb");
+
 async function createGameDb(gameId,gameModelGlobal,db) {
     const gameBoard = await db.collection('gameboards').insertOne({
         gameId: gameId, // Lier le plateau de jeu à la partie
@@ -44,5 +46,39 @@ async function createGameDb(gameId,gameModelGlobal,db) {
     })));
     return gameBoardId;
 }
+async function saveGame(userToken, db, data) {
+    const userId = await db.collection('users').findOne({ token: userToken});
+    const gameDb = await db.collection('games').findOne({ _id: new ObjectId(data.gameId), creator_id: userId.username});
+    const gameBoardId = await db.collection('gameboards').findOne({ gameId: gameDb._id });
 
-module.exports = { createGameDb };
+    // Sauvegarder l'état du jeu avec l'ID de l'utilisateur
+    await db.collection('savedGames').insertOne({
+        userId,
+        gameId:gameDb._id, // Assurez-vous que gameState est un objet sérialisable
+        gameBoardId: gameBoardId._id,
+        createdAt: new Date()
+    });
+    return gameBoardId;
+}
+
+async function loadGameFromDb(db, savedGame) {
+    const gameBoardSaved = await db.collection('gameboards').findOne({ _id: savedGame.gameBoardId });
+    //get all walls from gameBoardSaved
+    const wallsHorizontal = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'H'}).toArray();
+    const wallsVertical = await db.collection('walls').find({gameBoardId: gameBoardSaved._id, type: 'V'}).toArray();
+    const playableSquares = await db.collection('squares').find({gameBoardId: gameBoardSaved._id}).toArray();
+    const players_array = await db.collection('character').find({gameBoardId: gameBoardSaved._id}).toArray();
+    const config = {
+        horizontal_Walls: wallsHorizontal,
+        vertical_Walls: wallsVertical,
+        playable_squares: playableSquares,
+        player_array: players_array,
+        currentPlayer: gameBoardSaved.currentPlayer,
+        roundCounter: gameBoardSaved.roundCounter,
+        winner : gameBoardSaved.winner,
+        lastChance: gameBoardSaved.lastChance
+    };
+    return config;
+}
+
+module.exports = { createGameDb, saveGame, loadGameFromDb };
