@@ -1,4 +1,5 @@
 const {ObjectId} = require("mongodb");
+const {playBot} = require("./botController");
 
 async function createGameDb(gameId,gameModelGlobal,db) {
     const gameBoard = await db.collection('gameboards').insertOne({
@@ -81,4 +82,47 @@ async function loadGameFromDb(db, savedGame) {
     return config;
 }
 
-module.exports = { createGameDb, saveGame, loadGameFromDb };
+async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameModel){
+    const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(dataParse.gameId) });
+    const gameBoard = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+    const currentPlayer = gameBoard.currentPlayer;
+    let playerCharacter = await db.collection('character').findOne({ gameBoardId: gameBoard._id, currentPlayerIndex: currentPlayer });
+
+    //find square where is the player
+
+    //on met à jour la position du joueur dans la bd
+    for (let square of squareGameModel) {
+        if(parseInt(square.position.row) === parseInt(playerCharacter.position.row) && parseInt(square.position.col) === parseInt(playerCharacter.position.col)){
+            //update db
+            await db.collection('character').updateOne({ _id: playerCharacter._id , gameBoardId: gameBoard._id}, { $set: { position: { row: dataParse.row, col: dataParse.col } } });
+            let playerCharacterUpdated = await db.collection('character').findOne({ _id: new ObjectId(playerCharacter._id)});
+            console.log('Player position updated', playerCharacterUpdated.position.row + " " + playerCharacterUpdated.position.col);
+        }
+    }
+    return gameBoard;
+}
+async function  manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionController,db){
+    let botCharacter = await db.collection('character').findOne({ gameBoardId: new ObjectId(gameBoard._id), currentPlayerIndex: gameModelGlobal.currentPlayer });
+    let botCharacterGameModel = gameModelGlobal.player_array.getPlayer(gameModelGlobal.currentPlayer);
+
+    playBot(gameModelGlobal, actionController);
+
+
+    for(let square of squareGameModel){
+        if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
+
+            //update db
+            await db.collection('character').updateOne({ _id: botCharacter._id , gameBoardId: gameBoard._id}, { $set: { position: { row: botCharacterGameModel.position.row, col: botCharacterGameModel.position.col } } });
+            let botCharacterUpdated = await db.collection('character').findOne({ _id: new ObjectId(botCharacter._id)});
+            console.log('Bot position updated', botCharacterUpdated.position.row + " " + botCharacterUpdated.position.col);
+        }
+    }
+}
+
+async function updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal){
+    //on met à jour le joueur actuel dans la bd
+    await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer, lastChance: gameModelGlobal.lastChance, winner: gameModelGlobal.winner } });
+    const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: gameBoard._id });
+    console.log('Current player db  updated', gameBoardUpdated.currentPlayer);
+}
+module.exports = { createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb };
