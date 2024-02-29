@@ -17,7 +17,6 @@ export class GameBehaviour{
     }
 
     getWall(list,row,col){
-        //TODO: VERIFIER S'IL EXISTE
         for(let i=0;i<list?.length;i++){
             let wall = list[i];
             if(parseInt(wall.position.row) === parseInt(row) && parseInt(wall.position.col) === parseInt(col)){return wall;}

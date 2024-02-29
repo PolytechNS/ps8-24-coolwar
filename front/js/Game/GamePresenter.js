@@ -240,12 +240,12 @@ export class GamePresenter {
      hoverHandler = (wall) => {
          return () => {
              let neighborhood = getWallNeighborhood(wall);
-             if(!this.gameBehaviour.isPresentWall(neighborhood)){
+             if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                  neighborhood.children.item(0).style.opacity = "0.8";
              }
              else {
                  neighborhood = getWallNeighborhood_Invert(wall);
-                 if (!this.gameBehaviour.isPresentWall(neighborhood)) {
+                 if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
                      neighborhood.children.item(0).style.opacity = "0.8";
                  }
              }
@@ -257,12 +257,12 @@ export class GamePresenter {
      leaveHoverHandler = (wall) => {
          return () => {
              let neighborhood = getWallNeighborhood(wall);
-             if(!this.gameBehaviour.isPresentWall(neighborhood)){
+             if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                  neighborhood.children.item(0).style.opacity = "0";
              }
              else{
                  neighborhood = getWallNeighborhood_Invert(wall);
-                 if(!this.gameBehaviour.isPresentWall(neighborhood)){
+                 if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                      neighborhood.children.item(0).style.opacity = "0";
                  }
              }
