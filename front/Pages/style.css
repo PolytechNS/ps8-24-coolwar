@@ -37,6 +37,7 @@ h1{
 
 
 .cadre{
+    margin-top: 30px;
     background-color: #22341A;
     border: #497637 2px solid;
     display: flex;
@@ -45,6 +46,7 @@ h1{
     justify-content: center;
     padding: 20px 30px;
     text-align: center;
+    width: 390px;
 }
 
 .theButton{
