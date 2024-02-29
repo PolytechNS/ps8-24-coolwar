@@ -25,12 +25,7 @@
 }
 
 p{
-    font-size: 25px;
-}
-
-.achievementName{
-    margin: 0;
-    color: black;
+    font-size: 60%;
 }
 
 
@@ -42,17 +37,32 @@ p{
     border: 1px solid black;
 }
 
-.listAchievements{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+.listAchievements {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Permet jusqu'à 4 éléments par ligne */
+    gap: 10px; /* Espace entre les éléments */
+    justify-content: center; /* Centrer les éléments horizontalement */
+    max-height: 400px; /* Hauteur maximale de la liste d'accomplissements */
+    overflow-y: auto; /* Ajoute un défilement vertical lorsque le contenu dépasse la hauteur maximale */
 }
 
 .achievement{
     background-color: #D9D9D9;
-    border-radius: 10%;
+    border-radius: 10px;
     padding: 10px;
     margin: 10px;
-    max-height: fit-content;
+    max-width: 200px; /* Largeur maximale des éléments */
+    text-align: center; /* Centrer le contenu horizontalement */
+}
+
+.achievementImg{
+    max-height: 120px;
+    max-width: 120px;
+    display: block; /* Pour centrer l'image à l'intérieur de son conteneur */
+    margin: 0 auto; /* Pour centrer l'image horizontalement */
+}
+
+.achievementName{
+    margin: 0;
+    color: black;
 }
