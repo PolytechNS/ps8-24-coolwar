@@ -6,6 +6,7 @@ const { MongoClient,ObjectId } = require('mongodb');
 const {MONGO_URL} = require("./logic/Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const {playBot} = require('./logic/Controller/botController.js');
+const {createGameDb} = require('./logic/Controller/gameController.js');
 
 let gameModelGlobal = null;
 let actionController = null;
@@ -42,51 +43,8 @@ module.exports = (server) => {
                 gameModelGlobal = new GameModel();
                 actionController = new ActionController(gameModelGlobal);
                 // Persister le plateau de jeu
-                const gameBoard = await db.collection('gameboards').insertOne({
-                    gameId: gameId, // Lier le plateau de jeu à la partie
-                    nbJoueursMax: gameModelGlobal.nbPlayers, // Nombre maximum de joueurs
-                    roundCounter: gameModelGlobal.roundCounter, // Compteur de tours
-                    currentPlayer: gameModelGlobal.currentPlayer, // Joueur actuel
-                    winner : gameModelGlobal.winner,
-                    lastChance: gameModelGlobal.lastChance,
-                    // autres données du plateau de jeu
-                });
-                const gameBoardId = gameBoard.insertedId;
 
-                //persister la position des joueurs
-                const players = gameModelGlobal.player_array.getAllPlayers();
-                await db.collection('character').insertMany(players.map((player, index) => ({
-                    ...player,
-                    gameBoardId: gameBoardId,
-                    currentPlayerIndex: index + 1 // Ajout de l'attribut currentPlayerIndex
-                })));
-
-
-                // Persister les murs et les cases en référençant l'ID du plateau de jeu
-
-                const horizontalWalls = gameModelGlobal.horizontal_Walls.getAllWalls();
-                await db.collection('walls').insertMany(horizontalWalls.map(wall => ({
-                    ...wall,
-                    gameBoardId: gameBoardId,
-                    idPlayer: null,
-                    type: 'H' // Ajout d'une propriété pour indiquer l'orientation du mur
-                })));
-
-                const verticalWalls = gameModelGlobal.vertical_Walls.getAllWalls();
-                await db.collection('walls').insertMany(verticalWalls.map(wall => ({
-                    ...wall,
-                    gameBoardId: gameBoardId,
-                    type: 'V' // Ajout d'une propriété pour indiquer l'orientation du mur
-                })));
-
-                const squares = gameModelGlobal.playable_squares;
-                const squaresList = [...squares.getAllPlayableSquares()];
-                await db.collection('squares').insertMany(squaresList.map(square => ({
-                    ...square,
-                    gameBoardId: gameBoardId
-                })));
-
-
+                gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
 
                 // Envoyer l'état initial du jeu au client
                 socket.emit('game model', JSON.stringify({
@@ -234,6 +192,8 @@ module.exports = (server) => {
                 let botCharacterGameModel = gameModelGlobal.player_array.getPlayer(gameModelGlobal.currentPlayer);
 
                 playBot(gameModelGlobal, actionController);
+
+
                 for(let square of squareGameModel){
                     if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
 
