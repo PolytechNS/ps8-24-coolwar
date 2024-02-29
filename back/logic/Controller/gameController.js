@@ -47,6 +47,9 @@ async function createGameDb(gameId,gameModelGlobal,db) {
     })));
     return gameBoardId;
 }
+
+
+
 async function saveGame(userToken, db, data) {
     const userId = await db.collection('users').findOne({ token: userToken});
     const gameDb = await db.collection('games').findOne({ _id: new ObjectId(data.gameId), creator_id: userId.username});

@@ -42,9 +42,12 @@ module.exports = (server) => {
                 // Créer un nouveau GameModel
                 gameModelGlobal = new GameModel();
                 actionController = new ActionController(gameModelGlobal);
-                // Persister le plateau de jeu
 
+                // Persister le plateau de jeu
                 let gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
+
+                // Gestion Bot
+
 
                 // Envoyer l'état initial du jeu au client
                 socket.emit('game model', JSON.stringify({
@@ -131,16 +134,20 @@ module.exports = (server) => {
         socket.on('movecharactere', async(data)=>{
             const dataParse = JSON.parse(data);
             try {
+                //On essaye de bouger le personnage
                 let responseBoolean = actionController.moveCharacter(dataParse.id,dataParse.row,dataParse.col);
                 await client.connect();
                 const db = client.db();
+                //on récupère les carrés jouables
                 let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
 
+                //on met à jour la position du joueur dans la bd
                 let gameBoard = await updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameModel);
 
-                ///GESTION BOT
+                ///GESTION BOT --action de bouger
                 await manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionController,db);
 
+                //on met à jour le joueur actuel dans la bd
                 await updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal);
 
                 //on emit la réponse
@@ -194,7 +201,7 @@ module.exports = (server) => {
                 socket.emit('placewallResponse', false);
             }
         });
-        
+
         socket.on('joinGame', () => {
             let responseBoolean = gameController.join()
 

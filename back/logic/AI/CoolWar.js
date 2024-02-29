@@ -987,3 +987,5 @@ class PriorityQueue {
 }
 
 main()
+
+module.exports = { setup, nextMove };
