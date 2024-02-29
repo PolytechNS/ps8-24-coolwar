@@ -1,16 +1,24 @@
+main{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 30px;
+    min-width: 85%;
+}
 
 .plate{
     display: grid;
+    margin: 70px 30px 30px;
 
-    grid-template-columns: repeat(8,50px 5px) 50px;
-    grid-template-rows: repeat(8,50px 5px) 50px;
+    grid-template-columns: repeat(8, 60px 5px) 60px;
+    grid-template-rows: repeat(8, 60px 5px) 60px;
 
     justify-content: center;
     align-items: center;
 }
 
 .playable_square{
-    height: 50px;
+    height: 60px;
     width: auto;
     background: black;
     display: flex;
@@ -43,8 +51,43 @@
 .horizontal_hitbox{
     width: auto;
     z-index: 1;
-    padding: 5px 0px 5px 0px;
+    padding: 3px 0 3px 0;
 }
+
+p{
+    margin: 0;
+}
+
+.left{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.walls{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.wall{
+    max-width: 200px;
+    background-color: #345128;
+    border: 5px solid #000000;;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: -8px 7px 5px rgba(0, 0, 0, 0.69);
+}
+
+.info{
+    background-color: #D9D9D9;
+    border: 2px solid #000000;
+    color: black;
+    padding: 20px;
+    margin-top: 70px;
+}
+
+
 
 <!-- pop up -->
 .modal {

@@ -50,7 +50,7 @@ p{
     max-height: 150px;
 }
 
-button{
+.theButton{
     min-width: fit-content;
 }
 
