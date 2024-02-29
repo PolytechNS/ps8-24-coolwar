@@ -295,7 +295,6 @@ export class GamePresenter {
                     });
                     this.updatePage();
                 }
-
             });
         }
 

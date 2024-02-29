@@ -3,8 +3,8 @@ const {PlayableSquareDictionary} = require("../Objects/PlayableSquareDictionary.
 const {GamePlayer} = require("../Objects/GamePlayer.js");
 const {PlayerManager} = require("../Objects/PlayerManager.js");
 const {Position} = require("../Objects/Position.js");
-//const { v4:uuidv4 } = require('uuid');
 const {Graph} = require("../Graph/Graph.js");
+const {Djikstra} = require("../Graph/Djikstra.js");
 
 
 class GameModel {
@@ -93,6 +93,9 @@ class GameModel {
             this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index2),10));
             this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1),10));
         }
+
+        console.log("PLAYER 1 : "+this.player_array.getPlayer(1).position.row+"|"+this.player_array.getPlayer(1).position.col);
+        console.log("PLAYER 2 : "+this.player_array.getPlayer(2).position.row+"|"+this.player_array.getPlayer(2).position.col);
     }
 
     generateRandom(min, max) {
@@ -468,6 +471,47 @@ class GameModel {
                 }
             }
         }
+    }
+
+    pathExists(wallBackList){
+        console.log("CHECK PATH EXISTS ! (WITH DJIKSTRA)");
+        //SIMULER LA POSE DES MURS
+        //ON COPIE LA LISTE DES MURS
+        let horizontalWalls = new WallDictionary();
+        for(let i=0;i<this.horizontal_Walls.wallList.length;i++){horizontalWalls.wallList.push(this.horizontal_Walls.wallList[i]);}
+        let verticalWalls = new WallDictionary();
+        for(let i=0;i<this.horizontal_Walls.wallList.length;i++){verticalWalls.wallList.push(this.vertical_Walls.wallList[i]);}
+        //ON AJOUTE LES MURS A TESTER
+        for(let i=0;i<wallBackList.length;i++){
+            let wall = wallBackList[i];
+            if(wall.type==='H'){horizontalWalls.getWall(wall.position.row,wall.position.col,wall.type).setPresent();}
+            if(wall.type==='V'){verticalWalls.getWall(wall.position.row,wall.position.col,wall.type).setPresent();}
+        }
+        //ON GENERE LA GRAPH DU JEU SIMULE
+        let graph = new Graph(this.playable_squares, horizontalWalls, verticalWalls);
+        console.log("GRAPH GENERATED !");
+        //VOIR SI UN CHEMIN EXISTE POUR CHACUN DES JOUEURS
+        for(let i=0;i<2;i++){
+            console.log("CHECK PLAYER "+i+" PATH !");
+            console.log("PATH FROM : "+this.player_array.players[i].position.row+","+this.player_array.players[i].position.col);
+            let player = this.player_array.players[i];
+            let playerPosition = player.position;
+            let playerNode = graph.getNodeFromCoordinates(playerPosition.row,playerPosition.col);
+            let finishLine = 0;
+            if(i===0){finishLine = 8;}
+            //COMPUTE POUR TOUTE LA LIGNE
+            let isImpossibleToReach = true;
+            let DjikstraClass = new Djikstra();
+            for (let i = 0; i < 8; i++) {
+                console.log("TO :",finishLine+","+i)
+                let res = DjikstraClass.compute_djikstra(graph, playerNode, graph.getNodeFromCoordinates(finishLine, i));
+                console.log("DISTANCE : "+res.distance);
+                if(res.distance!==Infinity){isImpossibleToReach = false;}
+            }
+            console.log("Is Impossible to Reach ? : "+isImpossibleToReach+" !");
+            if(isImpossibleToReach){return false;}
+        }
+        return true;
     }
 }
 

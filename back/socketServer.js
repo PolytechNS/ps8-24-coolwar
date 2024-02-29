@@ -356,8 +356,6 @@ module.exports = (server) => {
 
                     console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
 
-
-
                     //on met à jour le joueur actuel dans la bd
                     await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoardIdDb._id) }, { $set: { currentPlayer: gameModelGlobal.currentPlayer } });
                     const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: new ObjectId(gameBoardIdDb._id) });
