@@ -237,8 +237,13 @@ class GameModel {
 
     //RECEPTION -> wall du back
     isCuttingWallGroup(backInformations){
+        console.log("CHECK CUTTING WALL GROUP !");
+        console.log(backInformations);
         let neighborhoodList = [];
         let wallBackList = [];
+        //ON TRIE LES MURS RECU DANS L'ORDRE CROISSANT
+        backInformations.wallList.sort();
+
         for(let i=0;i<backInformations.wallList.length;i++){
             let wallToEdit = backInformations.wallList[i];
             let wallInformations = wallToEdit.split("X");
@@ -255,6 +260,9 @@ class GameModel {
         let wallToRead = backInformations.wallList[0];
         let wallInformations = wallToRead.split("X");
 
+        neighborhoodList.forEach(neighborhood => {
+            console.log(neighborhood);
+        });
 
         //SI LA SELECTION EST UN ENSEMBLE DE MURS HORIZONTAUX
         if(wallInformations[2]==='H'){
