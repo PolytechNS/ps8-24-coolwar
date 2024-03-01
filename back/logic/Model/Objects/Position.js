@@ -5,7 +5,7 @@ class Position {
     }
 
     toString() {
-        return "row:" + this.row + "/col:" + this.col + "\n";
+        return "" + this.row + this.col;
     }
 }
 

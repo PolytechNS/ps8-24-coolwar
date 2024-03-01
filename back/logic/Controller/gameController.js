@@ -122,6 +122,20 @@ async function  manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionCo
     }
 }
 
+async function updatePlayerPositionFromDb(squareGameModel,db,gameBoard,gameModelGlobal){
+    let botCharacter = await db.collection('character').findOne({ gameBoardId: new ObjectId(gameBoard._id), currentPlayerIndex: gameModelGlobal.currentPlayer });
+    let botCharacterGameModel = gameModelGlobal.player_array.getPlayer(gameModelGlobal.currentPlayer);
+    for(let square of squareGameModel){
+        if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
+
+            //update db
+            await db.collection('character').updateOne({ _id: botCharacter._id , gameBoardId: gameBoard._id}, { $set: { position: { row: botCharacterGameModel.position.row, col: botCharacterGameModel.position.col } } });
+            let botCharacterUpdated = await db.collection('character').findOne({ _id: new ObjectId(botCharacter._id)});
+            console.log('Bot position updated', botCharacterUpdated.position.row + " " + botCharacterUpdated.position.col);
+        }
+    }
+}
+
 async function updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal){
     //on met à jour le joueur actuel dans la bd
     await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer, lastChance: gameModelGlobal.lastChance, winner: gameModelGlobal.winner } });
@@ -191,4 +205,4 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
     }
 }
 
-module.exports = { setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };
+module.exports = { updatePlayerPositionFromDb,setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };

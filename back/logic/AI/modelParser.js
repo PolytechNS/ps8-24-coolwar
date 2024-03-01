@@ -1,10 +1,19 @@
 exports.computeVisibilityPlayableSquare = function (gameModel, currentPlayerIndex) {
    let board = Array(9).fill().map(() => Array(9).fill(0));
-    let ownPosition = gameModel.player_array.getAllPlayers[currentPlayerIndex].position;
-    let opponentPosition = gameModel.player_array.getAllPlayers[1 - currentPlayerIndex].position;
+    let ownPosition = gameModel.player_array.getPlayer(currentPlayerIndex).position;
+    console.log("ownPosition : ", ownPosition);
+    let currentPlayerOpponent = null;
+    if (currentPlayerIndex === 1) {
+        currentPlayerOpponent = currentPlayerIndex + 1;
+    } else {
+        currentPlayerOpponent = currentPlayerIndex - 1;
+    }
+    console.log("currentPlayerOpponent : ", currentPlayerOpponent);
+    let opponentPosition = gameModel.player_array.getPlayer(currentPlayerOpponent).position;
    // Remplir le tableau 9x9 par les visibilités des PlayableSquares
-    gameModel.playableSquares.getAllPlayableSquares().forEach((square) => {
+    gameModel.playable_squares.getAllPlayableSquares().forEach((square) => {
       let { row, col } = square.position;
+      console.log("currentPlayerIndex : ", currentPlayerIndex);
       if(currentPlayerIndex === 1){
           if(square.visibility <= 0){
               board[row][col] = 0;
@@ -12,10 +21,10 @@ exports.computeVisibilityPlayableSquare = function (gameModel, currentPlayerInde
           else if (square.visibility > 0){
               board[row][col] = -1;
           }
-          if (ownPosition.position.row === row && ownPosition.position.col === col){
+          if (ownPosition.row === row && ownPosition.col === col){
               board[row][col] = 1;
           }
-          else if (opponentPosition.position.row === row && opponentPosition.position.col === col && square.visibility >= 0){
+          else if (opponentPosition.row === row && opponentPosition.col === col && square.visibility <= 0){
               board[row][col] = 2;
           }
       }
@@ -26,51 +35,88 @@ exports.computeVisibilityPlayableSquare = function (gameModel, currentPlayerInde
             else if (square.visibility < 0){
                 board[row][col] = -1;
             }
-            if (ownPosition.position.row === row && ownPosition.position.col === col){
+            if (ownPosition.row === row && ownPosition.col === col){
                 board[row][col] = 1;
             }
-            else if (opponentPosition.position.row === row && opponentPosition.position.col === col && square.visibility <= 0){
+            else if (opponentPosition.row === row && opponentPosition.col === col && square.visibility >= 0){
                 board[row][col] = 2;
             }
         }
    });
-
-   return board.reverse();
+    let boardToReturn = board.reverse();
+   return boardToReturn;
 }
+
+function convertOurCoordinatesToVellaCooordinates(row,col){
+    return [parseInt(col)+1,9-parseInt(row)];
+}
+
 
 
 exports.getWallOpponent = function (gameModel) {
    let wallsReturn =[];
+   let wallGroupList = [];
+   //inverse current player
+    let currentPlayerOpponent = null;
+    if(gameModel.currentPlayer === 1){
+        currentPlayerOpponent = 2;
+    }else{
+        currentPlayerOpponent = 1;
+    }
 
     gameModel.horizontal_Walls.getAllWalls().forEach((wall) => {
-        if(wall.idPlayer !== gameModel.currentPlayer){
-            let wallToPush = [wall.position.toString(), 0];
-             wallsReturn.push(wallToPush);
+        if(wall.idPlayer !== currentPlayerOpponent  && wall.idPlayer !== null ){
+            if(wallGroupList.includes(wall.wallGroup)===false){
+                wallGroupList.push(wall.wallGroup);
+                let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);
+                let wallToPush = [wallVella[0]+""+wallVella[1], 0];
+                wallsReturn.push(wallToPush);
+            }
         }
     });
     gameModel.vertical_Walls.getAllWalls().forEach((wall) => {
-        if(wall.idPlayer !== gameModel.currentPlayer){
-            let wallToPush = [wall.position.toString(), 1];
-            wallsReturn.push(wallToPush);
+        if(wall.idPlayer !== currentPlayerOpponent && wall.idPlayer !== null){
+            if(wallGroupList.includes(wall.wallGroup)===false){
+                wallGroupList.push(wall.wallGroup);
+                let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);
+                let wallToPush = [wallVella[0]+""+wallVella[1], 1];
+                wallsReturn.push(wallToPush);
+            }
         }
     });
+
    return wallsReturn;
 }
 
 exports.getOwnWalls = function (gameModel) {
     let wallsReturn =[];
+    let wallGroupList = [];
 
+    let currentPlayerOwn = null;
+    if(gameModel.currentPlayer === 1){
+        currentPlayerOwn = 2;
+    }else{
+        currentPlayerOwn = 1;
+    }
      gameModel.horizontal_Walls.getAllWalls().forEach((wall) => {
-          if(wall.idPlayer === gameModel.currentPlayer){
-              let wallToPush = [wall.position.toString(), 0];
-              wallsReturn.push(wallToPush);
+          if(wall.idPlayer === currentPlayerOwn){
+              if(wallGroupList.includes(wall.wallGroup)===false){
+                  wallGroupList.push(wall.wallGroup);
+                  let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);
+                  let wallToPush = [wallVella[0]+""+wallVella[1], 0];
+                  wallsReturn.push(wallToPush);
+              }
           }
      });
 
     gameModel.vertical_Walls.getAllWalls().forEach((wall) => {
-        if(wall.idPlayer === gameModel.currentPlayer){
-            let wallToPush = [wall.position.toString(), 1];
-            wallsReturn.push(wallToPush);
+        if(wall.idPlayer === currentPlayerOwn){
+            if(wallGroupList.includes(wall.wallGroup)===false){
+                wallGroupList.push(wall.wallGroup);
+                let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);
+                let wallToPush = [wallVella[0]+""+wallVella[1], 1];
+                wallsReturn.push(wallToPush);
+            }
         }
     });
     return wallsReturn;
