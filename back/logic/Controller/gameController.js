@@ -129,6 +129,14 @@ async function updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal){
     console.log('Current player db  updated', gameBoardUpdated.currentPlayer);
 }
 
+function setUpPositionRealBot(positionBot,gameModelGlobal,botIndex){
+    let col = parseInt(positionBot.charAt(0)) -1;
+    let row = parseInt(positionBot.charAt(1)) -1;
+    gameModelGlobal.updatePlayerPosition(botIndex+1, row, col);
+    //update visibility
+    gameModelGlobal.resetSquaresVisibility();
+    gameModelGlobal.computeSquaresVisibility();
+}
 async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db,squareGameModel){
     let nbWalls = playerBd.nbWalls - 1;
     await db.collection('character').updateOne({ _id: new ObjectId(playerBd._id) }, { $set: { nbWalls : nbWalls } });
@@ -183,4 +191,4 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
     }
 }
 
-module.exports = { createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };
+module.exports = { setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };

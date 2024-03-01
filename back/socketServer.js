@@ -6,7 +6,7 @@ const { MongoClient,ObjectId } = require('mongodb');
 const {MONGO_URL} = require("./logic/Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const {playBot, setupBothController, nextMove} = require('./logic/Controller/botController.js');
-const {createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd} = require('./logic/Controller/gameController.js');
+const {createGameDb,setUpPositionRealBot, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd} = require('./logic/Controller/gameController.js');
 
 let gameModelGlobal = null;
 let actionController = null;
@@ -43,23 +43,13 @@ module.exports = (server) => {
                 gameModelGlobal = new GameModel();
                 actionController = new ActionController(gameModelGlobal);
 
-                // Persister le plateau de jeu
-                let gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
-
-
                 // Gestion Bot
-                //on met +1 au current player car 1 c'est nous et 2 c'est le bot
                 let botIndex = gameModelGlobal.currentPlayer;
-               setupBothController(botIndex).then((positionBot) => {
-                   console.log("CURRRENT PLAYER: ", botIndex);
-                   console.log("SETUP AFTER THEN: ",positionBot);
-                   let col = parseInt(positionBot.charAt(0)) -1;
-                   let row = parseInt(positionBot.charAt(1)) -1;
-                   gameModelGlobal.updatePlayerPosition(botIndex+1, row, col);
-                   //update visibility
-                   gameModelGlobal.resetSquaresVisibility();
-                   gameModelGlobal.computeSquaresVisibility();
 
+                //on met +1 au current player car 1 c'est nous et 2 c'est le bot
+               setupBothController(botIndex).then((positionBot) => {
+
+                   setUpPositionRealBot(positionBot,gameModelGlobal,botIndex);
 
                    //afficher les player de gameModel
                    console.log("PLAYER ARRAY: ", gameModelGlobal.player_array.getAllPlayers());
@@ -80,6 +70,8 @@ module.exports = (server) => {
                    }));
 
                });
+                // Persister le plateau de jeu
+                let gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
 
             } catch (error) {
                 console.error('Error creating game model', error);
