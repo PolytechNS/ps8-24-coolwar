@@ -44,6 +44,15 @@ class GraphNode {
         }
         return verticesToReturn;
     }
+
+    getNeighborhood(){
+        let neighborhood = [];
+        if(this.upLink!==null){neighborhood.push(this.upLink.destinationNode);}
+        if(this.downLink!==null){neighborhood.push(this.downLink.destinationNode);}
+        if(this.leftLink!==null){neighborhood.push(this.leftLink.destinationNode);}
+        if(this.rightLink!==null){neighborhood.push(this.rightLink.destinationNode);}
+        return neighborhood;
+    }
 }
 
 module.exports = {GraphNode};
