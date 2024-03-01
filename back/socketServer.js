@@ -5,7 +5,7 @@ const {ActionController} = require("./logic/Controller/actionController.js");
 const { MongoClient,ObjectId } = require('mongodb');
 const {MONGO_URL} = require("./logic/Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-const {playBot} = require('./logic/Controller/botController.js');
+const {playBot, setupBothController, nextMove} = require('./logic/Controller/botController.js');
 const {createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd} = require('./logic/Controller/gameController.js');
 
 let gameModelGlobal = null;
@@ -46,23 +46,41 @@ module.exports = (server) => {
                 // Persister le plateau de jeu
                 let gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
 
+
                 // Gestion Bot
+                //on met +1 au current player car 1 c'est nous et 2 c'est le bot
+                let botIndex = gameModelGlobal.currentPlayer;
+               setupBothController(botIndex).then((positionBot) => {
+                   console.log("CURRRENT PLAYER: ", botIndex);
+                   console.log("SETUP AFTER THEN: ",positionBot);
+                   let col = parseInt(positionBot.charAt(0)) -1;
+                   let row = parseInt(positionBot.charAt(1)) -1;
+                   gameModelGlobal.updatePlayerPosition(botIndex+1, row, col);
+                   //update visibility
+                   gameModelGlobal.resetSquaresVisibility();
+                   gameModelGlobal.computeSquaresVisibility();
 
 
-                // Envoyer l'état initial du jeu au client
-                socket.emit('game model', JSON.stringify({
-                    gameId: gameId, // ID de la partie
-                    gameBoardId: gameBoardId, // ID du plateau de jeu
-                    nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
-                    nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
-                    player_array: gameModelGlobal.player_array.getAllPlayers(),
-                    horizontal_Walls: gameModelGlobal.horizontal_Walls.getAllWalls(),
-                    vertical_Walls: gameModelGlobal.vertical_Walls.getAllWalls(),
-                    playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
-                    currentPlayer: gameModelGlobal.currentPlayer,
-                    roundCounter: gameModelGlobal.roundCounter,
-                    winner : gameModelGlobal.winner
-                }));
+                   //afficher les player de gameModel
+                   console.log("PLAYER ARRAY: ", gameModelGlobal.player_array.getAllPlayers());
+
+                   // Envoyer l'état initial du jeu au client
+                   socket.emit('game model', JSON.stringify({
+                       gameId: gameId, // ID de la partie
+                       gameBoardId: gameBoardId, // ID du plateau de jeu
+                       nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
+                       nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
+                       player_array: gameModelGlobal.player_array.getAllPlayers(),
+                       horizontal_Walls: gameModelGlobal.horizontal_Walls.getAllWalls(),
+                       vertical_Walls: gameModelGlobal.vertical_Walls.getAllWalls(),
+                       playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
+                       currentPlayer: gameModelGlobal.currentPlayer,
+                       roundCounter: gameModelGlobal.roundCounter,
+                       winner : gameModelGlobal.winner
+                   }));
+
+               });
+
             } catch (error) {
                 console.error('Error creating game model', error);
                 // Gérer l'erreur, par exemple en envoyant un message d'erreur au client

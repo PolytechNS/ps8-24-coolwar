@@ -95,6 +95,12 @@ class GameModel {
         }
     }
 
+    updatePlayerPosition(playerIndex, row, col){
+        this.player_array.getPlayerPosition(playerIndex).row = row;
+        this.player_array.getPlayerPosition(playerIndex).col = col;
+        console.log("PLAYER POSITION UPDATED : "+this.player_array.getPlayerPosition(playerIndex).row+"|"+this.player_array.getPlayerPosition(playerIndex).col);
+    }
+
     generateRandom(min, max) {
         // find diff
         let difference = max - min;

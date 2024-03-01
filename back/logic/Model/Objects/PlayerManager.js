@@ -45,7 +45,6 @@ class PlayerManager {
         return null;
     }
 
-
 }
 
 module.exports = { PlayerManager };
