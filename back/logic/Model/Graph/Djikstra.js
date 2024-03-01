@@ -10,10 +10,7 @@ const {PlayableSquare} = require("../Objects/PlayableSquare.js");
 class Djikstra {
     constructor() {}
     compute_djikstra(graph, startNode, endNode) {
-        console.log("compute_djikstra");
-        graph.nodes.forEach(node => {
-            console.log("node position",node.position);
-        });
+        console.log("----COMPUTE DJIKSTRA----");
         let distances = {};
         let prev = {};
         let pq = new PriorityQueue();
@@ -50,7 +47,7 @@ class Djikstra {
         path.reverse();
         // Le chemin est construit à l'envers, donc nous le retournons
         // Retourner le chemin et la distance
-
+        console.log("----END COMPUTE DJIKSTRA----");
         return {
             path: path,
             distance: distances[endNode.position]

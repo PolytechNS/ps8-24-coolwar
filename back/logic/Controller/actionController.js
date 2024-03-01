@@ -32,14 +32,14 @@ class ActionController {
             wallBackList.push(this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]));
         }
         //TODO: PB AVEC LE CALCUL DE CHEMIN
-        //if(!this.model.pathExists(wallBackList)){console.log("AUCUN CHEMIN POSSIBLE POUR L'UN DES JOUEURS !");return false;}
+        if(!this.model.pathExists(wallBackList)){console.log("AUCUN CHEMIN POSSIBLE POUR L'UN DES JOUEURS !");return false;}
 
         for (let i = 0; i < walls.wallList.length; i++) {
             let wall = walls.wallList[i];
             let wallInformations = wall.split("X");
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
-                if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
+                //if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
                 if (wallBack.isPresent === false) {
                     wallBack.setOwner(this.model.currentPlayer);
                     wallBack.setPresent();

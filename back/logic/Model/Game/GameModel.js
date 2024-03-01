@@ -260,10 +260,6 @@ class GameModel {
         let wallToRead = backInformations.wallList[0];
         let wallInformations = wallToRead.split("X");
 
-        neighborhoodList.forEach(neighborhood => {
-            console.log(neighborhood);
-        });
-
         //SI LA SELECTION EST UN ENSEMBLE DE MURS HORIZONTAUX
         if(wallInformations[2]==='H'){
             //SI TOUS LES ELEMENTS DE COMPARAISON EXISTENT
@@ -486,9 +482,25 @@ class GameModel {
         //SIMULER LA POSE DES MURS
         //ON COPIE LA LISTE DES MURS
         let horizontalWalls = new WallDictionary();
-        for(let i=0;i<this.horizontal_Walls.wallList.length;i++){horizontalWalls.wallList.push(this.horizontal_Walls.wallList[i]);}
+        for(let i=0;i<this.horizontal_Walls.wallList.length;i++){
+            horizontalWalls.addWall(
+                this.horizontal_Walls.wallList[i].position.row,
+                this.horizontal_Walls.wallList[i].position.col,
+                this.horizontal_Walls.wallList[i].type,
+                this.horizontal_Walls.wallList[i].isPresent,
+                this.horizontal_Walls.wallList[i].idPlayer,
+                this.horizontal_Walls.wallList[i].wallGroup);
+        }
         let verticalWalls = new WallDictionary();
-        for(let i=0;i<this.horizontal_Walls.wallList.length;i++){verticalWalls.wallList.push(this.vertical_Walls.wallList[i]);}
+        for(let i=0;i<this.horizontal_Walls.wallList.length;i++){
+            verticalWalls.addWall(
+                this.vertical_Walls.wallList[i].position.row,
+                this.vertical_Walls.wallList[i].position.col,
+                this.vertical_Walls.wallList[i].type,
+                this.vertical_Walls.wallList[i].isPresent,
+                this.vertical_Walls.wallList[i].idPlayer,
+                this.vertical_Walls.wallList[i].wallGroup);
+        }
         //ON AJOUTE LES MURS A TESTER
         for(let i=0;i<wallBackList.length;i++){
             let wall = wallBackList[i];
