@@ -99,6 +99,10 @@ class GameModel {
     }
 
     updatePlayerPosition(playerIndex, row, col){
+        console.log("UPDATE PLAYER POSITION");
+        console.log(playerIndex);
+        console.log(row);
+        console.log(col);
         this.player_array.getPlayerPosition(playerIndex).row = row;
         this.player_array.getPlayerPosition(playerIndex).col = col;
         console.log("PLAYER POSITION UPDATED : "+this.player_array.getPlayerPosition(playerIndex).row+"|"+this.player_array.getPlayerPosition(playerIndex).col);
@@ -421,8 +425,6 @@ class GameModel {
     }
 
     computeSquaresVisibility(){
-        //console.log("-----COMPUTE VISIBILITY-----");
-
         for(let i=0;i<this.player_array.players.length;i++){
             let position = this.player_array.players[i].position;
             let cardinalSquares = this.playable_squares.getCardinalSquares(position.row,position.col);
@@ -438,7 +440,6 @@ class GameModel {
         }
 
         for(let i=0;i<this.horizontal_Walls.wallList.length;i++){
-            //console.log("COMPUTE HORIZONTAL WALLS");
             let wall = this.horizontal_Walls.wallList[i];
             if(wall.isPresent){
                 let neighborhood = this.getPlayableSquareNeighborhoodFromWall(wall);
@@ -460,7 +461,6 @@ class GameModel {
             }
         }
         for(let i=0;i<this.vertical_Walls.wallList.length;i++){
-            //console.log("COMPUTE VERTICAL WALLS");
             let wall = this.vertical_Walls.wallList[i];
             if(wall.isPresent){
                 let neighborhood = this.getPlayableSquareNeighborhoodFromWall(wall);

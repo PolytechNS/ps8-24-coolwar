@@ -601,7 +601,6 @@ function main(){
     });
     let start = Date.now();
     nextMove({board, opponentWalls, ownWalls}).then((move) => {
-        console.log("NEXT MOVE: ",move);
         let timeTaken = Date.now() - start;
         console.log("Total time taken : " + timeTaken + " milliseconds");
     });

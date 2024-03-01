@@ -38,7 +38,6 @@ exports.nextMoveBotController = function (gameModel) {
     console.log("NEXT MOVE OBJETS INITIALIZED");
     return new Promise((resolve, reject) => {
         nextMove({board, opponentWalls, ownWalls}).then((move) => {
-            console.log("NEXT MOVE: ",move);
             resolve(move);
         }).catch((error) => {
             reject(error);

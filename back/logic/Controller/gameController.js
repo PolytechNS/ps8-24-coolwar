@@ -1,6 +1,6 @@
 const {ObjectId} = require("mongodb");
 const {playBot} = require("./botController");
-
+const {IAConverter} = require('../AI/IAConverter.js');
 async function createGameDb(gameId,gameModelGlobal,db) {
     const gameBoard = await db.collection('gameboards').insertOne({
         gameId: gameId, // Lier le plateau de jeu à la partie
@@ -144,9 +144,9 @@ async function updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal){
 }
 
 function setUpPositionRealBot(positionBot,gameModelGlobal,botIndex){
-    let col = parseInt(positionBot.charAt(0)) -1;
-    let row = parseInt(positionBot.charAt(1)) -1;
-    gameModelGlobal.updatePlayerPosition(botIndex+1, row, col);
+    let [row,col] = IAConverter.prototype.convertVellaCooordinatesToOurs(positionBot[0],positionBot[1]);
+    console.log("BOT POSITION TRADUCTION: ",row,col);
+    gameModelGlobal.updatePlayerPosition(botIndex, row, col);
     //update visibility
     gameModelGlobal.resetSquaresVisibility();
     gameModelGlobal.computeSquaresVisibility();

@@ -8,12 +8,10 @@ exports.computeVisibilityPlayableSquare = function (gameModel, currentPlayerInde
     } else {
         currentPlayerOpponent = currentPlayerIndex - 1;
     }
-    console.log("currentPlayerOpponent : ", currentPlayerOpponent);
     let opponentPosition = gameModel.player_array.getPlayer(currentPlayerOpponent).position;
    // Remplir le tableau 9x9 par les visibilités des PlayableSquares
     gameModel.playable_squares.getAllPlayableSquares().forEach((square) => {
       let { row, col } = square.position;
-      console.log("currentPlayerIndex : ", currentPlayerIndex);
       if(currentPlayerIndex === 1){
           if(square.visibility <= 0){
               board[row][col] = 0;

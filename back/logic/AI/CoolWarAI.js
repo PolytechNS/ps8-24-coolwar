@@ -4,6 +4,7 @@ const { Graph } = require('../Model/Graph/Graph.js');
 const { Position } = require('../Model/Objects/Position.js');
 const { WallDictionary } = require('../Model/Objects/WallDictionary.js');
 const { PlayableSquareDictionary } = require('../Model/Objects/PlayableSquareDictionary.js');
+const { Djikstra } = require('../Model/Graph/Djikstra.js');
 
 
 /*
@@ -89,19 +90,19 @@ function nextMove(gameState) {
 
 
 function Real_nextMove(gameState) {
+    console.log("REAL NEXT MOVE");
+    console.log("GAME STATE : ",gameState);
     let opponentPos = opponentPosition(gameState.board);
     let opponentPosConverted = null;
     console.log("OPPONENT POS   : ",opponentPos);
-    if(opponentPos !== null) {
-        opponentPosConverted = convertOurCoordinatesToVellaCooordinates(opponentPos[1], opponentPos[0]);
-    }
+    if(opponentPos !== null) {opponentPosConverted = convertOurCoordinatesToVellaCooordinates(opponentPos[1], opponentPos[0]);}
 
     //SI LES DERNIERES ACTIONS ETAIENT DES MURS EN PLUS
     if(wallCount > 2){
         wallCount = 0;
         lastMove = "move";
         moveCount++;
-        return moveCharacterWithDijkstra();
+        return moveCharacterWithDjikstra();
     }
 
     //SI ON CONNAIT LA POSITION DU JOUEUR ADVERSE -> ON MET UN MUR DEVANT LUI
@@ -164,7 +165,7 @@ function Real_nextMove(gameState) {
                         else{
                             lastMove = "move";
                             moveCount++;
-                            return moveCharacterWithDijkstra();
+                            return moveCharacterWithDjikstra();
                         }
                     }
                 }
@@ -184,7 +185,7 @@ function Real_nextMove(gameState) {
                     else{
                         lastMove = "move";
                         moveCount++;
-                        return moveCharacterWithDijkstra();
+                        return moveCharacterWithDjikstra();
                     }
                 }
             }
@@ -192,7 +193,7 @@ function Real_nextMove(gameState) {
             else {
                 lastMove = "move";
                 moveCount++;
-                return moveCharacterWithDijkstra();
+                return moveCharacterWithDjikstra();
             }
         }
         else{
@@ -253,7 +254,7 @@ function Real_nextMove(gameState) {
                         else{
                             lastMove = "move";
                             moveCount++;
-                            return moveCharacterWithDijkstra();
+                            return moveCharacterWithDjikstra();
                         }
                     }
                 }
@@ -273,7 +274,7 @@ function Real_nextMove(gameState) {
                     else{
                         lastMove = "move";
                         moveCount++;
-                        return moveCharacterWithDijkstra();
+                        return moveCharacterWithDjikstra();
                     }
                 }
             }
@@ -281,7 +282,7 @@ function Real_nextMove(gameState) {
             else {
                 lastMove = "move";
                 moveCount++;
-                return moveCharacterWithDijkstra();
+                return moveCharacterWithDjikstra();
             }
         }
     }
@@ -289,14 +290,14 @@ function Real_nextMove(gameState) {
     else{
         lastMove = "move";
         moveCount++;
-        return moveCharacterWithDijkstra();
+        return moveCharacterWithDjikstra();
     }
 
 
 
     // --------------------- INTERNAL FUNCTIONS ---------------------------------- //
     
-    function moveCharacterWithDijkstra(){
+    function moveCharacterWithDjikstra(){
         const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
         let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
         const ownPosition = myPosition(gameState.board);
@@ -305,12 +306,10 @@ function Real_nextMove(gameState) {
 
         //COMPUTE POUR TOUTE LA LIGNE
         for (let i = 0; i < 8; i++) {
-            let res = dijkstra(graph, ownNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
+            console.log("moveCharacterWithDjikstra");
+            let res = Djikstra.prototype.compute_djikstra(graph, ownNode, graph.getNodeFromCoordinates(finishLine-1, i));
             if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
         }
-        bestRes.path.forEach(node => {
-           //console.log(node.position);
-        });
         let nextMove = bestRes.path[1].position;
         let finalPosition = convertOurCoordinatesToVellaCooordinates(nextMove.row,nextMove.col);
         //console.log("FINAL POSITION : ",finalPosition);
@@ -342,7 +341,7 @@ function Real_nextMove(gameState) {
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = dijkstra(graph, ownNode, graph.getNodeFromCoordinates(finishLine-1, i));
+                let res = Djikstra.prototype.compute_djikstra(graph, ownNode, graph.getNodeFromCoordinates(finishLine-1, i));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
@@ -355,7 +354,7 @@ function Real_nextMove(gameState) {
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = dijkstra(graph, oppNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
+                let res = Djikstra.prototype.compute_djikstra(graph, oppNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
@@ -495,7 +494,6 @@ function convertGameStateToGamemodel(gameState){
         verticalWalls.addWall(i, j,'V',false,null,null);}}
 
     let opponentPlayOrder = playOrder === 1 ? 2 : 1;
-    console.log("GAME STATE : ",gameState);
     gameState.opponentWalls.forEach(function (wall){
         let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[1]);
         //SI MUR HORIZONTAL
@@ -589,185 +587,37 @@ function convertGameStateToGamemodel(gameState){
     return [playableSquares,horizontalWalls,verticalWalls];
 }
 
-function main(){
+function main() {
     let opponentWalls = [
-        ["19",0],
-        ["25",0],
-        ["34",0]
+        ["19", 0],
+        ["25", 0],
+        ["34", 0]
     ];
     let ownWalls = [
-        ["38",1],
-        ["16",0],
-        ["52",0],
-        ["59",0]
+        ["38", 1],
+        ["16", 0],
+        ["52", 0],
+        ["59", 0]
     ];
     let board = [
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,2,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,1,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0]
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 2, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0]
     ];
     setup(1).then((position) => {
     });
     let start = Date.now();
     nextMove({board, opponentWalls, ownWalls}).then((move) => {
-        console.log("NEXT MOVE: ",move);
+        console.log("NEXT MOVE: ", move);
         let timeTaken = Date.now() - start;
         console.log("Total time taken : " + timeTaken + " milliseconds");
     });
-
-
-
-
-
-    // ------------------- FONCTIONS ----------------------------------
-
-    /*
-    function init_gameboard(){
-        let gameboard = [];
-                for (let i = 0; i < 9; i++) {
-                    let row = [];
-                    for (let j = 0; j < 9; j++) {row.push(parseInt("0"));}
-                    gameboard.push(row);
-                }
-        return gameboard.reverse();
-    }
-    function showGameboard(gameboard){
-        gameboard.forEach(row => {
-            let rowString = "";
-            row.forEach(cell => {
-                rowString += "|"+cell;
-            });
-            rowString += "|";
-            console.log(rowString);
-        });
-    }
-    */
 }
-
-function dijkstra(graph, startNode, endNode) {
-    let distances = {};
-    let prev = {};
-    let pq = new PriorityQueue();
-
-    graph.nodes.forEach(node => {
-        distances[node.position] = Infinity;
-        prev[node.position] = null;
-        pq.enqueue(node, Infinity);
-    });
-
-    distances[startNode.position] = 0;
-    pq.updatePriority(startNode, 0);
-
-    while (!pq.isEmpty()) {
-        let { element: currentNode } = pq.dequeue();
-        // Si nous avons atteint le nœud de destination, arrêtons l'algorithme
-        if (currentNode === endNode) break;
-
-        let neighbors = currentNode.getNeighborhood();
-        neighbors.forEach(neighbor => {
-            let alt = distances[currentNode.position] + 1; // Suppose un poids de 1 pour chaque arête
-            if (alt < distances[neighbor.position]) {
-                distances[neighbor.position] = alt;
-                prev[neighbor.position] = currentNode;
-                pq.updatePriority(neighbor, alt);
-            }
-        });
-    }
-
-    // Reconstruire le chemin le plus court de startNode à endNode
-    let path = [];
-    for (let at = endNode; at !== null; at = prev[at.position]) {
-        path.push(at);
-    }
-    path.reverse();
-    // Le chemin est construit à l'envers, donc nous le retournons
-    // Retourner le chemin et la distance
-
-    return {
-        path: path,
-        distance: distances[endNode.position]
-    };
-}
-
-class PriorityQueue {
-    constructor() {
-        this.items = [];
-    }
-
-    enqueue(element, priority) {
-        let contain = false;
-        const queueElement = { element, priority };
-
-        for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].priority > queueElement.priority) {
-                this.items.splice(i, 0, queueElement);
-                contain = true;
-                break;
-            }
-        }
-
-        if (!contain) {
-            this.items.push(queueElement);
-        }
-    }
-
-    updatePriority(element, newPriority) {
-        // Trouver l'élément dans la file d'attente
-        let found = false;
-        for (let i = 0; i < this.items.length; i++) {
-            if (this.items[i].element === element) {
-                // Element trouvé, retirer de la file d'attente
-                this.items.splice(i, 1);
-                found = true;
-                break;
-            }
-        }
-
-        // Si l'élément a été trouvé, l'ajouter à nouveau avec la nouvelle priorité
-        if (found) {
-            this.enqueue(element, newPriority);
-        } else {
-            //console.log('Element not found in priority queue.');
-        }
-    }
-
-    dequeue() {
-        if (this.isEmpty())
-            return 'Underflow';
-        return this.items.shift();
-    }
-
-    isEmpty() {
-        return this.items.length === 0;
-    }
-
-    front() {
-        if (this.isEmpty())
-            return 'No elements in Queue';
-        return this.items[0];
-    }
-
-    rear() {
-        if (this.isEmpty())
-            return 'No elements in Queue';
-        return this.items[this.items.length - 1];
-    }
-
-    clear() {
-        this.items = [];
-    }
-
-    size() {
-        return this.items.length;
-    }
-}
-
-main()
 
 module.exports = { setup, nextMove };

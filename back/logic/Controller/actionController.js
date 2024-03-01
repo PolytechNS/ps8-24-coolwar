@@ -31,7 +31,6 @@ class ActionController {
             let wallInformations = wall.split("X");
             wallBackList.push(this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]));
         }
-        //TODO: PB AVEC LE CALCUL DE CHEMIN
         if(!this.model.pathExists(wallBackList)){console.log("AUCUN CHEMIN POSSIBLE POUR L'UN DES JOUEURS !");return false;}
 
         for (let i = 0; i < walls.wallList.length; i++) {

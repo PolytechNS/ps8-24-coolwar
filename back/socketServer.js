@@ -7,6 +7,7 @@ const {MONGO_URL} = require("./logic/Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const {playBot, setupBotController, nextMoveBotController} = require('./logic/Controller/botController.js');
 const {updatePlayerPositionFromDb,createGameDb,setUpPositionRealBot, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd} = require('./logic/Controller/gameController.js');
+const {IAConverter} = require('./logic/AI/IAConverter.js');
 
 let gameModelGlobal = null;
 let actionController = null;
@@ -44,11 +45,10 @@ module.exports = (server) => {
                 actionController = new ActionController(gameModelGlobal);
 
                 // Gestion Bot
-                let botIndex = gameModelGlobal.currentPlayer;
-
+                let botIndex = IAConverter.prototype.convertOurIndexToVellaIndex(gameModelGlobal.currentPlayer);
+                console.log("BOT INDEX: ", botIndex);
                 //on met +1 au current player car 1 c'est nous et 2 c'est le bot
                setupBotController(botIndex).then((positionBot) => {
-
                    setUpPositionRealBot(positionBot,gameModelGlobal,botIndex);
                    //afficher les player de gameModel
                    console.log("PLAYER ARRAY: ", gameModelGlobal.player_array.getAllPlayers());
@@ -189,29 +189,24 @@ module.exports = (server) => {
 
                 console.log("INDEX DU JOUEUR QUI DOIT JOUER: ", gameModelGlobal.currentPlayer);
                 //je fais le move avec l'ia
-                nextMoveBotController(gameModelGlobal).then((move) => {
-                    console.log("NEXT MOVE: ",move);
+                console.log("BEFORE NEXT MOVE - AFTER PLACING WALL");
+                nextMoveBotController(gameModelGlobal).then(async (move) => {
+                    console.log("NEXT MOVE: ", move);
+                    console.log("AFTER NEXT MOVE - AFTER PLACING WALL");
+                    //si les murs sont placés
+                    if (responseBoolean) {
+                        //on met à jour le nombre de murs restants dans la bd pour le joueur
+                        await updateWallsAndVisibilityFromBd(wallDataDeserialized, playerBd, gameBoardIdDb, gameModelGlobal, db, squareGameModel);
+
+                        //Gestion Bot DEBILE--action de bouger
+                        await manageBotMove(squareGameModel, gameBoardIdDb, gameModelGlobal, actionController, db);
+
+                        console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
+
+                        //on met à jour le joueur actuel dans la bd
+                        await updateCurrentPlayerFromDb(gameBoardIdDb, db, gameModelGlobal);
+                    }
                 });
-
-                //je mets à jour la position dans gameModel
-
-                //je mets à jour la position dans la bd
-
-                //si les murs sont placés
-                if(responseBoolean){
-                    //on met à jour le nombre de murs restants dans la bd pour le joueur
-                    await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db,squareGameModel);
-
-
-
-                    //Gestion Bot DEBILE--action de bouger
-                    await manageBotMove(squareGameModel,gameBoardIdDb,gameModelGlobal,actionController,db);
-
-                    console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
-
-                    //on met à jour le joueur actuel dans la bd
-                    await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModelGlobal);
-                }
                 // Envoyer la réponse au client
 
                 socket.emit('placewallResponse', responseBoolean);
