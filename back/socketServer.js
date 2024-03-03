@@ -186,7 +186,7 @@ module.exports = (server) => {
                 console.log("INDEX DU JOUEUR QUI DOIT JOUER: ", gameModelGlobal.currentPlayer);
                 //on essaye de placer le mur
                 let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
-
+                //TOUT VAS BIEN
                 console.log("INDEX DU JOUEUR QUI DOIT JOUER: ", gameModelGlobal.currentPlayer);
                 //je fais le move avec l'ia
                 console.log("BEFORE NEXT MOVE - AFTER PLACING WALL");
@@ -198,9 +198,8 @@ module.exports = (server) => {
                     //si les murs sont placés
                     if (responseBoolean) {
                         //on met à jour le nombre de murs restants dans la bd pour le joueur
+                        await playBot(gameModelGlobal, actionController,move,gameModelGlobal.currentPlayer);
                         await updateWallsAndVisibilityFromBd(wallDataDeserialized, playerBd, gameBoardIdDb, gameModelGlobal, db, squareGameModel);
-                        //Gestion Bot DEBILE--action de bouger
-                        await manageBotMove(squareGameModel, gameBoardIdDb, gameModelGlobal, actionController, db);
                         console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
                         //on met à jour le joueur actuel dans la bd
                         await updateCurrentPlayerFromDb(gameBoardIdDb, db, gameModelGlobal);
@@ -286,7 +285,7 @@ module.exports = (server) => {
 
                     //show horizontal walls from savedGame gameModel
 
-                    console.log('--UPDATE-- CURRENT PLAYER :', gameModelGlobal.currentPlayer);
+                    //console.log('--UPDATE-- CURRENT PLAYER :', gameModelGlobal.currentPlayer);
 
                     socket.emit('updateGameModelResponse', JSON.stringify({
                         gameId: gameBoardSaved.gameId, // ID de la partie

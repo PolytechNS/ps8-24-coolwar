@@ -38,7 +38,6 @@ class ActionController {
             let wallInformations = wall.split("X");
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
-                //if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
                 if (wallBack.isPresent === false) {
                     wallBack.setOwner(this.model.currentPlayer);
                     wallBack.setPresent();
@@ -46,9 +45,12 @@ class ActionController {
                     this.model.wallGroup.push(wallGroupId);
                 }
             } else {return false;}
+            console.log("WALL UPDATE :",wallBack);
         }
         this.model.player_array.getPlayer(this.model.currentPlayer).minusWall();
         this.model.setNextPlayer();
+        this.model.resetSquaresVisibility();
+        this.model.computeSquaresVisibility();
         return true;
     }
 
@@ -83,31 +85,7 @@ class ActionController {
         return false;
     }
 
-    moveCharacterAI(id,number) {
-        if(this.checkCurrentPlayer(id)){
-            let player_position = this.model.player_array.getPlayerPosition(id);
 
-            if(number ===3){//en haut
-                if(this.characterCanBeMoved(player_position.row-1,player_position.col,player_position)){
-                    this.model.resetSquaresVisibility();
-                    let playerToMove = this.model.player_array.getPlayer(id);
-                    let row = player_position.row-1;
-                    let col = player_position.col;
-                    playerToMove.position = new Position(row,col);
-                    console.log("AVANT NEXT PLAYER : ",this.model.currentPlayer);
-                    this.model.setNextPlayer();
-                    console.log("APRES NEXT PLAYER : ",this.model.currentPlayer);
-
-                    return true;
-                }
-            }else{
-                console.log("MOUVEMENT IMPOSSIBLE !");
-            }
-        }
-        this.checkWinner();
-        return false;
-
-    }
 
 
     getPlayerPosition(id){

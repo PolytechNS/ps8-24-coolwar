@@ -459,7 +459,6 @@ function myPosition(board){
         }
     }
 }
-
 //RETOURNE -> [col,row]
 function opponentPosition(board){
     for (let i = 0; i < board.length; i++) {
@@ -472,14 +471,12 @@ function opponentPosition(board){
     }
     return null;
 }
-
 function convertVellaCooordinatesToOurs(col,row){
     return [9-parseInt(row),parseInt(col)-1];
 }
 function convertOurCoordinatesToVellaCooordinates(row,col){
     return [parseInt(col)+1,9-parseInt(row)];
 }
-
 function convertGameStateToGamemodel(gameState){
     let horizontalWalls = new WallDictionary();
     let verticalWalls = new WallDictionary();
@@ -576,21 +573,15 @@ function convertGameStateToGamemodel(gameState){
 
 function main(){
     let opponentWalls = [
-        ["19",0],
-        ["25",0],
-        ["34",0]
+        ["89",1]
     ];
     let ownWalls = [
-        ["38",1],
-        ["16",0],
-        ["52",0],
-        ["59",0]
     ];
     let board = [
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,2,0,0,0],
         [0,0,0,0,1,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
@@ -602,6 +593,7 @@ function main(){
     let start = Date.now();
     nextMove({board, opponentWalls, ownWalls}).then((move) => {
         let timeTaken = Date.now() - start;
+        console.log(move);
         console.log("Total time taken : " + timeTaken + " milliseconds");
     });
 

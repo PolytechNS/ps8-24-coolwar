@@ -433,10 +433,11 @@ class GameModel {
     }
 
     computeSquaresVisibility(){
+        console.log("------COMPUTE SQUARES VISIBILITY------");
         for(let i=0;i<this.player_array.players.length;i++){
             let position = this.player_array.players[i].position;
             let cardinalSquares = this.playable_squares.getCardinalSquares(position.row,position.col);
-
+            //UPDATE LES CASES VOISINES
             for(let j=0;j<cardinalSquares.length;j++){
                 let caseToEdit = this.playable_squares.getPlayableSquare(cardinalSquares[j][0],cardinalSquares[j][1]);
                 //console.log(caseToEdit);
@@ -447,6 +448,7 @@ class GameModel {
             if(i===1){ this.playable_squares.getPlayableSquare(position.row,position.col).visibility += 1;}
         }
 
+        //UPDATE EN FONCTION DES MURS
         for(let i=0;i<this.horizontal_Walls.wallList.length;i++){
             let wall = this.horizontal_Walls.wallList[i];
             if(wall.isPresent){
@@ -489,6 +491,7 @@ class GameModel {
                 }
             }
         }
+        console.log("------END COMPUTE SQUARES VISIBILITY------");
     }
 
     pathExists(wallBackList){

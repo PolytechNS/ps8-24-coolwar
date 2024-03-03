@@ -2,14 +2,21 @@ const { computeMove } = require('../AI/ai.js');
 const { gameModel } = require('../Model/Game/GameModel.js');
 const {nextMove,setup} = require('../AI/CoolWarAI.js');
 const {computeVisibilityPlayableSquare,getWallOpponent,getOwnWalls} = require('../AI/modelParser.js');
+const {Position} = require("../Model/Objects/Position");
 
 
-//IA DEBILE
-exports.playBot = function (gameModel, actionController) {
-    let currentPlayerGameModel = gameModel.currentPlayer;
-    console.log("currentPlayerGameModel : ", currentPlayerGameModel);
-    console.log("gameModel INSIDE PLAYBOT : ", gameModel.player_array.getAllPlayers());
-    actionController.moveCharacterAI(currentPlayerGameModel, 3);
+//GESTION DES ACTIONS DU BOT
+exports.playBot = function (gameModel, actionController,move,indexPlayer) {
+    console.log("PLAY BOT");
+    if(move.action === "move"){
+       actionController.moveCharacter(indexPlayer,move.position.row,move.position.col);
+    }
+    else if(move.action === "wall"){
+        actionController.placeWall(move,indexPlayer);
+    }
+    else{
+
+    }
 }
 
 

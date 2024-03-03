@@ -47,10 +47,11 @@ class GraphNode {
 
     getNeighborhood(){
         let neighborhood = [];
-        if(this.upLink!==null){neighborhood.push(this.upLink.destinationNode);}
-        if(this.downLink!==null){neighborhood.push(this.downLink.destinationNode);}
-        if(this.leftLink!==null){neighborhood.push(this.leftLink.destinationNode);}
-        if(this.rightLink!==null){neighborhood.push(this.rightLink.destinationNode);}
+        //AJOUTER A LA LISTE UNIQUEMENT SI UN LIEN EXISTE ET QUE LE NODE DESTINATION EXISTE AUSSI
+        if(this.upLink!==null && this.upLink.destinationNode!==null){neighborhood.push(this.upLink.destinationNode);}
+        if(this.downLink!==null && this.downLink.destinationNode!==null){neighborhood.push(this.downLink.destinationNode);}
+        if(this.leftLink!==null && this.leftLink.destinationNode!==null){neighborhood.push(this.leftLink.destinationNode);}
+        if(this.rightLink!==null && this.rightLink.destinationNode!==null){neighborhood.push(this.rightLink.destinationNode);}
         return neighborhood;
     }
 }

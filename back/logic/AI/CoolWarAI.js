@@ -56,17 +56,18 @@ function setup(AIplay) {
     });
 
     function setupIA(AIplay){
-        let randomBottom = Math.round(Math.random() * 8) + 1;
-        let randomTop = Math.round(Math.random() * 8) + 1;
         let position = null;
         console.log("AIPLAY",AIplay);
-        if(AIplay === 1){
-            position = randomBottom.toString()+"9";
-            finishLine = parseInt("1");
+        let rand = Math.round(Math.random() * 8) + 1;
+        if(AIplay === 2){
+            position = rand.toString()+"1";
+            finishLine = parseInt("9");
+            console.log("FINISH LINE AFTER INIT : ",finishLine);
         }
         else{
-            position = randomTop.toString()+"1";
-            finishLine = parseInt("9");
+            position = rand.toString()+"9";
+            finishLine = parseInt("1");
+            console.log("FINISH LINE AFTER INIT : ",finishLine);
         }
         return position;
     }
@@ -94,9 +95,8 @@ function Real_nextMove(gameState) {
     console.log("REAL NEXT MOVE");
     console.log("GAME STATE : ",gameState);
     let opponentPos = opponentPosition(gameState.board);
-    let opponentPosConverted = null;
-    if(opponentPos !== null) {opponentPosConverted = convertOurCoordinatesToVellaCooordinates(opponentPos[1], opponentPos[0]);}
 
+    console.log("OPPONENT POSITION CONVERTED : ",opponentPos);
     //SI LES DERNIERES ACTIONS ETAIENT DES MURS EN PLUS
     if(wallCount > 2){
         wallCount = 0;
@@ -106,18 +106,152 @@ function Real_nextMove(gameState) {
     }
 
     //SI ON CONNAIT LA POSITION DU JOUEUR ADVERSE -> ON MET UN MUR DEVANT LUI
-    if(opponentPosConverted!==null){
+    if(opponentPos!==null){
         //si ma finishLine = 1 --> ma direction = haut // ennemi = bas ||
         if(finishLine !== 1){
+            console.log("JE SAIS OU EST L'ENNEMI !! \nJE DOIS ALLER EN HAUT !!");
+            //je verifie qu'il existe un mur autour de l'ennemi
+            let wall = isWallAtPosition(gameState, opponentPos);
+            //SI LE MUR EXISTE, JE REGARDE LES MURS VOISINS
+            if(wall!==null){
+                console.log("MUR TROUVE ! ");
+                //SI LE MUR EST HORIZONTAL
+                if(wall[1] === 0){
+                    console.log("MUR HORIZONTAL TROUVE ! ");
+                    //ON REGARDE S'IL EXISTE UN MUR A GAUCHE
+                    let leftHorizontalWallPosition = [null,null];
+                    let leftVerticalWallPosition = [null,null];
+                    //il est au bord de la grid
+                    if(parseInt(opponentPos[1]) === finishLine){
+                        leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]];
+                        leftVerticalWallPosition = [opponentPos[0], opponentPos[1]];
+                    }
+                    //en plein milieu de la grid
+                    else {
+                        leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]];
+                        leftVerticalWallPosition = [opponentPos[0] - 1, opponentPos[1] + 1];
+                    }
+                    console.log("LEFT HORIZONTAL WALL POSITION : ", leftHorizontalWallPosition);
+                    console.log("LEFT VERTICAL WALL POSITION : ", leftVerticalWallPosition);
+
+                    let isLeftHorizontalWallExist = isWallAtPosition(gameState, leftHorizontalWallPosition);
+                    let isLeftVerticalWallExist = isWallAtPosition(gameState, leftVerticalWallPosition)
+                    //S'IL N'EXISTE PAS, ON POSE ABSOLUMENT UN MUR A GAUCHE (BLOQUAGE >>)
+                    if (!isLeftHorizontalWallExist && !isLeftVerticalWallExist) {
+                        console.log("VOISIN DU MUR HORIZONTAL GAUCHE NON TROUVE ! --> ON POSE UN MUR A GAUCHE");
+                        console.log("LEFT HORIZONTAL DJIKSTRA");
+                        let djikstraLeftHorizontalResult = computeDjikstraForSpecificWall(gameState, wall, 'H', 'G');
+                        console.log("LEFT VERTICAL DJIKSTRA");
+                        let djikstraLeftVerticalResult = computeDjikstraForSpecificWall(gameState, wall, 'V', 'G');
+
+                        console.log("DJIKSTRA LEFT HORIZONTAL : ", djikstraLeftHorizontalResult);
+                        console.log("DJIKSTRA LEFT VERTICAL : ", djikstraLeftVerticalResult);
+
+                        //On compare les deux valeurs et on prend la plus grande valeur des deux
+                        if (djikstraLeftHorizontalResult > djikstraLeftVerticalResult) {
+                            console.log("KEEPING LEFT HORIZONTAL WALL");
+                            lastMove = "wall";
+                            wallCount++;
+                            return {
+                                action: "wall",
+                                value: [leftHorizontalWallPosition[0].toString() + leftHorizontalWallPosition[1].toString(), 0]
+                            };
+                        } else {
+                            console.log("KEEPING LEFT VERTICAL WALL");
+                            lastMove = "wall";
+                            wallCount++;
+                            return {
+                                action: "wall",
+                                value: [leftVerticalWallPosition[0].toString() + leftVerticalWallPosition[1].toString(), 1]
+                            };
+                        }
+                    }
+                    //ON REGARDE S'IL EXISTE UN MUR A DROITE
+                    else {
+                        let rightHorizontalWallPosition = [null,null];
+                        let rightVerticalWallPosition = [null,null];
+
+                        //il est au bord de la grid
+                        if(parseInt(opponentPos[1]) === finishLine){
+                            rightHorizontalWallPosition = [opponentPos[0] + 1, opponentPos[1]];
+                            rightVerticalWallPosition = [opponentPos[0]+1, opponentPos[1]+1];
+                        }
+                        //en plein milieu de la grid
+                        else {
+                            rightHorizontalWallPosition = [opponentPos[0] + 2, opponentPos[1]];
+                            rightVerticalWallPosition = [opponentPos[0] + 1, opponentPos[1] + 1];
+                        }
+
+                        let isRightHorizontalWallExist = isWallAtPosition(gameState, rightHorizontalWallPosition);
+                        let isRightVerticalWallExist = isWallAtPosition(gameState, rightVerticalWallPosition);
+
+                        if (!isRightHorizontalWallExist && !isRightVerticalWallExist) {
+                            console.log("VOISIN DU MUR HORIZONTAL DROITE NON TROUVE ! --> ON POSE UN MUR A DROITE");
+                            let djikstraRightHorizontalResult = computeDjikstraForSpecificWall(gameState, wall, 'H', 'R');
+                            let djikstraRightVerticalResult = computeDjikstraForSpecificWall(gameState, wall, 'V', 'R');
+                            //On compare les deux valeurs et on prend la plus grande valeur des deux
+                            if (djikstraRightHorizontalResult > djikstraRightVerticalResult) {
+                                lastMove = "wall";
+                                wallCount++;
+                                return {
+                                    action: "wall",
+                                    value: [rightHorizontalWallPosition[0].toString() + rightHorizontalWallPosition[1].toString(), 0]
+                                };
+                            } else {
+                                lastMove = "wall";
+                                wallCount++;
+                                return {
+                                    action: "wall",
+                                    value: [rightVerticalWallPosition[0].toString() + rightVerticalWallPosition[1].toString(), 1]
+                                };
+                            }
+                        }
+                        else {
+                            lastMove = "move";
+                            moveCount++;
+                            return moveCharacterWithDjikstra();
+                        }
+                    }
+                }
+                //SI LE MUR EST VERTICAL
+                else if(wall[1] === 1){
+                    //ON REGARDE S'IL EXISTE UN MUR A GAUCHE
+                    let leftHorizontalWallPosition = [opponentPos[0] -1, opponentPos[1]];
+                    let isLeftHorizontalWallExist = isWallAtPosition(gameState, leftHorizontalWallPosition);
+                    //S'IL N'EXISTE PAS, ON POSE ABSOLUMENT UN MUR A GAUCHE (BLOQUAGE >>)
+                    if (!isLeftHorizontalWallExist){
+                        lastMove = "wall";
+                        wallCount++;
+                            return {action: "wall",
+                                value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
+                    }
+                    //ON REGARDE S'IL EXISTE UN MUR A DROITE
+                    else{
+                        lastMove = "move";
+                        moveCount++;
+                        return moveCharacterWithDjikstra();
+                    }
+                }
+            }
+            //SI LE MUR N'EXISTE PAS
+            else {
+                console.log("MUR NON TROUVE.... ");
+                lastMove = "move";
+                moveCount++;
+                return moveCharacterWithDjikstra();
+            }
+        }
+        else{
             //je verifie que le mur qu'on veut poser n'est pas dans les murs deja existants
-            let wall = isWallAtPosition(gameState, opponentPosConverted);
+            opponentPos = [parseInt(opponentPos[0]),parseInt(opponentPos[1]+1)];
+            let wall = isWallAtPosition(gameState, opponentPos);
             //SI LE MUR EST BIEN TROUVE
             if(wall!==null){
                 //SI LE MUR EST HORIZONTAL
                 if(wall[1] === 0){
                     //ON REGARDE S'IL EXISTE UN MUR A GAUCHE
-                    let leftHorizontalWallPosition = [opponentPosConverted[0] - 2, opponentPosConverted[1]];
-                    let leftVerticalWallPosition = [opponentPosConverted[0]-1, opponentPosConverted[1]+1];
+                    let leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]];
+                    let leftVerticalWallPosition = [opponentPos[0]-1, opponentPos[1]-1];
                     let isLeftHorizontalWallExist = isWallAtPosition(gameState, leftHorizontalWallPosition);
                     let isLeftVerticalWallExist = isWallAtPosition(gameState, leftVerticalWallPosition)
                     //S'IL N'EXISTE PAS, ON POSE ABSOLUMENT UN MUR A GAUCHE (BLOQUAGE >>)
@@ -141,7 +275,7 @@ function Real_nextMove(gameState) {
                     //ON REGARDE S'IL EXISTE UN MUR A DROITE
                     else{
                         let rightHorizontalWallPosition = [opponentPos[0] + 2, opponentPos[1]];
-                        let rightVerticalWallPosition = [opponentPos[0] +1 , opponentPos[1]+1];
+                        let rightVerticalWallPosition = [opponentPos[0] +1 , opponentPos[1]-1];
                         let isRightHorizontalWallExist = isWallAtPosition(gameState, rightHorizontalWallPosition);
                         let isRightVerticalWallExist = isWallAtPosition(gameState, rightVerticalWallPosition);
 
@@ -172,96 +306,7 @@ function Real_nextMove(gameState) {
                 //SI LE MUR EST VERTICAL
                 else if(wall[1] === 1){
                     //ON REGARDE S'IL EXISTE UN MUR A GAUCHE
-                    let leftHorizontalWallPosition = [opponentPosConverted[0] -1, opponentPosConverted[1]];
-                    let isLeftHorizontalWallExist = isWallAtPosition(gameState, leftHorizontalWallPosition);
-                    //S'IL N'EXISTE PAS, ON POSE ABSOLUMENT UN MUR A GAUCHE (BLOQUAGE >>)
-                    if (!isLeftHorizontalWallExist){
-                        lastMove = "wall";
-                        wallCount++;
-                            return {action: "wall",
-                                value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
-                    }
-                    //ON REGARDE S'IL EXISTE UN MUR A DROITE
-                    else{
-                        lastMove = "move";
-                        moveCount++;
-                        return moveCharacterWithDjikstra();
-                    }
-                }
-            }
-            //SI LE MUR EXISTE, JE REGARDE LES MURS VOISINS
-            else {
-                lastMove = "move";
-                moveCount++;
-                return moveCharacterWithDjikstra();
-            }
-        }
-        else{
-            //je verifie que le mur qu'on veut poser n'est pas dans les murs deja existants
-            opponentPosConverted = [parseInt(opponentPosConverted[0]),parseInt(opponentPosConverted[1]+1)];
-            let wall = isWallAtPosition(gameState, opponentPosConverted);
-            //SI LE MUR EST BIEN TROUVE
-            if(wall!==null){
-                //SI LE MUR EST HORIZONTAL
-                if(wall[1] === 0){
-                    //ON REGARDE S'IL EXISTE UN MUR A GAUCHE
-                    let leftHorizontalWallPosition = [opponentPosConverted[0] - 2, opponentPosConverted[1]];
-                    let leftVerticalWallPosition = [opponentPosConverted[0]-1, opponentPosConverted[1]-1];
-                    let isLeftHorizontalWallExist = isWallAtPosition(gameState, leftHorizontalWallPosition);
-                    let isLeftVerticalWallExist = isWallAtPosition(gameState, leftVerticalWallPosition)
-                    //S'IL N'EXISTE PAS, ON POSE ABSOLUMENT UN MUR A GAUCHE (BLOQUAGE >>)
-                    if (!isLeftHorizontalWallExist && !isLeftVerticalWallExist){
-                        let djikstraLeftHorizontalResult = computeDjikstraForSpecificWall(gameState,wall,'H','G');
-                        let djikstraLeftVerticalResult = computeDjikstraForSpecificWall(gameState,wall,'V','G');
-                        //On compare les deux valeurs et on prend la plus grande valeur des deux
-                        if(djikstraLeftHorizontalResult > djikstraLeftVerticalResult){
-                            lastMove = "wall";
-                            wallCount++;
-                            return {action: "wall",
-                                value: [leftHorizontalWallPosition[0].toString()+leftHorizontalWallPosition[1].toString(), 0]};
-                        }
-                        else{
-                            lastMove = "wall";
-                            wallCount++;
-                            return {action: "wall",
-                                value: [leftVerticalWallPosition[0].toString()+leftVerticalWallPosition[1].toString(), 1]};
-                        }
-                    }
-                    //ON REGARDE S'IL EXISTE UN MUR A DROITE
-                    else{
-                        let rightHorizontalWallPosition = [opponentPosConverted[0] + 2, opponentPosConverted[1]];
-                        let rightVerticalWallPosition = [opponentPosConverted[0] +1 , opponentPosConverted[1]-1];
-                        let isRightHorizontalWallExist = isWallAtPosition(gameState, rightHorizontalWallPosition);
-                        let isRightVerticalWallExist = isWallAtPosition(gameState, rightVerticalWallPosition);
-
-                        if(!isRightHorizontalWallExist && !isRightVerticalWallExist){
-                            let djikstraRightHorizontalResult = computeDjikstraForSpecificWall(gameState,wall,'H','R');
-                            let djikstraRightVerticalResult = computeDjikstraForSpecificWall(gameState,wall,'V','R');
-                            //On compare les deux valeurs et on prend la plus grande valeur des deux
-                            if(djikstraRightHorizontalResult > djikstraRightVerticalResult){
-                                lastMove = "wall";
-                                wallCount++;
-                                return {action: "wall",
-                                    value: [rightHorizontalWallPosition[0].toString()+rightHorizontalWallPosition[1].toString(), 0]};
-                            }
-                            else{
-                                lastMove = "wall";
-                                wallCount++;
-                                return {action: "wall",
-                                    value: [rightVerticalWallPosition[0].toString()+rightVerticalWallPosition[1].toString(), 1]};
-                            }
-                        }
-                        else{
-                            lastMove = "move";
-                            moveCount++;
-                            return moveCharacterWithDjikstra();
-                        }
-                    }
-                }
-                //SI LE MUR EST VERTICAL
-                else if(wall[1] === 1){
-                    //ON REGARDE S'IL EXISTE UN MUR A GAUCHE
-                    let leftHorizontalWallPosition = [opponentPosConverted[0] -1, opponentPosConverted[1]];
+                    let leftHorizontalWallPosition = [opponentPos[0] -1, opponentPos[1]];
                     let isLeftHorizontalWallExist = isWallAtPosition(gameState, leftHorizontalWallPosition);
                     //S'IL N'EXISTE PAS, ON POSE ABSOLUMENT UN MUR A GAUCHE (BLOQUAGE >>)
                     if (!isLeftHorizontalWallExist){
@@ -301,14 +346,13 @@ function Real_nextMove(gameState) {
     function moveCharacterWithDjikstra(){
         const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
         let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
-        const ownPosition = myPosition(gameState.board);
-        console.log(ownPosition);
+        const ownPosition = convertVellaCooordinatesToOurs(myPosition(gameState.board)[0], myPosition(gameState.board)[1]);
         const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
         let bestRes = null;
 
         //COMPUTE POUR TOUTE LA LIGNE
         for (let i = 0; i < 8; i++) {
-            let res = Djikstra.prototype.compute_djikstra(graph, ownNode, graph.getNodeFromCoordinates(finishLine-1, i));
+            let res = Djikstra.prototype.compute_djikstra(graph, ownNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
             if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
         }
         console.log(bestRes);
@@ -335,28 +379,30 @@ function Real_nextMove(gameState) {
         return wallExists;
     }
     function computeDjikstaFor(gameState,player){
+        console.log("---COMPUTE DJIKSTRA FOR--- ");
         if(player==="me"){
             const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
             let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
-            const ownPosition = myPosition(gameState.board);
+            const ownPosition = convertVellaCooordinatesToOurs(myPosition(gameState.board)[0],myPosition(gameState.board)[1]);
             const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = Djikstra.prototype.compute_djikstra(graph, ownNode, graph.getNodeFromCoordinates(finishLine-1, i));
+                let res = Djikstra.prototype.compute_djikstra(graph, ownNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
         }
         else if(player==="opponent"){
+            console.log("---OPPONENT--- ")
             const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
             let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
-            const oppPos = opponentPosition(gameState.board);
+            const oppPos = convertVellaCooordinatesToOurs(opponentPosition(gameState.board)[0],opponentPosition(gameState.board)[1]);
             const oppNode = graph.getNodeFromCoordinates(oppPos[0], oppPos[1]);
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = Djikstra.prototype.compute_djikstra(graph, oppNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
+                let res = Djikstra.prototype.compute_djikstra(graph, oppNode, graph.getNodeFromCoordinates(finishLine-1, i));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
@@ -374,6 +420,9 @@ function Real_nextMove(gameState) {
         //SI LE MUR EST HORIZONTAL
         if(rootWall[1]===0){
             if(typeWallToAnalysis === 'H' && directionToAnalysis === 'G'){
+                console.log("ROOT WALL : ",rootWall);
+                console.log("TYPE WALL TO ANALYSIS : ",typeWallToAnalysis);
+                console.log("DIRECTION TO ANALYSIS : ",directionToAnalysis);
                 let hypoteticCase = JSON.parse(JSON.stringify(gameState));
                 //on place le mur horizontal dans le gameState Copie
                 hypoteticCase.ownWalls.push([(rootWall[0]-2).toString()+rootWall[1].toString(), 0]);
@@ -473,7 +522,7 @@ function opponentPosition(board){
         const innerList = board[i];
         for (let j = 0; j < innerList.length; j++) {
             if (board[i][j] === 2){
-                return [i, j];
+                return [j+1, i+1];
             }
         }
     }
@@ -512,8 +561,6 @@ function convertGameStateToGamemodel(gameState){
         else if(parseInt(wall[1])===parseInt("1")){
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
             let wallToEdit = verticalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'V');
-            console.log("WALL TO EDIT : ",wallToEdit);
-
             let neighborOfWallToEdit = verticalWalls.getWall(goodCoordinates[0]-1,goodCoordinates[1], 'V');
             wallToEdit.setPresent();
             wallToEdit.setOwner(opponentPlayOrder);
@@ -527,8 +574,6 @@ function convertGameStateToGamemodel(gameState){
         if(parseInt(wall[1])===parseInt("0")) {
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row, wallPosition.col);
             let wallToEdit = horizontalWalls.getWall(goodCoordinates[0], goodCoordinates[1], 'H');
-            console.log("WALL TO EDIT : ",wallToEdit);
-
             let neighborOfWallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1]+1, 'H');
             wallToEdit.setPresent();
             wallToEdit.setOwner(playOrder);
@@ -539,8 +584,6 @@ function convertGameStateToGamemodel(gameState){
         else if(parseInt(wall[1])===parseInt("1")){
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
             let wallToEdit = verticalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'V');
-            console.log("WALL TO EDIT : ",wallToEdit);
-
             let neighborOfWallToEdit = verticalWalls.getWall(goodCoordinates[0]-1,goodCoordinates[1], 'V');
             wallToEdit.setPresent();
             wallToEdit.setOwner(playOrder);
@@ -587,6 +630,15 @@ function convertGameStateToGamemodel(gameState){
     //console.log(horizontalWalls.wallList.toString());
     //console.log(verticalWalls.wallList.toString());
     return [playableSquares,horizontalWalls,verticalWalls];
+}
+
+function getNeighborhood(){
+    let neighborhood = [];
+    if(this.upLink!==null){neighborhood.push(this.upLink.destinationNode);}
+    if(this.downLink!==null){neighborhood.push(this.downLink.destinationNode);}
+    if(this.leftLink!==null){neighborhood.push(this.leftLink.destinationNode);}
+    if(this.rightLink!==null){neighborhood.push(this.rightLink.destinationNode);}
+    return neighborhood;
 }
 
 function main() {
