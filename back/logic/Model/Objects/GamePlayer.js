@@ -1,8 +1,9 @@
 class GamePlayer {
-    constructor(name,position,remainingWalls) {
+    constructor(name,position,remainingWalls,order) {
         this.name=name;
         this.nbWalls = remainingWalls;
         this.position = position;
+        this.order = order;
     }
     getRemainingWalls(){
         return this.nbWalls;

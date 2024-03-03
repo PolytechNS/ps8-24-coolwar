@@ -59,6 +59,7 @@ function setup(AIplay) {
         let randomBottom = Math.round(Math.random() * 8) + 1;
         let randomTop = Math.round(Math.random() * 8) + 1;
         let position = null;
+        console.log("AIPLAY",AIplay);
         if(AIplay === 1){
             position = randomBottom.toString()+"9";
             finishLine = parseInt("1");
@@ -94,7 +95,6 @@ function Real_nextMove(gameState) {
     console.log("GAME STATE : ",gameState);
     let opponentPos = opponentPosition(gameState.board);
     let opponentPosConverted = null;
-    console.log("OPPONENT POS   : ",opponentPos);
     if(opponentPos !== null) {opponentPosConverted = convertOurCoordinatesToVellaCooordinates(opponentPos[1], opponentPos[0]);}
 
     //SI LES DERNIERES ACTIONS ETAIENT DES MURS EN PLUS
@@ -288,6 +288,7 @@ function Real_nextMove(gameState) {
     }
     //ON BOUGE NOTRE PERSONNAGE
     else{
+        console.log("ON BOUGE NOTRE PERSONNAGE -> PAS DE POSITION ADVERSE CONNUE");
         lastMove = "move";
         moveCount++;
         return moveCharacterWithDjikstra();
@@ -301,19 +302,20 @@ function Real_nextMove(gameState) {
         const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
         let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
         const ownPosition = myPosition(gameState.board);
+        console.log(ownPosition);
         const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
         let bestRes = null;
 
         //COMPUTE POUR TOUTE LA LIGNE
         for (let i = 0; i < 8; i++) {
-            console.log("moveCharacterWithDjikstra");
             let res = Djikstra.prototype.compute_djikstra(graph, ownNode, graph.getNodeFromCoordinates(finishLine-1, i));
             if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
         }
+        console.log(bestRes);
         let nextMove = bestRes.path[1].position;
         let finalPosition = convertOurCoordinatesToVellaCooordinates(nextMove.row,nextMove.col);
         //console.log("FINAL POSITION : ",finalPosition);
-        return { action: " move", value: finalPosition[0].toString() + finalPosition[1].toString() };
+        return { action: "move", value: finalPosition[0].toString() + finalPosition[1].toString() };
     }
     function isWallAlreadyExists(wallList, opponentPos){
         let isExists = null;
@@ -459,7 +461,7 @@ function myPosition(board){
         const innerList = board[i];
         for (let j = 0; j < innerList.length; j++) {
             if (board[i][j] === 1){
-                return [i, j];
+                return [j+1, i+1];
             }
         }
     }
@@ -500,7 +502,6 @@ function convertGameStateToGamemodel(gameState){
         if(parseInt(wall[1])===parseInt("0")){
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
             let wallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'H');
-            console.log("WALL TO EDIT : ",wallToEdit);
             let neighborOfWallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1]+1, 'H');
             wallToEdit.setPresent();
             wallToEdit.setOwner(opponentPlayOrder);
@@ -521,8 +522,8 @@ function convertGameStateToGamemodel(gameState){
         }
     });
     gameState.ownWalls.forEach(function (wall){
-        console.log("WALL : ",wall);
         let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[1]);
+        // MUR HORIZONTAL
         if(parseInt(wall[1])===parseInt("0")) {
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row, wallPosition.col);
             let wallToEdit = horizontalWalls.getWall(goodCoordinates[0], goodCoordinates[1], 'H');
@@ -534,6 +535,7 @@ function convertGameStateToGamemodel(gameState){
             neighborOfWallToEdit.setPresent();
             neighborOfWallToEdit.setOwner(playOrder);
         }
+        //MUR VERTICAL
         else if(parseInt(wall[1])===parseInt("1")){
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
             let wallToEdit = verticalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'V');

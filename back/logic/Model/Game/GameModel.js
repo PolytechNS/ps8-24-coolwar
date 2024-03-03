@@ -9,17 +9,17 @@ const {Djikstra} = require("../Graph/Djikstra.js");
 
 class GameModel {
 
-    /*TODO: LAST POSITION IN EDIT
-    CREATION DES JOUEURS ET NOTION DE TOUR ✅
+    /*
+    PLAYER START --> 1 = PLAYER | 2 = BOT
     */
     constructor(config = {}) {
-        //this.idGame = uuidv4();
         this.nbLignes = 9;
         this.nbColonnes = 9;
         this.nbPlayers = 2;
         if(!config.horizontal_Walls){
             this.horizontal_Walls = new WallDictionary();
-        }else {
+        }
+        else {
             this.horizontal_Walls = new WallDictionary();
             //console.log("CONFIG : "+config.horizontal_Walls[0].position.row+"|"+config.horizontal_Walls[0].position.col+"|"+config.horizontal_Walls[0].type+"|"+config.horizontal_Walls[0].isPresent+"|"+config.horizontal_Walls[0].idPlayer+"|"+config.horizontal_Walls[0].wallGroup);
             config.horizontal_Walls.forEach(wall => {
@@ -29,7 +29,8 @@ class GameModel {
         }
         if(!config.vertical_Walls){
             this.vertical_Walls = new WallDictionary();
-        }else {
+        }
+        else {
             this.vertical_Walls = new WallDictionary();
             config.vertical_Walls.forEach(wall => {
                 this.vertical_Walls.addWall(wall.position.row, wall.position.col, wall.type, wall.isPresent,wall.idPlayer,wall.wallGroup);
@@ -45,18 +46,26 @@ class GameModel {
                 this.playable_squares.addPlayableSquare(square.position.row, square.position.col, square.player, square.isPlayable,square.visibility);
             });
         }
+        if(!config.currentPlayer){
+            this.currentPlayer = 1;
+            //this.currentPlayer = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+            console.log("CURRENT PLAYER GENERATED : "+this.currentPlayer);
+        }
+        else {
+            this.currentPlayer = config.currentPlayer;
+        }
+        if(!config.startingPlayer) {
+            this.startingPlayer = this.currentPlayer;
+        }
+        else{
+            this.startingPlayer = config.startingPlayer;
+        }
         if(!config.player_array){
             this.player_array = new PlayerManager();
             this.initPlayers();
         }else {
             this.player_array = new PlayerManager();
             this.player_array.createPlayFromArray(config.player_array);
-        }
-        if(!config.currentPlayer){
-            this.currentPlayer = 1;
-        }
-        else {
-            this.currentPlayer = config.currentPlayer;
         }
         if(!config.roundCounter){
             this.roundCounter = 0;
@@ -75,7 +84,6 @@ class GameModel {
         }else{
             this.lastChance = config.lastChance;
         }
-        this.graph = new Graph(this.playable_squares,this.horizontal_Walls,this.vertical_Walls);
         this.wallGroup = [];
         //COMPUTE SQUARES VISIBILITY
         this.resetSquaresVisibility();
@@ -85,13 +93,13 @@ class GameModel {
     initPlayers(){
         let index1 = this.generateRandom(0,this.nbColonnes);
         let index2 = this.generateRandom(0,this.nbColonnes);
-        if(this.generateRandom(0,1)===0){
-            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index1),10));
-            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index2),10));
+        if(this.currentPlayer===0){
+            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index1),10,0));
+            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index2),10,1));
         }
         else{
-            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index2),10));
-            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1),10));
+            this.player_array.addPlayer(new GamePlayer("Player1",new Position(0,index2),10,0));
+            this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1),10,1));
         }
 
         console.log("PLAYER 1 : "+this.player_array.getPlayer(1).position.row+"|"+this.player_array.getPlayer(1).position.col);
@@ -529,9 +537,7 @@ class GameModel {
             let isImpossibleToReach = true;
             let DjikstraClass = new Djikstra();
             for (let i = 0; i < 8; i++) {
-                console.log("TO :",finishLine+","+i)
                 let res = DjikstraClass.compute_djikstra(graph, playerNode, graph.getNodeFromCoordinates(finishLine, i));
-                console.log("DISTANCE : "+res.distance);
                 if(res.distance!==Infinity){isImpossibleToReach = false;}
             }
             console.log("Is Impossible to Reach ? : "+isImpossibleToReach+" !");

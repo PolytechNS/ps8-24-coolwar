@@ -45,11 +45,13 @@ module.exports = (server) => {
                 actionController = new ActionController(gameModelGlobal);
 
                 // Gestion Bot
-                let botIndex = IAConverter.prototype.convertOurIndexToVellaIndex(gameModelGlobal.currentPlayer);
+                let botIndex = 2;
                 console.log("BOT INDEX: ", botIndex);
                 //on met +1 au current player car 1 c'est nous et 2 c'est le bot
-               setupBotController(botIndex).then((positionBot) => {
-                   setUpPositionRealBot(positionBot,gameModelGlobal,botIndex);
+               setupBotController(botIndex).then(async (positionBot) => {
+                   setUpPositionRealBot(positionBot, gameModelGlobal, botIndex);
+                   // Persister le plateau de jeu
+                   let gameBoardId = await createGameDb(gameId, gameModelGlobal, db);
                    //afficher les player de gameModel
                    console.log("PLAYER ARRAY: ", gameModelGlobal.player_array.getAllPlayers());
 
@@ -65,13 +67,11 @@ module.exports = (server) => {
                        playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
                        currentPlayer: gameModelGlobal.currentPlayer,
                        roundCounter: gameModelGlobal.roundCounter,
-                       winner : gameModelGlobal.winner
+                       winner: gameModelGlobal.winner,
+                       lastChance: gameModelGlobal.lastChance,
+                       startingPlayer: gameModelGlobal.startingPlayer
                    }));
-
                });
-                // Persister le plateau de jeu
-                let gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
-
             } catch (error) {
                 console.error('Error creating game model', error);
                 // Gérer l'erreur, par exemple en envoyant un message d'erreur au client
@@ -111,7 +111,6 @@ module.exports = (server) => {
                     gameModelGlobal = new GameModel(config);
                     actionController = new ActionController(gameModelGlobal);
 
-
                     socket.emit('loaded game', JSON.stringify({
                         gameId: savedGame.gameId, // ID de la partie
                         gameBoardId: savedGame.gameBoardId, // ID du plateau de jeu
@@ -124,7 +123,8 @@ module.exports = (server) => {
                         currentPlayer: gameModelGlobal.currentPlayer,
                         roundCounter: gameModelGlobal.roundCounter,
                         winner : gameModelGlobal.winner,
-                        lastChance: gameModelGlobal.lastChance
+                        lastChance: gameModelGlobal.lastChance,
+                        startingPlayer: gameModelGlobal.startingPlayer
                     }));
                 }
                 else {
@@ -183,26 +183,25 @@ module.exports = (server) => {
                 const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
                 let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
                 let actionController = new ActionController(gameModelGlobal);
-
+                console.log("INDEX DU JOUEUR QUI DOIT JOUER: ", gameModelGlobal.currentPlayer);
                 //on essaye de placer le mur
                 let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
 
                 console.log("INDEX DU JOUEUR QUI DOIT JOUER: ", gameModelGlobal.currentPlayer);
                 //je fais le move avec l'ia
                 console.log("BEFORE NEXT MOVE - AFTER PLACING WALL");
+                console.log(gameModelGlobal.player_array.getAllPlayers());
                 nextMoveBotController(gameModelGlobal).then(async (move) => {
+                    move = IAConverter.prototype.convertMoveToOurMove(move);
                     console.log("NEXT MOVE: ", move);
                     console.log("AFTER NEXT MOVE - AFTER PLACING WALL");
                     //si les murs sont placés
                     if (responseBoolean) {
                         //on met à jour le nombre de murs restants dans la bd pour le joueur
                         await updateWallsAndVisibilityFromBd(wallDataDeserialized, playerBd, gameBoardIdDb, gameModelGlobal, db, squareGameModel);
-
                         //Gestion Bot DEBILE--action de bouger
                         await manageBotMove(squareGameModel, gameBoardIdDb, gameModelGlobal, actionController, db);
-
                         console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
-
                         //on met à jour le joueur actuel dans la bd
                         await updateCurrentPlayerFromDb(gameBoardIdDb, db, gameModelGlobal);
                     }

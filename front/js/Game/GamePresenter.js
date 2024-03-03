@@ -311,6 +311,9 @@ export class GamePresenter {
         actionGameService.updateGameModel(informationsData,(newModel)=>{
             this.model = JSON.parse(newModel);
             console.log("MODEL AFTER UPDATE",this.model);
+            if(this.model.currentPlayer === 1){
+
+            }
             this.view.updateDisplayBot(this.model.player_array[1].position.row,this.model.player_array[1].position.col);
             this.checkEndGame();
             this.updateInformations();

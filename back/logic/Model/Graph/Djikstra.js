@@ -10,6 +10,9 @@ const {PlayableSquare} = require("../Objects/PlayableSquare.js");
 class Djikstra {
     constructor() {}
     compute_djikstra(graph, startNode, endNode) {
+        console.log("Computing Djikstra algorithm");
+        console.log("Start node: " + startNode.position);
+        console.log("End node: " + endNode.position);
         let distances = {};
         let prev = {};
         let pq = new PriorityQueue();

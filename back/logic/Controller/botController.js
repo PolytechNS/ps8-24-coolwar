@@ -8,6 +8,7 @@ const {computeVisibilityPlayableSquare,getWallOpponent,getOwnWalls} = require('.
 exports.playBot = function (gameModel, actionController) {
     let currentPlayerGameModel = gameModel.currentPlayer;
     console.log("currentPlayerGameModel : ", currentPlayerGameModel);
+    console.log("gameModel INSIDE PLAYBOT : ", gameModel.player_array.getAllPlayers());
     actionController.moveCharacterAI(currentPlayerGameModel, 3);
 }
 

@@ -110,10 +110,8 @@ async function  manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionCo
 
     playBot(gameModelGlobal, actionController);
 
-
     for(let square of squareGameModel){
         if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
-
             //update db
             await db.collection('character').updateOne({ _id: botCharacter._id , gameBoardId: gameBoard._id}, { $set: { position: { row: botCharacterGameModel.position.row, col: botCharacterGameModel.position.col } } });
             let botCharacterUpdated = await db.collection('character').findOne({ _id: new ObjectId(botCharacter._id)});
@@ -144,6 +142,7 @@ async function updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal){
 }
 
 function setUpPositionRealBot(positionBot,gameModelGlobal,botIndex){
+    console.log("BOT POSITION BEFORE TRADUCTION: ",positionBot[0],positionBot[1]);
     let [row,col] = IAConverter.prototype.convertVellaCooordinatesToOurs(positionBot[0],positionBot[1]);
     console.log("BOT POSITION TRADUCTION: ",row,col);
     gameModelGlobal.updatePlayerPosition(botIndex, row, col);
