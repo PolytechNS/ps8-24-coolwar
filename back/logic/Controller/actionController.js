@@ -95,9 +95,7 @@ class ActionController {
                     let row = player_position.row-1;
                     let col = player_position.col;
                     playerToMove.position = new Position(row,col);
-                    console.log("AVANT NEXT PLAYER : ",this.model.currentPlayer);
                     this.model.setNextPlayer();
-                    console.log("APRES NEXT PLAYER : ",this.model.currentPlayer);
 
                     return true;
                 }

@@ -7,7 +7,6 @@ const {computeVisibilityPlayableSquare,getWallOpponent,getOwnWalls} = require('.
 //IA DEBILE
 exports.playBot = function (gameModel, actionController) {
     let currentPlayerGameModel = gameModel.currentPlayer;
-    console.log("currentPlayerGameModel : ", currentPlayerGameModel);
     actionController.moveCharacterAI(currentPlayerGameModel, 3);
 }
 
@@ -19,8 +18,6 @@ exports.setupBotController = function (currentPlayerIndex) {
     return new Promise((resolve, reject) => {
         // Appelle la fonction setup originale et augmente l'index de joueur
         setup(currentPlayerIndex).then((position) => {
-            console.log("CURRENT BOT INDEX ", currentPlayerIndex);
-            console.log("SETUP: ", position);
             // Résout la promesse avec la position obtenue
             resolve(position);
         }).catch((error) => {
@@ -35,10 +32,8 @@ exports.nextMoveBotController = function (gameModel) {
     let board = computeVisibilityPlayableSquare(gameModel, gameModel.currentPlayer);
     let opponentWalls = getWallOpponent(gameModel);
     let ownWalls = getOwnWalls(gameModel);
-    console.log("NEXT MOVE OBJETS INITIALIZED");
     return new Promise((resolve, reject) => {
         nextMove({board, opponentWalls, ownWalls}).then((move) => {
-            console.log("NEXT MOVE: ",move);
             resolve(move);
         }).catch((error) => {
             reject(error);

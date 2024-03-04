@@ -94,14 +94,11 @@ class GameModel {
             this.player_array.addPlayer(new GamePlayer("Player2",new Position(this.nbLignes-1,index1),10));
         }
 
-        console.log("PLAYER 1 : "+this.player_array.getPlayer(1).position.row+"|"+this.player_array.getPlayer(1).position.col);
-        console.log("PLAYER 2 : "+this.player_array.getPlayer(2).position.row+"|"+this.player_array.getPlayer(2).position.col);
     }
 
     updatePlayerPosition(playerIndex, row, col){
         this.player_array.getPlayerPosition(playerIndex).row = row;
         this.player_array.getPlayerPosition(playerIndex).col = col;
-        console.log("PLAYER POSITION UPDATED : "+this.player_array.getPlayerPosition(playerIndex).row+"|"+this.player_array.getPlayerPosition(playerIndex).col);
     }
 
     generateRandom(min, max) {
@@ -146,7 +143,6 @@ class GameModel {
     }
 
     setNextPlayer(){
-        console.log("NEXT PLAYER !");
         if(this.currentPlayer===1){this.currentPlayer=2;}
         else if(this.currentPlayer===2){this.currentPlayer=1;}
         else{}
@@ -244,7 +240,6 @@ class GameModel {
     //RECEPTION -> wall du back
     isCuttingWallGroup(backInformations){
         console.log("CHECK CUTTING WALL GROUP !");
-        console.log(backInformations);
         let neighborhoodList = [];
         let wallBackList = [];
         //ON TRIE LES MURS RECU DANS L'ORDRE CROISSANT
@@ -515,11 +510,8 @@ class GameModel {
         }
         //ON GENERE LA GRAPH DU JEU SIMULE
         let graph = new Graph(this.playable_squares, horizontalWalls, verticalWalls);
-        console.log("GRAPH GENERATED !");
         //VOIR SI UN CHEMIN EXISTE POUR CHACUN DES JOUEURS
         for(let i=0;i<2;i++){
-            console.log("CHECK PLAYER "+i+" PATH !");
-            console.log("PATH FROM : "+this.player_array.players[i].position.row+","+this.player_array.players[i].position.col);
             let player = this.player_array.players[i];
             let playerPosition = player.position;
             let playerNode = graph.getNodeFromCoordinates(playerPosition.row,playerPosition.col);
@@ -529,9 +521,7 @@ class GameModel {
             let isImpossibleToReach = true;
             let DjikstraClass = new Djikstra();
             for (let i = 0; i < 8; i++) {
-                console.log("TO :",finishLine+","+i)
                 let res = DjikstraClass.compute_djikstra(graph, playerNode, graph.getNodeFromCoordinates(finishLine, i));
-                console.log("DISTANCE : "+res.distance);
                 if(res.distance!==Infinity){isImpossibleToReach = false;}
             }
             console.log("Is Impossible to Reach ? : "+isImpossibleToReach+" !");

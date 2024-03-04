@@ -71,14 +71,14 @@ export const actionGameService = {
             callback(res);
         });
     },
-    getPlayerPosition(idPlayer,callback){
+    getPlayerPosition(idPlayer,gameId,callback){
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return
         }
-
-        socketManager.socket.emit('getplayerposition',JSON.stringify(idPlayer));
+        const dataToSend = {idPlayer,gameId};
+        socketManager.socket.emit('getplayerposition',JSON.stringify(dataToSend));
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('getplayerpositionresponse', (res) => {
@@ -111,13 +111,14 @@ export const actionGameService = {
             callback(res);
         });
     },
-    checkWinner(callback){
+    checkWinner(gameId,callback){
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
             return
         }
-        socketManager.socket.emit('checkWinner');
+        const dataToParse = {gameId};
+        socketManager.socket.emit('checkWinner', JSON.stringify(dataToParse));
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('checkWinnerResponse', (res) => {

@@ -91,7 +91,6 @@ function nextMove(gameState) {
 function Real_nextMove(gameState) {
     let opponentPos = opponentPosition(gameState.board);
     let opponentPosConverted = null;
-    console.log("OPPONENT POS   : ",opponentPos);
     if(opponentPos !== null) {
         opponentPosConverted = convertOurCoordinatesToVellaCooordinates(opponentPos[1], opponentPos[0]);
     }
@@ -495,14 +494,12 @@ function convertGameStateToGamemodel(gameState){
         verticalWalls.addWall(i, j,'V',false,null,null);}}
 
     let opponentPlayOrder = playOrder === 1 ? 2 : 1;
-    console.log("GAME STATE : ",gameState);
     gameState.opponentWalls.forEach(function (wall){
         let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[1]);
         //SI MUR HORIZONTAL
         if(parseInt(wall[1])===parseInt("0")){
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
             let wallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'H');
-            console.log("WALL TO EDIT : ",wallToEdit);
             let neighborOfWallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1]+1, 'H');
             wallToEdit.setPresent();
             wallToEdit.setOwner(opponentPlayOrder);
@@ -513,7 +510,6 @@ function convertGameStateToGamemodel(gameState){
         else if(parseInt(wall[1])===parseInt("1")){
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
             let wallToEdit = verticalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'V');
-            console.log("WALL TO EDIT : ",wallToEdit);
 
             let neighborOfWallToEdit = verticalWalls.getWall(goodCoordinates[0]-1,goodCoordinates[1], 'V');
             wallToEdit.setPresent();
@@ -523,12 +519,10 @@ function convertGameStateToGamemodel(gameState){
         }
     });
     gameState.ownWalls.forEach(function (wall){
-        console.log("WALL : ",wall);
         let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[1]);
         if(parseInt(wall[1])===parseInt("0")) {
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row, wallPosition.col);
             let wallToEdit = horizontalWalls.getWall(goodCoordinates[0], goodCoordinates[1], 'H');
-            console.log("WALL TO EDIT : ",wallToEdit);
 
             let neighborOfWallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1]+1, 'H');
             wallToEdit.setPresent();
@@ -539,7 +533,6 @@ function convertGameStateToGamemodel(gameState){
         else if(parseInt(wall[1])===parseInt("1")){
             let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
             let wallToEdit = verticalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'V');
-            console.log("WALL TO EDIT : ",wallToEdit);
 
             let neighborOfWallToEdit = verticalWalls.getWall(goodCoordinates[0]-1,goodCoordinates[1], 'V');
             wallToEdit.setPresent();
@@ -616,7 +609,6 @@ function main(){
     });
     let start = Date.now();
     nextMove({board, opponentWalls, ownWalls}).then((move) => {
-        console.log("NEXT MOVE: ",move);
         let timeTaken = Date.now() - start;
         console.log("Total time taken : " + timeTaken + " milliseconds");
     });

@@ -49,8 +49,6 @@ function manageRequest(request, response) {
     }
 
     // Log the pathName for debugging
-    console.log("pathName");
-    console.log(pathName);
     // Let's check if the file exists.
     fs.exists(pathName, async function (exist) {
         if (!exist) {

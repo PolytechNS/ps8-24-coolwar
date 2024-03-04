@@ -4,8 +4,6 @@ const { parseJSON } = require('../Utils/utils');
 
 function signup(req, res, db) {
     parseJSON(req, async (err, { username, password }) => {
-        console.log('email', username);
-        console.log('password', password);
         if (err) {
             res.writeHead(400, { 'Content-Type': 'text/plain' });
             res.end('Invalid JSON');

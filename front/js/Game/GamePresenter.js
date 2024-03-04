@@ -301,7 +301,7 @@ export class GamePresenter {
     };
 
     checkEndGame(){
-        actionGameService.checkWinner((callback)=>{
+        actionGameService.checkWinner(this.model.gameId,(callback)=>{
             console.log(callback);
             if(callback!==-1){this.cancel_behaviour();}
         });
@@ -354,7 +354,7 @@ export class GamePresenter {
                 //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
                 let oldPosition = null;
-                    actionGameService.getPlayerPosition(this.model.currentPlayer,(res)=>{
+                    actionGameService.getPlayerPosition(this.model.currentPlayer,this.model.gameId,(res)=>{
                         oldPosition = res;
                     });
                     //token

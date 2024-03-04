@@ -12,5 +12,3 @@ let result = computeVisibilityPlayableSquare(gameModel.playable_squares);
 
 let resultWallOppo = getWallOpponent(gameModel);
 
-console.log("result opponent");
-console.log(resultWallOppo);

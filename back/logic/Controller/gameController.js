@@ -111,6 +111,8 @@ async function  manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionCo
     playBot(gameModelGlobal, actionController);
 
 
+
+    //code dupliqué mais pas grave
     for(let square of squareGameModel){
         if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
 

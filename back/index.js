@@ -15,7 +15,6 @@ async function startServer() {
         const server = http.createServer((req, res) => {
           // Vous pouvez passer 'db' à mainRouter si nécessaire
             mainRouter.handle(req, res, db);
-            console.log("j'attends les requetes");
         });
 
         setupSocketServer(server);

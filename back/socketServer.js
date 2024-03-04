@@ -10,6 +10,7 @@ const {updatePlayerPositionFromDb,createGameDb,setUpPositionRealBot, saveGame, l
 
 let gameModelGlobal = null;
 let actionController = null;
+const games = new Map();
 
 module.exports = (server) => {
     const io = socketIo(server, {
@@ -31,6 +32,7 @@ module.exports = (server) => {
                 // Créer une nouvelle partie dans la base de données
                 await client.connect();
                 const db = client.db();
+
                 const user = await db.collection('users').findOne({ token: userToken });
                 const newGame = await db.collection('games').insertOne({
                     fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
@@ -40,37 +42,41 @@ module.exports = (server) => {
                 const gameId = newGame.insertedId;
 
                 // Créer un nouveau GameModel
-                gameModelGlobal = new GameModel();
-                actionController = new ActionController(gameModelGlobal);
+                let gameModel = new GameModel();
+                let actionController = new ActionController(gameModel);
+
+
+                // Stocker l'instance de GameModel dans la map
+                games.set(gameId.toString(), { gameModel, actionController });
+
 
                 // Gestion Bot
-                let botIndex = gameModelGlobal.currentPlayer;
+                let botIndex = gameModel.currentPlayer;
 
                 //on met +1 au current player car 1 c'est nous et 2 c'est le bot
                setupBotController(botIndex).then((positionBot) => {
 
-                   setUpPositionRealBot(positionBot,gameModelGlobal,botIndex);
+                   setUpPositionRealBot(positionBot,gameModel,botIndex);
                    //afficher les player de gameModel
-                   console.log("PLAYER ARRAY: ", gameModelGlobal.player_array.getAllPlayers());
 
                    // Envoyer l'état initial du jeu au client
                    socket.emit('game model', JSON.stringify({
                        gameId: gameId, // ID de la partie
                        gameBoardId: gameBoardId, // ID du plateau de jeu
-                       nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
-                       nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
-                       player_array: gameModelGlobal.player_array.getAllPlayers(),
-                       horizontal_Walls: gameModelGlobal.horizontal_Walls.getAllWalls(),
-                       vertical_Walls: gameModelGlobal.vertical_Walls.getAllWalls(),
-                       playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
-                       currentPlayer: gameModelGlobal.currentPlayer,
-                       roundCounter: gameModelGlobal.roundCounter,
-                       winner : gameModelGlobal.winner
+                       nbLignes: gameModel.nbLignes, // Nombre de lignes
+                       nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
+                       player_array: gameModel.player_array.getAllPlayers(),
+                       horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
+                       vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
+                       playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                       currentPlayer: gameModel.currentPlayer,
+                       roundCounter: gameModel.roundCounter,
+                       winner : gameModel.winner
                    }));
 
                });
                 // Persister le plateau de jeu
-                let gameBoardId = await createGameDb(gameId,gameModelGlobal,db);
+                let gameBoardId = await createGameDb(gameId,gameModel,db);
 
             } catch (error) {
                 console.error('Error creating game model', error);
@@ -106,8 +112,8 @@ module.exports = (server) => {
                 const savedGame = await db.collection('savedGames').findOne({ user });
 
                 if (savedGame) {
-                    const config = await loadGameFromDb(savedGame);
 
+                    const config = await loadGameFromDb(savedGame);
                     gameModelGlobal = new GameModel(config);
                     actionController = new ActionController(gameModelGlobal);
 
@@ -143,21 +149,25 @@ module.exports = (server) => {
         socket.on('movecharactere', async(data)=>{
             const dataParse = JSON.parse(data);
             try {
-                //On essaye de bouger le personnage
+                //On récupère la partie dans la map
+                let actionController = games.get(dataParse.gameId).actionController;
+                let gameModel = games.get(dataParse.gameId).gameModel;
+
+                //move le personnage
                 let responseBoolean = actionController.moveCharacter(dataParse.id,dataParse.row,dataParse.col);
                 await client.connect();
                 const db = client.db();
                 //on récupère les carrés jouables
-                let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
+                let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
 
                 //on met à jour la position du joueur dans la bd
-                let gameBoard = await updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameModel);
+                let gameBoard = await updatePositionCharacter(dataParse,db,gameModel,squareGameModel);
 
                 ///GESTION BOT --action de bouger
-                await manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionController,db);
+                await manageBotMove(squareGameModel,gameBoard,gameModel,actionController,db);
 
                 //on met à jour le joueur actuel dans la bd
-                await updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal);
+                await updateCurrentPlayerFromDb(gameBoard,db,gameModel);
 
                 //on emit la réponse
                 socket.emit('movecharactereresponse',responseBoolean);
@@ -173,7 +183,11 @@ module.exports = (server) => {
         socket.on('placewall', async (datas) => {
             try {
                 let wallDataDeserialized = JSON.parse(datas);
-                let playerID = gameModelGlobal.currentPlayer;
+                console.log("WALL DATA DESERIALIZED : ",wallDataDeserialized);
+                let actionController = games.get(wallDataDeserialized.gameId).actionController;
+                let gameModel = games.get(wallDataDeserialized.gameId).gameModel;
+
+                let playerID = gameModel.currentPlayer;
                 await client.connect();
                 const db = client.db();
 
@@ -181,36 +195,23 @@ module.exports = (server) => {
                 const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
                 const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
                 const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
-                let squareGameModel = gameModelGlobal.playable_squares.getAllPlayableSquares();
-                let actionController = new ActionController(gameModelGlobal);
+                let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
+                //let actionController = new ActionController(gameModelGlobal);
 
                 //on essaye de placer le mur
                 let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
 
-                console.log("INDEX DU JOUEUR QUI DOIT JOUER: ", gameModelGlobal.currentPlayer);
-                //je fais le move avec l'ia
-                nextMoveBotController(gameModelGlobal).then((move) => {
-                    console.log("NEXT MOVE: ",move);
-                });
-
-                //je mets à jour la position dans gameModel
-
-                //je mets à jour la position dans la bd
 
                 //si les murs sont placés
                 if(responseBoolean){
                     //on met à jour le nombre de murs restants dans la bd pour le joueur
-                    await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db,squareGameModel);
-
-
+                    await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModel,db,squareGameModel);
 
                     //Gestion Bot DEBILE--action de bouger
-                    await manageBotMove(squareGameModel,gameBoardIdDb,gameModelGlobal,actionController,db);
-
-                    console.log("--MOVING--BOT-- NEXT PLAYER : ", gameModelGlobal.currentPlayer);
+                    await manageBotMove(squareGameModel,gameBoardIdDb,gameModel,actionController,db);
 
                     //on met à jour le joueur actuel dans la bd
-                    await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModelGlobal);
+                    await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);
                 }
                 // Envoyer la réponse au client
 
@@ -232,9 +233,11 @@ module.exports = (server) => {
 
 
 
-        socket.on('getplayerposition',(id)=>{
-            let idplayer = JSON.parse(id);
-            let response = actionController.getPlayerPosition(idplayer);
+        socket.on('getplayerposition',(data)=>{
+            let dataParse = JSON.parse(data);
+            console.log("DATA PARSE : ",dataParse);
+            let actionController = games.get(dataParse.gameId).actionController;
+            let response = actionController.getPlayerPosition(dataParse.idPlayer);
             socket.emit('getplayerpositionresponse',response);
         });
 
@@ -246,7 +249,11 @@ module.exports = (server) => {
             let wallsList = actionController.updateWalls();
             socket.emit('updateWallsResponse',wallsList);
         });
-        socket.on('checkWinner',()=>{
+        socket.on('checkWinner',(data)=>{
+            let dataParse = JSON.parse(data);
+            console.log("DATA PARSE : ",dataParse);
+            console.log("GAMES : ",games);
+            let actionController = games.get(dataParse.gameId).actionController;
             let response = actionController.checkWinner();
             socket.emit('checkWinnerResponse',response);
         });
@@ -261,6 +268,8 @@ module.exports = (server) => {
 
         socket.on('updateGameModel', async ( data ) => {
             let datas = JSON.parse(data);
+            console.log("UPDATE GAME MODEL");
+            console.log(datas);
             let gameId = datas[1];
             try {
                 await client.connect();
@@ -285,27 +294,27 @@ module.exports = (server) => {
                         lastChance: gameBoardSaved.lastChance
                     };
 
-                    gameModelGlobal = new GameModel(config);
-                    actionController = new ActionController(gameModelGlobal);
+                    let gameModel = new GameModel(config);
+                    let actionController = new ActionController(gameModel);
 
-                    //show walls from savedGame bd
+                    // Stocker l'instance de GameModel dans la map
+                    games.set(gameId.toString(), { gameModel, actionController });
 
                     //show horizontal walls from savedGame gameModel
 
-                    console.log('--UPDATE-- CURRENT PLAYER :', gameModelGlobal.currentPlayer);
 
                     socket.emit('updateGameModelResponse', JSON.stringify({
                         gameId: gameBoardSaved.gameId, // ID de la partie
                         gameBoardId: gameBoardSaved._id, // ID du plateau de jeu
-                        nbLignes: gameModelGlobal.nbLignes, // Nombre de lignes
-                        nbColonnes: gameModelGlobal.nbColonnes, // Nombre de colonnes
-                        player_array: gameModelGlobal.player_array.getAllPlayers(),
-                        horizontal_Walls: gameModelGlobal.horizontal_Walls.getAllWalls(),
-                        vertical_Walls: gameModelGlobal.vertical_Walls.getAllWalls(),
-                        playable_squares: gameModelGlobal.playable_squares.getAllPlayableSquares(),
-                        currentPlayer: gameModelGlobal.currentPlayer,
-                        roundCounter: gameModelGlobal.roundCounter,
-                        winner : gameModelGlobal.winner
+                        nbLignes: gameModel.nbLignes, // Nombre de lignes
+                        nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
+                        player_array: gameModel.player_array.getAllPlayers(),
+                        horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
+                        vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
+                        playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                        currentPlayer: gameModel.currentPlayer,
+                        roundCounter: gameModel.roundCounter,
+                        winner : gameModel.winner
                     }));
                 } else {
                     console.log(' UPDATE GAME MODEL ERROR');
