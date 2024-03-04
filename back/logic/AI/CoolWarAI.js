@@ -121,16 +121,36 @@ function Real_nextMove(gameState) {
                     //ON REGARDE S'IL EXISTE UN MUR A GAUCHE
                     let leftHorizontalWallPosition = [null,null];
                     let leftVerticalWallPosition = [null,null];
-                    //il est au bord de la grid
-                    if(parseInt(opponentPos[1]) === finishLine){
-                        leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]];
-                        leftVerticalWallPosition = [opponentPos[0], opponentPos[1]];
+
+                    //il est au bord haut de la grid
+                    if(parseInt(opponentPos[1]) === 9){
+                        console.log("BORD HAUT DE LA GRILLE");
+                        //il est en haut à gauche (horizontal gauche ne sert à rien)
+                        if(parseInt(opponentPos[0]) === 1){leftHorizontalWallPosition = [null,null];}
+                        //il a un mur d'ecart (on ne regarde qu'a un écart de un)
+                        else if(parseInt(opponentPos[0] === 2)){leftHorizontalWallPosition = [opponentPos[0] - 1, opponentPos[1]];}
+                        //RAS
+                        else{ leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]];}
+                        //VERTICAL -> SI ON REGARDE CE MUR, MOUVEMENT ILLEGAL SI UN MUR HORIZONTAL EXISTE
+                        leftVerticalWallPosition = [opponentPos[0] - 1, opponentPos[1]];
+                    }
+                    //il est au bord bas de la grid
+                    else if(parseInt(opponentPos[1]) === 1){
+                        //il est en bas à gauche (horizontal gauche ne sert à rien)
+                        if(parseInt(opponentPos[0]) === 1){leftHorizontalWallPosition = [null,null];}
+                        //il a un mur d'ecart
+                        else if(parseInt(opponentPos[0] === 2)){leftHorizontalWallPosition = [opponentPos[0] - 1, opponentPos[1]];}
+                        //RAS
+                        else{ leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]];}
+                        //VERTICAL
+                        leftVerticalWallPosition = [opponentPos[0] - 2, opponentPos[1]];
                     }
                     //en plein milieu de la grid
                     else {
                         leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]];
                         leftVerticalWallPosition = [opponentPos[0] - 1, opponentPos[1] + 1];
                     }
+
                     console.log("LEFT HORIZONTAL WALL POSITION : ", leftHorizontalWallPosition);
                     console.log("LEFT VERTICAL WALL POSITION : ", leftVerticalWallPosition);
 
@@ -147,17 +167,8 @@ function Real_nextMove(gameState) {
                         console.log("DJIKSTRA LEFT HORIZONTAL : ", djikstraLeftHorizontalResult);
                         console.log("DJIKSTRA LEFT VERTICAL : ", djikstraLeftVerticalResult);
 
-                        //On compare les deux valeurs et on prend la plus grande valeur des deux
-                        if (djikstraLeftHorizontalResult > djikstraLeftVerticalResult) {
-                            console.log("KEEPING LEFT HORIZONTAL WALL");
-                            lastMove = "wall";
-                            wallCount++;
-                            return {
-                                action: "wall",
-                                value: [leftHorizontalWallPosition[0].toString() + leftHorizontalWallPosition[1].toString(), 0]
-                            };
-                        } else {
-                            console.log("KEEPING LEFT VERTICAL WALL");
+                        //ON APPLIQUE VERTICAL RESULTS
+                        if(djikstraLeftHorizontalResult=== Infinity && djikstraLeftVerticalResult !== Infinity){
                             lastMove = "wall";
                             wallCount++;
                             return {
@@ -165,7 +176,42 @@ function Real_nextMove(gameState) {
                                 value: [leftVerticalWallPosition[0].toString() + leftVerticalWallPosition[1].toString(), 1]
                             };
                         }
+                        //ON APPLIQUE HORIZONTAL RESULTS
+                        else if(djikstraLeftHorizontalResult !== Infinity && djikstraLeftVerticalResult === Infinity){
+                            lastMove = "wall";
+                            wallCount++;
+                            return {
+                                action: "wall",
+                                value: [leftHorizontalWallPosition[0].toString() + leftHorizontalWallPosition[1].toString(), 0]
+                            };
+                        }
+                        //ON CANCEL LE MOVE -> AUTRE CHOIX
+                        else if(djikstraLeftHorizontalResult === Infinity && djikstraLeftVerticalResult === Infinity){
+                        }
+                        //LES DEUX VALEURS SONT BONNES, ON COMPARE
+                        else{
+                            //On compare les deux valeurs et on prend la plus grande valeur des deux
+                            if (djikstraLeftHorizontalResult > djikstraLeftVerticalResult) {
+                                console.log("KEEPING LEFT HORIZONTAL WALL");
+                                lastMove = "wall";
+                                wallCount++;
+                                return {
+                                    action: "wall",
+                                    value: [leftHorizontalWallPosition[0].toString() + leftHorizontalWallPosition[1].toString(), 0]
+                                };
+                            } else {
+                                console.log("KEEPING LEFT VERTICAL WALL");
+                                lastMove = "wall";
+                                wallCount++;
+                                return {
+                                    action: "wall",
+                                    value: [leftVerticalWallPosition[0].toString() + leftVerticalWallPosition[1].toString(), 1]
+                                };
+                            }
+                        }
                     }
+
+                    //SINON
                     //ON REGARDE S'IL EXISTE UN MUR A DROITE
                     else {
                         let rightHorizontalWallPosition = [null,null];
@@ -338,8 +384,6 @@ function Real_nextMove(gameState) {
         moveCount++;
         return moveCharacterWithDjikstra();
     }
-
-
 
     // --------------------- INTERNAL FUNCTIONS ---------------------------------- //
     
@@ -515,7 +559,6 @@ function myPosition(board){
         }
     }
 }
-
 //RETOURNE -> [col,row]
 function opponentPosition(board){
     for (let i = 0; i < board.length; i++) {
@@ -535,7 +578,6 @@ function convertVellaCooordinatesToOurs(col,row){
 function convertOurCoordinatesToVellaCooordinates(row,col){
     return [parseInt(col)+1,9-parseInt(row)];
 }
-
 function convertGameStateToGamemodel(gameState){
     let horizontalWalls = new WallDictionary();
     let verticalWalls = new WallDictionary();
