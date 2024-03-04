@@ -16,24 +16,30 @@ class ActionController {
 
     placeWall(walls,playerID) {
         if (!this.checkCurrentPlayer(playerID)) {return false;}
-        let wallToEdit = null;
         let wallBack = null;
 
         let wallGroupId = this.getRandomArbitrary(0,60);
 
         //VERIFIE QU'IL Y A TOUJOURS UN ID DE GROUPE DE MUR DISPONIBLE
         while(this.model.wallGroup.includes(wallGroupId)){wallGroupId = this.getRandomArbitrary(0,60);}
-
         //VERIFIE QUE LES MURS NE COUPENT PAS UN GROUPE DE MURS
         if(this.model.isCuttingWallGroup(walls)){console.log("COUPAGE ENTRE MURS !");return false;}
         if(this.model.player_array.getPlayer(playerID).getRemainingWalls()<=0){console.log("PAS DE MURS DISPONIBLES !");return false;}
+        let wallBackList = [];
+        for(let i=0;i<walls.wallList.length;i++){
+            let wall = walls.wallList[i];
+            let wallInformations = wall.split("X");
+            wallBackList.push(this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]));
+        }
+        //TODO: PB AVEC LE CALCUL DE CHEMIN
+        if(!this.model.pathExists(wallBackList)){console.log("AUCUN CHEMIN POSSIBLE POUR L'UN DES JOUEURS !");return false;}
 
         for (let i = 0; i < walls.wallList.length; i++) {
             let wall = walls.wallList[i];
             let wallInformations = wall.split("X");
             if (wallInformations[2] === 'H' || wallInformations[2] === 'V') {
                 wallBack = this.model.getWallByCoordinates(wallInformations[2], wallInformations[0], wallInformations[1]);
-                if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
+                //if (this.model.isLastWallOnTheLine(wallInformations[2], wallBack.position.row, wallBack.position.col)) {return false;}
                 if (wallBack.isPresent === false) {
                     wallBack.setOwner(this.model.currentPlayer);
                     wallBack.setPresent();
