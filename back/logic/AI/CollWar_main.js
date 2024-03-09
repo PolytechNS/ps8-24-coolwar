@@ -3,21 +3,20 @@ const {setup, updateBoard, nextMove} = require('./CoolWar.js');
 async function executeSequentially() {
     console.log('Exécution séquentielle des méthodes.');
     let opponentWalls =[
-        ['57',0]
+
     ];
     let ownWalls = [
-        ['78',1],
-        ['37',1],
-        ['16',1]
+
     ];
     let board = [
+        //1 tableau = une colonne
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,1,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
+        [1,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0]
     ];

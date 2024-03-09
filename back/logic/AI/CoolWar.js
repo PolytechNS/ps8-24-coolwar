@@ -4,10 +4,10 @@
 let finishLine = null; // trouver la ligne d'arrivée
 let playOrder = null;
 
-let moveCount = 5; // le nombre de mouvements effectués par l'IA
-let wallCount = 3; // le nombre de murs placés par l'IA
-let totalWallCount= 3; // le nombre total de murs placés par l'IA
-let numberOfRound = 9; // le nombre de tours que nous avons fait
+let moveCount =0; // le nombre de mouvements effectués par l'IA
+let wallCount =0; // le nombre de murs placés par l'IA
+let totalWallCount= 0; // le nombre total de murs placés par l'IA
+let numberOfRound = 1; // le nombre de tours que nous avons fait
 
 
 // setup function
@@ -22,8 +22,8 @@ function setup(AIplay) {
     });
 
     function setupIA(AIplay){
+        console.log("-----SETUP IA-----");
         let position = null;
-        console.log("AIPLAY",AIplay);
         let rand = Math.round(Math.random() * 8) + 1;
         if(AIplay === 1){
             position = rand.toString()+"1";
@@ -35,6 +35,7 @@ function setup(AIplay) {
             finishLine = parseInt("1");
             console.log("FINISH LINE AFTER INIT : ",finishLine);
         }
+        console.log("------END SETUP IA------");
         return position;
     }
 }
@@ -54,13 +55,18 @@ function nextMove(gameState) {
 }
 
 function Real_nextMove(gameState) {
+    console.log("-----REAL NEXT MOVE-----");
     //ON PRENDS EN COMPTE TOUS LES DOUBLES MURS
     let [realOwnWalls, realOpponentWalls] = computeRealWallList(gameState.ownWalls,gameState.opponentWalls);
     console.log("REAL OWN WALLS : ",realOwnWalls);
     console.log("REAL OPPONENT WALLS : ",realOpponentWalls);
+    console.log("my position in list : ",myPosition(gameState.board));
+    console.log("my position converted : ",convertOurCoordinatesToVellaCooordinates(myPosition(gameState.board)[0],myPosition(gameState.board)[1]));
     let initOpponentPos = opponentPosition(gameState.board);
-
     console.log("OPPONENT VISIBLE ?",initOpponentPos!==null);
+
+    return moveCharacterWithDjikstra();
+
     //SI LES DERNIERES ACTIONS ETAIENT DES MURS EN PLUS
     if(wallCount > 3 ){
         wallCount = 0;
@@ -427,17 +433,40 @@ function Real_nextMove(gameState) {
 
     // --------------------- INTERNAL FUNCTIONS ---------------------------------- //
 
+    function rotateBoard(board) {
+        // Création d'un nouveau tableau pour stocker le tableau tourné
+        let newBoard = [];
+
+        // Boucle sur chaque colonne de l'ancien tableau pour créer une nouvelle ligne
+        for (let col = 0; col < board.length; col++) {
+            let newRow = [];
+            // Boucle sur chaque ligne de l'ancien tableau pour récupérer la valeur correspondante
+            for (let row = 0; row < board.length; row++) {
+                newRow.push(board[row][col]);
+            }
+            // Ajout de la nouvelle ligne au nouveau tableau
+            newBoard.push(newRow);
+        }
+
+        // Retourne le nouveau tableau
+        return newBoard;
+    }
+
     function moveCharacterWithDjikstra(){
         console.log("---MOVE CHARACTER WITH DJIKSTRA---");
         const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
+
         let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
+        //console.log("GRAPH : ",graph);
         const ownPosition = [myPosition(gameState.board)[0], myPosition(gameState.board)[1]];
-        console.log("OWN POSITION : ",ownPosition);
+        console.log("OUR OWN POSITION : ",ownPosition);
         const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
+        //console.log("OWN NODE ->",ownNode);
+        console.log("FINISH LINE : ",finishLine);
         let bestRes = null;
         //COMPUTE POUR TOUTE LA LIGNE
         for (let i = 0; i < 9; i++) {
-            let endNode = graph.getNodeFromCoordinates(invertFinishLine()-1, i);
+            let endNode = graph.getNodeFromCoordinates( i, finishLine-1);
             if(endNode!==null){
                 let res = djikstra(graph, ownNode, endNode);
                 if (bestRes === null) {bestRes = res;}
@@ -445,13 +474,13 @@ function Real_nextMove(gameState) {
             }
         }
         //for(let i=0;i<bestRes.path.length;i++){
-            //console.log(bestRes.path[i].position);
+           // console.log(bestRes.path[i].position);
         //}
         let nextMove = bestRes.path[1].position;
         console.log("NEXT MOVE : ",nextMove);
 
         let finalPosition = convertOurCoordinatesToVellaCooordinates(nextMove.row, nextMove.col);
-
+        console.log("FINAL POSITION ", finalPosition);
         return moveCharacter(finalPosition);
     }
     function isWallAlreadyExists(wallList, opponentPos){
@@ -473,15 +502,15 @@ function Real_nextMove(gameState) {
     function computeDjikstaFor(gameState,player){
         console.log("---COMPUTE DJIKSTRA FOR--- ");
         if(player==="me"){
+            console.log("---ME--- ");
             const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
             let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
             const ownPosition = convertVellaCooordinatesToOurs(myPosition(gameState.board)[0],myPosition(gameState.board)[1]);
             const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
-            console.log("OWN NODE -> ",ownNode);
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = djikstra(graph, ownNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
+                let res = djikstra(graph, ownNode, graph.getNodeFromCoordinates(i,invertFinishLine()-1));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
@@ -495,7 +524,7 @@ function Real_nextMove(gameState) {
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = djikstra(graph, oppNode, graph.getNodeFromCoordinates(finishLine-1, i));
+                let res = djikstra(graph, oppNode, graph.getNodeFromCoordinates(i, finishLine-1));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
@@ -833,7 +862,7 @@ function Real_nextMove(gameState) {
         console.log("WALL COUNT : ", wallCount);
         console.log("TOTAL WALL : ", totalWallCount);
         console.log("MOVE COUNT : ", moveCount);
-        return { action: "move", value: parseInt(position[0]).toString() + parseInt(position[1]).toString() };
+        return { action: "move", value: parseInt(position[1]).toString() + parseInt(position[0]).toString() };
     }
 
     function computeRealWallList(ownWalls,opponentWalls){
@@ -843,16 +872,18 @@ function Real_nextMove(gameState) {
             //SI LE MUR EST HORIZONTAL ON VA AJOUTER LE MUR A SA DOITE
             if(wall[1]===0){
                 let rootWallPosition = wall[0].split("");
+                console.log(rootWallPosition);
                 let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),0];
-                let wallToAdd = [(parseInt(rootWallPosition[0])+1).toString()+rootWallPosition[1].toString(),0];
+                let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])+1).toString(),0];
                 realOwnWalls.push(wallToAdd);
                 realOwnWalls.push(rootWallCopy);
             }
             // SI LE MUR EST VERTICAL
             else if(wall[1]===1){
                 let rootWallPosition = wall[0].split("");
+                console.log(rootWallPosition);
                 let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),1];
-                let wallToAdd = [rootWallPosition[0].toString()+(parseInt(rootWallPosition[1])-1).toString(),1];
+                let wallToAdd = [(parseInt(rootWallPosition[0])-1).toString()+(parseInt(rootWallPosition[1])).toString(),1];
                 realOwnWalls.push(wallToAdd);
                 realOwnWalls.push(rootWallCopy);
             }
@@ -861,16 +892,18 @@ function Real_nextMove(gameState) {
             //SI LE MUR EST HORIZONTAL ON VA AJOUTER LE MUR A SA DOITE
             if(wall[1]===0){
                 let rootWallPosition = wall[0].split("");
+                console.log(rootWallPosition);
                 let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),0];
-                let wallToAdd = [(parseInt(rootWallPosition[0])+1).toString()+rootWallPosition[1].toString(),0];
+                let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])+1).toString(),0];
                 realOpponentWalls.push(wallToAdd);
                 realOpponentWalls.push(rootWallCopy);
             }
             // SI LE MUR EST VERTICAL
             else if(wall[1]===1){
                 let rootWallPosition = wall[0].split("");
+                console.log(rootWallPosition);
                 let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),1];
-                let wallToAdd = [rootWallPosition[0].toString()+(parseInt(rootWallPosition[1])-1).toString(),1];
+                let wallToAdd = [(parseInt(rootWallPosition[0])-1).toString()+(parseInt(rootWallPosition[1])).toString(),1];
                 realOpponentWalls.push(wallToAdd);
                 realOpponentWalls.push(rootWallCopy);
             }
@@ -878,33 +911,39 @@ function Real_nextMove(gameState) {
         return [realOwnWalls, realOpponentWalls];
     }
 
-    function isCuttingWall(gameState,currPos,type){
-        console.log("IS CUTTING WALL ? ",currPos);
+    function isCuttingWall(gameState,currPos,type) {
+        console.log("IS CUTTING WALL ? ", currPos);
         let wallToReturn = null;
-        for(let i=0;i<gameState.ownWalls.length;i++){
+        for (let i = 0; i < gameState.ownWalls.length; i++) {
             let wall = gameState.ownWalls[i];
             let wallPosition = wall[0].split("");
             //SI ON VEUT POSER UN MUR HORITONZAL
-            if(type === 0){
+            if (type === 0) {
                 //S'IL EXISTE UN MUR AU MEME ENDROIT (HORIZONTAL OU VERTICAL) --> CA SE CROISE !!
-                if(parseInt(wallPosition[1]) === parseInt(currPos[1]) && (parseInt(wallPosition[0]) === parseInt(currPos[0]))){wallToReturn = wall;break;}
+                if (parseInt(wallPosition[1]) === parseInt(currPos[1]) && (parseInt(wallPosition[0]) === parseInt(currPos[0]))) {
+                    wallToReturn = wall;
+                    break;
+                }
                 //S'IL EXISTE UN MUR DE 1 VERS LA DROITE OU VERS LA GAUCHE DU MEME TYPE
                 else {
-                    if(parseInt(wallPosition[1]) === parseInt(currPos[1]) &&
-                        (parseInt(wallPosition[0])+1 === parseInt(currPos[0]) || parseInt(wallPosition[0])-1 === parseInt(currPos[0]))){
+                    if (parseInt(wallPosition[1]) === parseInt(currPos[1]) &&
+                        (parseInt(wallPosition[0]) + 1 === parseInt(currPos[0]) || parseInt(wallPosition[0]) - 1 === parseInt(currPos[0]))) {
                         wallToReturn = wall;
                         break;
                     }
                 }
             }
             //SI ON VEUT POSER UN MUR VERTICAL
-            else if(type === 1){
+            else if (type === 1) {
                 console.log("MUR QU'ON VEUT POSER = VERTICAL");
                 //S'IL EXISTE UN MUR AU MEME ENDROIT (HORIZONTAL OU VERTICAL) --> CA SE CROISE !!
-                if(parseInt(wallPosition[0]) === parseInt(currPos[0]) && (parseInt(wallPosition[1]) === parseInt(currPos[1]))){wallToReturn = wall; break;}
+                if (parseInt(wallPosition[0]) === parseInt(currPos[0]) && (parseInt(wallPosition[1]) === parseInt(currPos[1]))) {
+                    wallToReturn = wall;
+                    break;
+                }
                 //S'IL EXISTE UN MUR DE 1 VERS LE HAUT OU VERS LE BAS DU MEME TYPE
                 else {
-                    if(parseInt(wallPosition[0]) === parseInt(currPos[0]) &&
+                    if (parseInt(wallPosition[0]) === parseInt(currPos[0]) &&
                         (parseInt(wallPosition[1]) + 1 === parseInt(currPos[1]) || parseInt(wallPosition[1]) - 1 === parseInt(currPos[1])) &&
                         (parseInt(type) === parseInt(wall[1]))) {
                         wallToReturn = wall;
@@ -913,31 +952,37 @@ function Real_nextMove(gameState) {
                 }
             }
         }
-        if(wallToReturn === null){
-            for(let i=0;i<gameState.opponentWalls.length;i++){
+        if (wallToReturn === null) {
+            for (let i = 0; i < gameState.opponentWalls.length; i++) {
                 let wall = gameState.opponentWalls[i];
                 let wallPosition = wall[0].split("");
-                if(type === 0){
+                if (type === 0) {
                     //S'IL EXISTE UN MUR AU MEME ENDROIT (HORIZONTAL OU VERTICAL) --> CA SE CROISE !!
-                    if(parseInt(wallPosition[1]) === parseInt(currPos[1]) && (parseInt(wallPosition[0]) === parseInt(currPos[0]))){wallToReturn = wall;break;}
+                    if (parseInt(wallPosition[1]) === parseInt(currPos[1]) && (parseInt(wallPosition[0]) === parseInt(currPos[0]))) {
+                        wallToReturn = wall;
+                        break;
+                    }
                     //S'IL EXISTE UN MUR DE 1 VERS LA DROITE OU VERS LA GAUCHE DU MEME TYPE
                     else {
-                        if(parseInt(wallPosition[1]) === parseInt(currPos[1]) &&
-                            (parseInt(wallPosition[0])+1 === parseInt(currPos[0]) || parseInt(wallPosition[0])-1 === parseInt(currPos[0]))){
+                        if (parseInt(wallPosition[1]) === parseInt(currPos[1]) &&
+                            (parseInt(wallPosition[0]) + 1 === parseInt(currPos[0]) || parseInt(wallPosition[0]) - 1 === parseInt(currPos[0]))) {
                             wallToReturn = wall;
                             break;
                         }
                     }
                 }
                 //SI ON VEUT POSER UN MUR VERTICAL
-                else if(type === 1){
+                else if (type === 1) {
                     //S'IL EXISTE UN MUR AU MEME ENDROIT (HORIZONTAL OU VERTICAL) --> CA SE CROISE !!
-                    if(parseInt(wallPosition[0]) === parseInt(currPos[0]) && (parseInt(wallPosition[1]) === parseInt(currPos[1]))){wallToReturn = wall; break;}
+                    if (parseInt(wallPosition[0]) === parseInt(currPos[0]) && (parseInt(wallPosition[1]) === parseInt(currPos[1]))) {
+                        wallToReturn = wall;
+                        break;
+                    }
                     //S'IL EXISTE UN MUR DE 1 VERS LE HAUT OU VERS LE BAS DU MEME TYPE
                     else {
-                        if(parseInt(wallPosition[0]) === parseInt(currPos[0]) &&
+                        if (parseInt(wallPosition[0]) === parseInt(currPos[0]) &&
                             (parseInt(wallPosition[1]) + 1 === parseInt(currPos[1]) || parseInt(wallPosition[1]) - 1 === parseInt(currPos[1])) &&
-                            (parseInt(type) === parseInt(wall[1]))){
+                            (parseInt(type) === parseInt(wall[1]))) {
 
                             wallToReturn = wall;
                             break;
@@ -997,12 +1042,17 @@ function opponentPosition(board){
     return null;
 }
 function convertVellaCooordinatesToOurs(col,row){
-    return [9-parseInt(row),parseInt(col)-1];
+    return [parseInt(row)-1,parseInt(col)-1];
 }
 function convertOurCoordinatesToVellaCooordinates(row,col){
-    return [parseInt(col)+1,9-parseInt(row)];
+    return [parseInt(col)+1,parseInt(row)+1];
+}
+
+function convertVellaToClassicCoordinates(col,row){
+    return [9-parseInt(row),parseInt(col)-1];
 }
 function convertGameStateToGamemodel(gameState){
+    console.log("-----CONVERSION GAMESTATE -> GAMEMODEL-----")
     let horizontalWalls = new WallDictionary();
     let verticalWalls = new WallDictionary();
     let playableSquares = new PlayableSquareDictionary();
@@ -1013,11 +1063,15 @@ function convertGameStateToGamemodel(gameState){
     let opponentPlayOrder = playOrder === 1 ? 2 : 1;
     gameState.opponentWalls.forEach(function (wall){
         let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[1]);
+        console.log("WALL POSITION : ",wallPosition.row,wallPosition.col);
         //SI MUR HORIZONTAL
         if(parseInt(wall[1])===parseInt("0")){
-            let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
+            let goodCoordinates = convertVellaToClassicCoordinates(wallPosition.col,wallPosition.row);
+            //let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.col,wallPosition.row);
             let wallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'H');
+            console.log("GOOD COORDINATES : ",goodCoordinates);
             let neighborOfWallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1]+1, 'H');
+            console.log("NEIGHBORHOOD -> ",neighborOfWallToEdit);
             wallToEdit.setPresent();
             wallToEdit.setOwner(opponentPlayOrder);
             neighborOfWallToEdit.setPresent();
@@ -1025,24 +1079,29 @@ function convertGameStateToGamemodel(gameState){
         }
         //SI MUR VERTICAL
         else if(parseInt(wall[1])===parseInt("1")){
-            console.log("WALL POSITION : ",wallPosition.row,wallPosition.col);
-            let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
+            let goodCoordinates = convertVellaToClassicCoordinates(wallPosition.col,wallPosition.row);
             console.log("GOOD COORDINATES : ",goodCoordinates);
             let wallToEdit = verticalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'V');
             let neighborOfWallToEdit = verticalWalls.getWall(goodCoordinates[0]+1,goodCoordinates[1], 'V');
+            console.log("WALL TO EDIT -> ",neighborOfWallToEdit);
             wallToEdit.setPresent();
             wallToEdit.setOwner(opponentPlayOrder);
             neighborOfWallToEdit.setPresent();
             neighborOfWallToEdit.setOwner(opponentPlayOrder);
         }
     });
+
     gameState.ownWalls.forEach(function (wall){
         let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[1]);
         // MUR HORIZONTAL
         if(parseInt(wall[1])===parseInt("0")) {
-            let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row, wallPosition.col);
+            console.log("OWN WALLS -> HORIZONTAL");
+            console.log(wallPosition.row,wallPosition.col);
+            let goodCoordinates = convertVellaToClassicCoordinates(wallPosition.col, wallPosition.row);
+            console.log("GOOD COORDINATES : ",goodCoordinates);
             let wallToEdit = horizontalWalls.getWall(goodCoordinates[0], goodCoordinates[1], 'H');
             let neighborOfWallToEdit = horizontalWalls.getWall(goodCoordinates[0],goodCoordinates[1]+1, 'H');
+            console.log("WALL TO EDIT -> ",neighborOfWallToEdit);
             wallToEdit.setPresent();
             wallToEdit.setOwner(playOrder);
             neighborOfWallToEdit.setPresent();
@@ -1050,9 +1109,12 @@ function convertGameStateToGamemodel(gameState){
         }
         //MUR VERTICAL
         else if(parseInt(wall[1])===parseInt("1")){
-            let goodCoordinates = convertVellaCooordinatesToOurs(wallPosition.row,wallPosition.col);
+            console.log("OWN WALLS -> VERTICAL")
+            let goodCoordinates = convertVellaToClassicCoordinates(wallPosition.col,wallPosition.row);
+            console.log("GOOD COORDINATES : ",goodCoordinates);
             let wallToEdit = verticalWalls.getWall(goodCoordinates[0],goodCoordinates[1],'V');
             let neighborOfWallToEdit = verticalWalls.getWall(goodCoordinates[0]+1,goodCoordinates[1], 'V');
+            console.log("WALL TO EDIT -> ",neighborOfWallToEdit);
             wallToEdit.setPresent();
             wallToEdit.setOwner(playOrder);
             neighborOfWallToEdit.setPresent();
@@ -1063,34 +1125,33 @@ function convertGameStateToGamemodel(gameState){
     //INIT DES PLAYABLE SQUARES
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-            let gameBoardCase = gameState.board[j][i];
-            let goodCoordinates = convertVellaCooordinatesToOurs(j+1, i+1);
+            let gameBoardCase = gameState.board[i][j];
             //SI ON EST SUR LA CASE
             if(gameBoardCase === 1) {
-                if(i<4) {playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], playOrder, false, parseInt("-1"));}
-                else if(i===4){playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], playOrder, false, parseInt("0"));}
-                else if(i<=9){playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], playOrder, false, parseInt("1"));}
+                if(i<4) {playableSquares.addPlayableSquare(j, i, playOrder, true, parseInt("1"));}
+                else if(i===4){playableSquares.addPlayableSquare(j, i, playOrder, true, parseInt("0"));}
+                else if(i<=9){playableSquares.addPlayableSquare(j, i, playOrder, true, parseInt("-1"));}
             }
             //SI L'ADVERSAIRE EST SUR LA CASE
             else if(gameBoardCase === 2) {
-                if(i<4) {playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], opponentPlayOrder, false, parseInt("-1"));}
-                else if(i===4){playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], opponentPlayOrder, false, parseInt("0"));}
-                else if(i<=9){playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], opponentPlayOrder, false, parseInt("1"));}
+                if(i<4) {playableSquares.addPlayableSquare(j, i, opponentPlayOrder, false, parseInt("1"));}
+                else if(i===4){playableSquares.addPlayableSquare(j, i, opponentPlayOrder, false, parseInt("0"));}
+                else if(i<=9){playableSquares.addPlayableSquare(j, i, opponentPlayOrder, false, parseInt("-1"));}
             }
             //SI ON VOIT LA CASE
             else if(gameBoardCase===0){
-                if(i<4) {playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], null, true, parseInt("-1"));}
-                else if(i===4){playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], null, true, parseInt("0"));}
-                else if(i<=9){playableSquares.addPlayableSquare(goodCoordinates[0], goodCoordinates[1], null, true, parseInt("1"));}
+                if(i<4) {playableSquares.addPlayableSquare(j, i, null, true, parseInt("1"));}
+                else if(i===4){playableSquares.addPlayableSquare(j, i, null, true, parseInt("0"));}
+                else if(i<=9){playableSquares.addPlayableSquare(j, i, null, true, parseInt("-1"));}
             }
             //SINON, PAR DEFAUT, ON NE VOIT PAS LA CASE
             else {
                 if (i < 4) {
-                    playableSquares.addPlayableSquare(i, j, null, false, parseInt("-1"));
+                    playableSquares.addPlayableSquare(j, i, null, false, parseInt("1"));
                 } else if (i === 4) {
-                    playableSquares.addPlayableSquare(i, j, null, false, parseInt("0"));
+                    playableSquares.addPlayableSquare(j, i, null, false, parseInt("0"));
                 } else if (i <= 9) {
-                    playableSquares.addPlayableSquare(i, j, null, false, parseInt("1"));
+                    playableSquares.addPlayableSquare(j, i, null, false, parseInt("-1"));
                 }
             }
         }
