@@ -1,21 +1,20 @@
+//const {setup, updateBoard, nextMove} = require('../../../../../kickoridor24.js');
 const {setup, updateBoard, nextMove} = require('./CoolWar.js');
 async function executeSequentially() {
     console.log('Exécution séquentielle des méthodes.');
     let opponentWalls =[
-        ["75",0]
+        ['57',0]
     ];
     let ownWalls = [
-        ["37",1],
-        ["78",1],
-        [ "26", 0 ],
-        [ "38", 0 ],
-        [ "17", 0 ]
+        ['78',1],
+        ['37',1],
+        ['16',1]
     ];
     let board = [
-        [0,0,0,0,0,1,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,1,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
@@ -24,7 +23,7 @@ async function executeSequentially() {
     ];
 
     // Attend que setup soit terminé
-    const setupResponse = await setup(9);
+    const setupResponse = await setup(1);
     console.log("SETUP RESPONSE :",setupResponse);
 
     // Attend que updateBoard soit terminé
