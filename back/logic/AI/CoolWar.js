@@ -223,10 +223,17 @@ function Real_nextMove(gameState) {
                         let rightHorizontalWallPosition = [null,null];
                         let rightVerticalWallPosition = [null,null];
 
-                        //il est au bord de la grid
+                        //il est au bord haut de la grid
                         if(parseInt(opponentPos[1]) === finishLine){
-                            rightHorizontalWallPosition = [opponentPos[0] + 1, opponentPos[1]];
-                            rightVerticalWallPosition = [opponentPos[0]+1, opponentPos[1]+1];
+                            console.log("BORD HAUT DROIT DE LA GRILLE");
+                            //il est en haut à gauche (horizontal gauche ne sert à rien)
+                            if(parseInt(opponentPos[0]) === 9){rightHorizontalWallPosition = [null,null];}
+                            //il a un mur d'ecart (on ne regarde qu'a un écart de un)
+                            else if(parseInt(opponentPos[0] === 8)){rightHorizontalWallPosition = [opponentPos[0] , opponentPos[1]];}
+                            //RAS
+                            else{ rightHorizontalWallPosition = [opponentPos[0]+1, opponentPos[1]];}
+                            //VERTICAL -> SI ON REGARDE CE MUR, MOUVEMENT ILLEGAL SI UN MUR HORIZONTAL EXISTE
+                            rightVerticalWallPosition = [opponentPos[0] + 1, opponentPos[1] +1];
                         }
                         //en plein milieu de la grid
                         else {
@@ -310,7 +317,7 @@ function Real_nextMove(gameState) {
                         //RAS
                         else{ leftHorizontalWallPosition = [opponentPos[0] - 2, opponentPos[1]+1];}
                         //VERTICAL
-                        leftVerticalWallPosition = [opponentPos[0] - 2, opponentPos[1]];
+                        leftVerticalWallPosition = [opponentPos[0] - 1, opponentPos[1] + 1];
                     }
                     //en plein milieu de la grid
                     else {
@@ -356,8 +363,20 @@ function Real_nextMove(gameState) {
                     //SINON
                     //ON REGARDE S'IL EXISTE UN MUR A DROITE
                     else {
-                        let rightHorizontalWallPosition = [opponentPos[0] + 2, opponentPos[1]+1];
-                        let rightVerticalWallPosition = [opponentPos[0], opponentPos[1] + 1];
+                        let rightHorizontalWallPosition = [null,null];
+                        let rightVerticalWallPosition = [null,null];
+                        //S'IL EST AU BORD BAS A DROITE DE LA GRID
+                        if(parseInt(opponentPos[1]) === 9){
+                            console.log("BORD BAS DE LA GRILLE INVERT");
+                            //il est en haut à gauche (horizontal gauche ne sert à rien)
+                            if(parseInt(opponentPos[0]) === 9){rightHorizontalWallPosition = [null,null];}
+                            //il a un mur d'ecart (on ne regarde qu'a un écart de un)
+                            else if(parseInt(opponentPos[0] === 8)){rightHorizontalWallPosition = [opponentPos[0], opponentPos[1]+1];}
+                            //RAS
+                            else{ rightHorizontalWallPosition = [opponentPos[0] + 2, opponentPos[1]+1];}
+                            //VERTICAL -> SI ON REGARDE CE MUR, MOUVEMENT ILLEGAL SI UN MUR HORIZONTAL EXISTE
+                            rightVerticalWallPosition = [opponentPos[0], opponentPos[1] +1];
+                        }
 
                         let isRightHorizontalWallExist = isWallAtPosition(realOwnWalls,realOpponentWalls, rightHorizontalWallPosition);
                         let isRightVerticalWallExist = isWallAtPosition(realOwnWalls,realOpponentWalls, rightVerticalWallPosition);
@@ -412,20 +431,20 @@ function Real_nextMove(gameState) {
         console.log("---MOVE CHARACTER WITH DJIKSTRA---");
         const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
         let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
-        console.log("myPosition :",myPosition(gameState.board));
+        //console.log("myPosition :",myPosition(gameState.board));
         const ownPosition = [myPosition(gameState.board)[0], myPosition(gameState.board)[1]];
         const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
         console.log("OWN POSITION : ",ownPosition);
-        console.log("OWN NODE : ",ownNode);
+        //console.log("OWN NODE : ",ownNode);
         let bestRes = null;
 
         //COMPUTE POUR TOUTE LA LIGNE
         for (let i = 0; i < 8; i++) {
             let res = djikstra(graph, ownNode, graph.getNodeFromCoordinates(invertFinishLine()-1, i));
-            console.log("FROM : ",ownNode.position);
-            console.log("PATH TO :", graph.getNodeFromCoordinates(invertFinishLine()-1, i).position);
+            //console.log("FROM : ",ownNode.position);
+            //console.log("PATH TO :", graph.getNodeFromCoordinates(invertFinishLine()-1, i).position);
             for(let j=0;j<res.path.length;j++){
-                console.log(res.path[j].position);
+                //console.log(res.path[j].position);
             }
             if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
         }

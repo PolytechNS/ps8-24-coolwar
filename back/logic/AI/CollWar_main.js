@@ -12,11 +12,11 @@ async function executeSequentially() {
         [ "17", 0 ]
     ];
     let board = [
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0],
-        [2,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,1,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0],
@@ -24,7 +24,7 @@ async function executeSequentially() {
     ];
 
     // Attend que setup soit terminé
-    const setupResponse = await setup(1);
+    const setupResponse = await setup(9);
     console.log("SETUP RESPONSE :",setupResponse);
 
     // Attend que updateBoard soit terminé
