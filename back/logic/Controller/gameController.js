@@ -1,7 +1,7 @@
 const {ObjectId} = require("mongodb");
 const {playBot} = require("./botController");
 
-async function createGameDb(gameId,gameModelGlobal,db) {
+async function createGameDb(gameId,playersInfo,gameModelGlobal,db) {
     const gameBoard = await db.collection('gameboards').insertOne({
         gameId: gameId, // Lier le plateau de jeu à la partie
         nbJoueursMax: gameModelGlobal.nbPlayers, // Nombre maximum de joueurs
@@ -9,18 +9,23 @@ async function createGameDb(gameId,gameModelGlobal,db) {
         currentPlayer: gameModelGlobal.currentPlayer, // Joueur actuel
         winner : gameModelGlobal.winner,
         lastChance: gameModelGlobal.lastChance,
+        typeGame: gameModelGlobal.typeGame
         // autres données du plateau de jeu
     });
     const gameBoardId = gameBoard.insertedId;
 
-    //persister la position des joueurs
-    const players = gameModelGlobal.player_array.getAllPlayers();
-    await db.collection('character').insertMany(players.map((player, index) => ({
-        ...player,
-        gameBoardId: gameBoardId,
-        currentPlayerIndex: index + 1 // Ajout de l'attribut currentPlayerIndex
-    })));
+    // Supposons que 'playersInfo' contient des informations des deux joueurs récupérées de la base de données.
+    const gamePlayers = gameModelGlobal.player_array.getAllPlayers(); // Contient les objets de jeu pour Player1 et Player2
 
+// Aucune association par nom n'est nécessaire car vous définissez arbitrairement les rôles basés sur l'ordre.
+    await db.collection('characters').insertMany(gamePlayers.map((gamePlayer, index) => {
+        return {
+            ...gamePlayer, // propriétés du modèle de jeu (position, nombre de murs, etc.)
+            userId: playersInfo[index]._id, // Assigne l'ID de l'utilisateur du tableau playersInfo basé sur l'ordre
+            gameBoardId: gameBoardId, // L'ID du plateau de jeu
+            currentPlayerIndex: index + 1 // 1 pour le premier joueur, 2 pour le second
+        };
+    }));
 
     // Persister les murs et les cases en référençant l'ID du plateau de jeu
 
@@ -80,7 +85,8 @@ async function loadGameFromDb(db, savedGame) {
         currentPlayer: gameBoardSaved.currentPlayer,
         roundCounter: gameBoardSaved.roundCounter,
         winner : gameBoardSaved.winner,
-        lastChance: gameBoardSaved.lastChance
+        lastChance: gameBoardSaved.lastChance,
+        typeGame: gameBoardSaved.typeGame
     };
     return config;
 }

@@ -1,6 +1,6 @@
 const http = require('http');
 const { MongoClient } = require('mongodb');
-const setupSocketServer = require('./socketServer');
+const setupSocketServer = require('./logic/Socket/socketServer');
 const mainRouter = require('./logic/Router/MainRouter');
 const { PORT, MONGO_URL } = require('./logic/Utils/constants'); // Assurez-vous d'ajouter MONGO_URL dans vos constants
 

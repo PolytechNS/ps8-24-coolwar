@@ -1,4 +1,4 @@
-import {Utils} from "../Utils/utils.js";
+import {Utils} from "../../Utils/utils.js";
 
 export class GameBehaviour{
     isPresentWall(wall,model) {

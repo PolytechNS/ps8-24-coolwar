@@ -1,4 +1,4 @@
-import {Utils} from "../../Utils/utils.js";
+import {Utils} from "./utils.js";
 
 export const getWallNeighborhood = (wall) => {
     let nbColonnes = 9;
@@ -118,13 +118,3 @@ export const getWallNeighborhood_Invert = (wall) => {
     }
     return wallToReturn;
 }
-
-//TODO : CHERCHER POURQUOI CA TROUVE RIEN ?
-export const getCaseFromCoordinates = (row, col) => {
-    let toSend = null;
-    document.querySelectorAll('.playable_square').forEach((playable_case)=>{
-        let coordinates = Utils.prototype.getCoordinatesFromID(playable_case.id);
-        if(parseInt(coordinates[0])===parseInt(row) && parseInt(coordinates[1])===parseInt(col)){toSend=playable_case;}
-    });
-    return toSend;
-};

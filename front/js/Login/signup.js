@@ -1,5 +1,5 @@
 // signup.js
-import { AuthService } from '../Services/authService.js'; // Mettez à jour le chemin selon votre structure de projet
+import { AuthService } from '../Services/Login/authService.js'; // Mettez à jour le chemin selon votre structure de projet
 
 document.addEventListener('DOMContentLoaded', () => {
     const signupForm = document.getElementById('signupForm');
