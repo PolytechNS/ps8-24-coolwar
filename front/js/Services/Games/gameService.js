@@ -1,4 +1,4 @@
-import { socketManager } from '../Socket/socketManager.js';
+import { socketManager } from '../../Socket/socketManager.js';
 
 export const gameService = {
     // ... Autres méthodes ...

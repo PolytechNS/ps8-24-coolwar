@@ -78,7 +78,7 @@ module.exports = (io, socket) => {
     });
 
 
-    socket.on('movecharactere', async(data)=>{
+    socket.on('moveCharacterWithBot', async(data)=>{
         const dataParse = JSON.parse(data);
         try {
             //On récupère la partie dans la map
@@ -102,17 +102,17 @@ module.exports = (io, socket) => {
             await updateCurrentPlayerFromDb(gameBoard,db,gameModel);
 
             //on emit la réponse
-            socket.emit('movecharactereresponse',responseBoolean);
+            socket.emit('moveCharacterWithBotResponse',responseBoolean);
 
         }
         catch (error) {
             console.error('Error moving character', error);
-            socket.emit('movecharactereresponse', false);
+            socket.emit('moveCharacterWithBotResponse', false);
         }
 
     });
 
-    socket.on('placewall', async (datas) => {
+    socket.on('placeWallWithBot', async (datas) => {
         try {
             let wallDataDeserialized = JSON.parse(datas);
             console.log("WALL DATA DESERIALIZED : ",wallDataDeserialized);
@@ -147,7 +147,7 @@ module.exports = (io, socket) => {
             }
             // Envoyer la réponse au client
 
-            socket.emit('placewallResponse', responseBoolean);
+            socket.emit('placeWallWithBotResponse', responseBoolean);
         }
         catch (error) {
             console.error('Error placing wall', error);
@@ -180,14 +180,7 @@ module.exports = (io, socket) => {
         let response = actionController.checkWinner();
         socket.emit('checkWinnerResponse',response);
     });
-
-    /*
-    data:{
-            userId,
-            gameId
-          }
-
-     */
+    
 
     socket.on('updateGameModel', async ( data ) => {
         let datas = JSON.parse(data);

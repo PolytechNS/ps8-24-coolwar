@@ -1,9 +1,9 @@
-import {actionGameService} from "../Services/actionGameService.js";
-import {gameService} from "../Services/gameService.js";
-import {Utils} from "../Utils/utils.js";
+import {actionGameService} from "../../Services/Games/WithBot/actionGameService.js";
+import {gameService} from "../../Services/Games/gameService.js";
+import {Utils} from "../../Utils/utils.js";
 import {GameBehaviour} from "./GameBehaviour.js";
-import {GameView} from "./GameView.js";
-import { getWallNeighborhood, getWallNeighborhood_Invert } from "../Utils/wallUtils.js";
+import {GameView} from "../Views/GameView.js";
+import { getWallNeighborhood, getWallNeighborhood_Invert } from "../../Utils/wallUtils.js";
 
 export class GamePresenter {
     constructor(model, view) {
@@ -163,7 +163,7 @@ export class GamePresenter {
                     oldPosition = res;
                 });
                 //token
-                actionGameService.moveCharacter(this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
+                actionGameService.moveCharacterWithBot(this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
                     if(res){
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                         //ON RETIRE L'ANCIEN STYLE
@@ -192,7 +192,7 @@ export class GamePresenter {
 
             const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq};
             //CALL BD -
-            actionGameService.placeWall(dataToSend, (isAuthorized)=>{
+            actionGameService.placeWallWithBot(dataToSend, (isAuthorized)=>{
                 if(isAuthorized){
                     wallListObj.forEach((wallToEdit) => {
                         this.view.displayWall(wallToEdit, 1);

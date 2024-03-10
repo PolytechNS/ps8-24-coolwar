@@ -1,7 +1,7 @@
-import {GamePresenter} from './Game/GamePresenter.js';
-import {actionGameService} from "./Services/actionGameService.js";
-import {GameView} from './Game/GameView.js';
-import {AuthService} from './Services/authService.js';
+import {GamePresenter} from './Game/Controllers/GamePresenter.js';
+import {actionGameService} from "./Services/Games/WithBot/actionGameService.js";
+import {GameView} from './Game/Views/GameView.js';
+import {AuthService} from './Services/Login/authService.js';
 import {socketManager} from './Socket/socketManager.js';
 
 

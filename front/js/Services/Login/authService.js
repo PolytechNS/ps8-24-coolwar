@@ -1,5 +1,5 @@
 // AuthService.js
-import { config } from '../Utils/config.js'; // Assurez-vous que le chemin est correct
+import { config } from '../../Utils/config.js'; // Assurez-vous que le chemin est correct
 
 const AuthService = {
     login(username, password) {
