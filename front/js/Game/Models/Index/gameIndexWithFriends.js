@@ -10,23 +10,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('token');
     if (token) {
         socketManager.initializeSocket(token);
+        const gameData = JSON.parse(localStorage.getItem('gameData'));
+        localStorage.removeItem('gameData');
 
-        // Vérifiez que la socket est prête avant de lancer le jeu
-        const checkSocketReady = setInterval(() => {
-            if (socketManager.isSocketInitialized()) {
-                clearInterval(checkSocketReady);
+        const model = JSON.parse(gameData); // Assurez-vous que ce modèle est correctement formaté
+        console.log("Game initialized with game model");
+        console.log(model);
+        const view = new GameView(model);
+        const presenter = new GamePresenter(model, view);
+        console.log("Game initialized with game model");
 
-                // La socket est prête, initialisons le jeu
-                actionGameService.getGame(config.withFriends,(serializedGameModel) => {
-                    // Désérialisez le modèle de jeu JSON en objet JavaScript
-                    const model = JSON.parse(serializedGameModel); // Assurez-vous que ce modèle est correctement formaté
-                    const view = new GameView(model);
-
-                    const presenter = new GamePresenter(model, view);
-                    console.log("Game initialized with game model");
-                });
-            }
-        }, 100); // Vérifiez toutes les 100ms, ajustez selon besoin
     } else {
         console.error("No token found. Please log in.");
         // Redirigez l'utilisateur vers la page de connexion si nécessaire

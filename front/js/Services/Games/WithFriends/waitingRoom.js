@@ -13,7 +13,8 @@ window.onload = function () {
             console.log('Opponent found:', gameInfo);
             const gameData = encodeURIComponent(JSON.stringify(gameInfo)); // Assurez-vous que gameInfo contient toutes les infos nécessaires
             // Utilisation du lien correct pour la redirection
-            //window.location.href = '../../../../Pages/GamePage/GamePageWithFriends.html?gameData=' + gameData;
+            localStorage.setItem('gameData', JSON.stringify(gameInfo));
+            window.location.href = '../../GamePage/GamePageWithFriends.html';
         });
     } else {
         console.error("No token found, please log in.");

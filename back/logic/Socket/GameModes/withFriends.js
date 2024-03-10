@@ -15,7 +15,6 @@ const {setUpPositionRealBot, createGameDb,
 
 const games = new Map();
 const waitingPlayers = new Map(); // Clé : token de l'utilisateur, Valeur : ID de la room
-const playerRoles = new Map(); // Clé : ID de la room, Valeur : tableau des tokens des joueurs avec leur rôle
 
 
 module.exports = (io, socket) => {
@@ -53,7 +52,7 @@ module.exports = (io, socket) => {
             waitingPlayers.delete(player2Token);
 
             const playerTokens = [player1Token, player2Token];
-    
+
             try {
                 await client.connect();
                 const db = client.db();
