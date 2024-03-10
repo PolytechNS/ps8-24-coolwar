@@ -1,7 +1,7 @@
 // Importer socketManager pour accéder à la socket
 import { socketManager } from '../../Socket/socketManager.js';
-import {BotActionService} from "./WithBot/BotActionService.js";
-import {BotGameService} from "./WithBot/BotGameService.js";
+import {BotActionService} from "./WithBot/botActionService.js";
+import {BotGameService} from "./WithBot/botGameService.js";
 import {config} from "../../Utils/config.js";
 
 export const actionGameService = {

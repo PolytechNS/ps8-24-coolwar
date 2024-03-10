@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GAME</title>
+  <link rel="stylesheet" href="GamePageStyle.css">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<main>
+  <div class="left">
+    <div class="menu">
+      <div class="dropdown">
+        <button id="save">Save</button>
+        <button> Options </button>
+        <a href="../PlayPage/PlayPage.html" class="theButton"><button>Leave</button></a>
+      </div>
+
+      <div class="modal" id="modal">
+        <div class="modal-back"></div>
+        <div class="modal-container">
+          GamePlayer<br />
+          Your turn<br />
+          Ready ?<br />
+          <button id="modalClose">Play</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="walls">
+        <img src="../../datas/horizontal_wall_texture.png" class="wall"/>
+        <p id="nbWallsLeft"></p>
+      </div>
+
+      <div class="validate">
+        <img id="validateTurn"/>
+        <img/>
+        <img/>
+      </div>
+    </div>
+  </div>
+
+  <div id="plate" class="plate"></div>
+
+  <div class="right">
+    <div class="info">
+      <p>Turn :</p>
+      <div id="curplayer"></div>
+      <br>
+      <div id="rounds"></div>
+      <div id="winner"></div>
+    </div>
+
+    <div class="chatBox">
+
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
+
+<script src="../../js/socket.io.js"></script>
+<script type="module" src="../../js/Game/Models/Index/gameIndexWithFriends.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>
