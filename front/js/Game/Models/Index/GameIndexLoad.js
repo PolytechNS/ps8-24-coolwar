@@ -1,6 +1,6 @@
 // GameIndexWithBot.js
 import {GamePresenter} from '../../Controllers/GamePresenter.js';
-import {actionGameService} from "../../../Services/Games/WithBot/actionGameService.js";
+import {actionGameService} from "../../../Services/Games/actionGameService.js";
 import {gameService} from "../../../Services/Games/gameService.js";
 import {GameView} from '../../Views/GameView.js';
 import {socketManager} from '../../../Socket/socketManager.js';

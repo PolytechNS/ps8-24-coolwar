@@ -1,4 +1,4 @@
-import {actionGameService} from "../../Services/Games/WithBot/actionGameService.js";
+import {actionGameService} from "../../Services/Games/actionGameService.js";
 import {gameService} from "../../Services/Games/gameService.js";
 import {Utils} from "../../Utils/utils.js";
 import {GameBehaviour} from "./GameBehaviour.js";
@@ -163,7 +163,7 @@ export class GamePresenter {
                     oldPosition = res;
                 });
                 //token
-                actionGameService.moveCharacterWithBot(this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
+                actionGameService.moveCharacter(this.model.typeGame,this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
                     if(res){
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                         //ON RETIRE L'ANCIEN STYLE
@@ -192,7 +192,7 @@ export class GamePresenter {
 
             const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq};
             //CALL BD -
-            actionGameService.placeWallWithBot(dataToSend, (isAuthorized)=>{
+            actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                 if(isAuthorized){
                     wallListObj.forEach((wallToEdit) => {
                         this.view.displayWall(wallToEdit, 1);
