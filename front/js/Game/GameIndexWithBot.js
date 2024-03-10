@@ -1,4 +1,4 @@
-// GameIndex.js
+// GameIndexWithBot.js
 import {GamePresenter} from './GamePresenter.js';
 import {actionGameService} from "../Services/actionGameService.js";
 import {GameView} from './GameView.js';
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 clearInterval(checkSocketReady);
 
                 // La socket est prête, initialisons le jeu
-                actionGameService.getGame((serializedGameModel) => {
+                actionGameService.getGameWithBot((serializedGameModel) => {
                     // Désérialisez le modèle de jeu JSON en objet JavaScript
                     const model = JSON.parse(serializedGameModel); // Assurez-vous que ce modèle est correctement formaté
                     const view = new GameView(model);

@@ -3,125 +3,7 @@ import {gameService} from "../Services/gameService.js";
 import {Utils} from "../Utils/utils.js";
 import {GameBehaviour} from "./GameBehaviour.js";
 import {GameView} from "./GameView.js";
-
-const getWallNeighborhood = (wall) => {
-    let nbColonnes = 9;
-    let nbLignes = 9;
-    let wallPosition = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id)
-    let wallToReturn = null;
-
-    //si mur vertical tout en bas
-    if(parseInt(wallPosition[0])===nbLignes-1 && wall.classList.contains('vertical_hitbox')){
-        let vWalls = document.querySelectorAll('.vertical_hitbox');
-        let xToFind = parseInt(wallPosition[0])-1;
-        let yToFind = parseInt(wallPosition[1]);
-        //SI DES MURS PEUVENT ETRE ENCORE POSES
-        for(let i=0;i<vWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
-                wallToReturn = vWalls.item(i);
-            }
-        }
-    }
-    //si mur horizontal A DROITE
-    if(parseInt(wallPosition[1])===nbColonnes-1 && wall.classList.contains('horizontal_hitbox')){
-        let hWalls = document.querySelectorAll('.horizontal_hitbox');
-        let xToFind = parseInt(wallPosition[0]);
-        let yToFind = parseInt(wallPosition[1])-1;
-        //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for(let i=0;i<hWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
-                wallToReturn = hWalls.item(i);
-            }
-        }
-    }
-    //autre cas PAR DEFAUT
-    if(wall.classList.contains('horizontal_hitbox')){
-        let hWalls = document.querySelectorAll('.horizontal_hitbox');
-        let xToFind = parseInt(wallPosition[0]);
-        let yToFind = parseInt(wallPosition[1])+1;
-        //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for(let i=0;i<hWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
-                wallToReturn = hWalls.item(i);
-            }
-        }
-    }
-    if(wall.classList.contains('vertical_hitbox')){
-        let vWalls = document.querySelectorAll('.vertical_hitbox');
-        let xToFind = parseInt(wallPosition[0])+1;
-        let yToFind = parseInt(wallPosition[1]);
-        //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for(let i=0;i<vWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
-            if(xToFind===parseInt(coordinates[0]) && yToFind===parseInt(coordinates[1])){
-                wallToReturn = vWalls.item(i);
-            }
-        }
-    }
-    return wallToReturn;
-}
-const getWallNeighborhood_Invert = (wall) => {
-    let nbColumns = 9;
-    let nbLines = 9;
-    let wallPosition = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id)
-    let wallToReturn = null;
-
-    //si mur vertical tout en bas
-    if(parseInt(wallPosition[0])===nbLines-1 && wall.classList.contains('vertical_hitbox')){
-        let vWalls = document.querySelectorAll('.vertical_hitbox');
-        let rowToFind = parseInt(wallPosition[0])-1;
-        let colToFind = parseInt(wallPosition[1]);
-        //SI DES MURS PEUVENT ETRE ENCORE POSES
-        for(let i=0;i<vWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
-            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
-                wallToReturn = vWalls.item(i);
-            }
-        }
-    }
-    //si mur horizontal A DROITE
-    if(parseInt(wallPosition[1])===nbColumns-1 && wall.classList.contains('horizontal_hitbox')){
-        let hWalls = document.querySelectorAll('.horizontal_hitbox');
-        let rowToFind = parseInt(wallPosition[0]);
-        let colToFind = parseInt(wallPosition[1])-1;
-        //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for(let i=0;i<hWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
-                wallToReturn = hWalls.item(i);
-            }
-        }
-    }
-    //autre cas PAR DEFAUT
-    if(wall.classList.contains('horizontal_hitbox')){
-        let hWalls = document.querySelectorAll('.horizontal_hitbox');
-        let rowToFind = parseInt(wallPosition[0]);
-        let colToFind = parseInt(wallPosition[1])-1;
-        //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for(let i=0;i<hWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(hWalls.item(i).children.item(0).id);
-            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
-                wallToReturn = hWalls.item(i);
-            }
-        }
-    }
-    if(wall.classList.contains('vertical_hitbox')){
-        let vWalls = document.querySelectorAll('.vertical_hitbox');
-        let rowToFind = parseInt(wallPosition[0])-1;
-        let colToFind = parseInt(wallPosition[1]);
-        //SI DES MURS PEUVEENT ETRE EENCORE POSES
-        for(let i=0;i<vWalls.length;i++){
-            let coordinates = Utils.prototype.getCoordinatesFromID(vWalls.item(i).children.item(0).id);
-            if(rowToFind===parseInt(coordinates[0]) && colToFind===parseInt(coordinates[1])){
-                wallToReturn = vWalls.item(i);
-            }
-        }
-    }
-    return wallToReturn;
-}
+import { getWallNeighborhood, getWallNeighborhood_Invert } from "../Utils/wallUtils.js";
 
 export class GamePresenter {
     constructor(model, view) {
@@ -223,7 +105,7 @@ export class GamePresenter {
             if(!wallModel.isPresent){
                 const hoverHandler = this.hoverHandler(wall);
                 const leaveHoverHandler = this.leaveHoverHandler(wall);
-                const clickHandler = this.clickHandler(wall);
+                const clickHandler = this.clickPlaceWallHandler(wall);
 
                 // Attache les gestionnaires d'événements
                 wall.addEventListener('mouseenter', hoverHandler);
@@ -271,7 +153,31 @@ export class GamePresenter {
 
     };
 
-    clickHandler = (wall) => {
+    init_playable_case(playable_case_HTML) {
+        playable_case_HTML.forEach(playable_case => {
+            const clickMoveHandler = () => {
+                //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
+                let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
+                let oldPosition = null;
+                actionGameService.getPlayerPosition(this.model.currentPlayer,this.model.gameId,(res)=>{
+                    oldPosition = res;
+                });
+                //token
+                actionGameService.moveCharacter(this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
+                    if(res){
+                        this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
+                        //ON RETIRE L'ANCIEN STYLE
+                        this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
+                        this.updatePage();
+                    }
+                });
+            };
+
+            playable_case.addEventListener('click', clickMoveHandler);
+        });
+    }
+
+    clickPlaceWallHandler = (wall) => {
         return () => {
             let neighborhood = getWallNeighborhood(wall);
             if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
@@ -348,28 +254,6 @@ export class GamePresenter {
         nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].nbWalls + " walls left";
     }
 
-    init_playable_case(playable_case_HTML) {
-        playable_case_HTML.forEach(playable_case => {
-            const clickHandler = () => {
-                //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
-                let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
-                let oldPosition = null;
-                    actionGameService.getPlayerPosition(this.model.currentPlayer,this.model.gameId,(res)=>{
-                        oldPosition = res;
-                    });
-                    //token
-                    actionGameService.moveCharacter(this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),(res)=>{
-                        if(res){
-                            this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
-                            //ON RETIRE L'ANCIEN STYLE
-                            this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
-                            this.updatePage();
-                        }
-                    });
-            };
 
-            playable_case.addEventListener('click', clickHandler);
-        });
-    }
 
 }

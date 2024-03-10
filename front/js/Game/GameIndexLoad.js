@@ -1,4 +1,4 @@
-// GameIndex.js
+// GameIndexWithBot.js
 import {GamePresenter} from './GamePresenter.js';
 import {actionGameService} from "../Services/actionGameService.js";
 import {gameService} from "../Services/gameService.js";
