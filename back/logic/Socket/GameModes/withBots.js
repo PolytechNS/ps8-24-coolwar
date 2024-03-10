@@ -30,6 +30,7 @@ module.exports = (io, socket) => {
             const newGame = await db.collection('games').insertOne({
                 fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
                 creator_id: user.username , // ID de l'utilisateur qui a créé la partie
+                typeGame: 'withBot', // Type de partie
                 game_name: 'New Game' // Nom de la partie, peut-être fourni par l'utilisateur
             });
             const gameId = newGame.insertedId;
@@ -64,7 +65,8 @@ module.exports = (io, socket) => {
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
                     currentPlayer: gameModel.currentPlayer,
                     roundCounter: gameModel.roundCounter,
-                    winner : gameModel.winner
+                    winner : gameModel.winner,
+                    typeGame: 'withBot'
                 }));
 
             });
@@ -180,7 +182,7 @@ module.exports = (io, socket) => {
         let response = actionController.checkWinner();
         socket.emit('checkWinnerResponse',response);
     });
-    
+
 
     socket.on('updateGameModel', async ( data ) => {
         let datas = JSON.parse(data);
@@ -207,7 +209,8 @@ module.exports = (io, socket) => {
                     currentPlayer: gameBoardSaved.currentPlayer,
                     roundCounter: gameBoardSaved.roundCounter,
                     winner : gameBoardSaved.winner,
-                    lastChance: gameBoardSaved.lastChance
+                    lastChance: gameBoardSaved.lastChance,
+                    typeGame: game.typeGame
                 };
 
                 let gameModel = new GameModel(config);
@@ -230,7 +233,8 @@ module.exports = (io, socket) => {
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
                     currentPlayer: gameModel.currentPlayer,
                     roundCounter: gameModel.roundCounter,
-                    winner : gameModel.winner
+                    winner : gameModel.winner,
+                    typeGame: gameModel.typeGame
                 }));
             } else {
                 console.log(' UPDATE GAME MODEL ERROR');

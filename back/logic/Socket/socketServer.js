@@ -81,7 +81,8 @@ module.exports = (server) => {
                         currentPlayer: gameModelGlobal.currentPlayer,
                         roundCounter: gameModelGlobal.roundCounter,
                         winner : gameModelGlobal.winner,
-                        lastChance: gameModelGlobal.lastChance
+                        lastChance: gameModelGlobal.lastChance,
+                        gameMode: gameModelGlobal.typeGame
                     }));
                 }
                 else {

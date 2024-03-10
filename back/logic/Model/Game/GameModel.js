@@ -27,6 +27,12 @@ class GameModel {
                 this.horizontal_Walls.addWall(wall.position.row, wall.position.col, wall.type, wall.isPresent,wall.idPlayer,wall.wallGroup);
             });
         }
+        if(!config.typeGame){
+            this.typeGame = "withBot";
+        }else{
+            this.typeGame = config.typeGame;
+        }
+
         if(!config.vertical_Walls){
             this.vertical_Walls = new WallDictionary();
         }else {
