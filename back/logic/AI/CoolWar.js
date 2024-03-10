@@ -5,7 +5,7 @@ let finishLine = null; // trouver la ligne d'arrivée
 let playOrder = null;
 
 let moveCount =0; // le nombre de mouvements effectués par l'IA
-let wallCount =0; // le nombre de murs placés par l'IA
+let wallCount = 0; // le nombre de murs placés par l'IA
 let totalWallCount= 0; // le nombre total de murs placés par l'IA
 let numberOfRound = 1; // le nombre de tours que nous avons fait
 
@@ -65,8 +65,6 @@ function Real_nextMove(gameState) {
     let initOpponentPos = opponentPosition(gameState.board);
     console.log("OPPONENT VISIBLE ?",initOpponentPos!==null);
 
-    return moveCharacterWithDjikstra();
-
     //SI LES DERNIERES ACTIONS ETAIENT DES MURS EN PLUS
     if(wallCount > 3 ){
         wallCount = 0;
@@ -92,7 +90,7 @@ function Real_nextMove(gameState) {
         else if(numberOfRound === 2){
             //SI ON NE LE VOIT PAS, ON POSE UN MUR EN 3,7
             if(initOpponentPos === null){
-                let valToReturn = placeWall([3,7],1,gameState);
+                let valToReturn = placeWall([5,7],1,gameState);
                 wallCount = 0;
                 return valToReturn;
             }
@@ -102,7 +100,7 @@ function Real_nextMove(gameState) {
         else if (numberOfRound === 3){
                 //SI ON NE LE VOIT PAS, ON POSE UN MUR HORIZONTAL 1,6
                 if(initOpponentPos === null){
-                    let valToReturn = placeWall([1,6], 0,gameState);
+                    let valToReturn = placeWall([2,6], 1,gameState);
                     wallCount = 0;
                     return valToReturn;
                 }
@@ -142,13 +140,15 @@ function Real_nextMove(gameState) {
 
     //SI ON CONNAIT LA POSITION DU JOUEUR ADVERSE -> ON MET UN MUR DEVANT LUI
     if(initOpponentPos!==null){
-        let opponentPos = convertOurCoordinatesToVellaCooordinates(initOpponentPos[0],initOpponentPos[1]);
+        let falseOpponentPos = convertOurCoordinatesToVellaCooordinates(initOpponentPos[0],initOpponentPos[1]);
+        let opponentPos = [falseOpponentPos[1], falseOpponentPos[0]];
+        console.log(opponentPos);
         //si ma finishLine = 1 --> ma direction = haut // ennemi = bas ||
         if(finishLine !== 1){
             console.log("JE SAIS OU EST L'ENNEMI !!");
             //je verifie qu'il existe un mur en dessous de lui
             let wall = isWallAtPosition(realOwnWalls,realOpponentWalls, opponentPos);
-            console.log(wall);
+            console.log("THE WALL",wall);
             //SI LE MUR EXISTE, JE REGARDE LES MURS VOISINS
             if(wall!==null){
                 console.log("MUR TROUVE ! ");
@@ -275,8 +275,9 @@ function Real_nextMove(gameState) {
                 }
                 //SI LE MUR EST VERTICAL
                 else if(wall[1] === 1){
+                    console.log("MUR VERTICAL");
                     //ON REGARDE S'IL EXISTE UN MUR HORIZONTAL A GAUCHE
-                    let leftHorizontalWallPosition = [opponentPos[0]-1, opponentPos[1]];
+                    let leftHorizontalWallPosition = [opponentPos[0], opponentPos[1]-1];
                     let isLeftHorizontalWallExist = isWallAtPosition(realOwnWalls,realOpponentWalls, leftHorizontalWallPosition);
                     //S'IL N'EXISTE PAS, ON POSE ABSOLUMENT UN MUR A GAUCHE (BLOQUAGE >>)
                     if (!isLeftHorizontalWallExist){
@@ -505,12 +506,13 @@ function Real_nextMove(gameState) {
             console.log("---ME--- ");
             const [playableSquares, horizontalWalls, verticalWalls] = convertGameStateToGamemodel(gameState);
             let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
-            const ownPosition = convertVellaCooordinatesToOurs(myPosition(gameState.board)[0],myPosition(gameState.board)[1]);
+            const ownPosition = [myPosition(gameState.board)[0],myPosition(gameState.board)[1]];
             const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
+            console.log(ownNode);
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = djikstra(graph, ownNode, graph.getNodeFromCoordinates(i,invertFinishLine()-1));
+                let res = djikstra(graph, ownNode, graph.getNodeFromCoordinates(i,finishLine-1));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
@@ -524,7 +526,7 @@ function Real_nextMove(gameState) {
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
-                let res = djikstra(graph, oppNode, graph.getNodeFromCoordinates(i, finishLine-1));
+                let res = djikstra(graph, oppNode, graph.getNodeFromCoordinates(i, invertFinishLine()-1));
                 if (bestRes === null) {bestRes = res;} else if (res.distance < bestRes.distance) {bestRes = res;}
             }
             return bestRes;
