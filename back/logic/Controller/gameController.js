@@ -20,7 +20,6 @@ async function createGameDb(gameId,playersInfo,gameModelGlobal) {
 
     // Supposons que 'playersInfo' contient des informations des deux joueurs récupérées de la base de données.
     const gamePlayers = gameModelGlobal.player_array.getAllPlayers(); // Contient les objets de jeu pour Player1 et Player2
-
 // Aucune association par nom n'est nécessaire car vous définissez arbitrairement les rôles basés sur l'ordre.
     await db.collection('character').insertMany(gamePlayers.map((gamePlayer, index) => {
         return {

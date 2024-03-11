@@ -19,6 +19,9 @@ export class GameView {
     }
 
     updateDisplayBot(row,col){
+        console.log("updateDisplayBot JOUEUR ADVERSE")
+        console.log(row)
+        console.log(col)
         this.boardGrid.updateBotPosition(row,col,2)
     }
 

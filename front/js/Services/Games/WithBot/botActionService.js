@@ -1,4 +1,7 @@
 import {socketManager} from "../../../Socket/socketManager.js ";
+import {config} from "../../../Utils/config.js";
+import {BotGameService} from "./botGameService.js";
+import {WithFriendsActionService} from "../WithFriends/withFriendsActionService.js";
 
 
 export const BotActionService = {
@@ -20,6 +23,8 @@ export const BotActionService = {
         });
     },
     moveCharacterWithBot(id, row, col, gameId, token, callback){
+
+        console.log("moveCharacterWithBot");
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
@@ -34,5 +39,8 @@ export const BotActionService = {
         socketManager.socket.once('moveCharacterWithBotResponse', (res) => {
             callback(res);
         });
-    }
+    },
+
+
+
 }

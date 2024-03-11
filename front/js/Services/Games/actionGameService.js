@@ -1,6 +1,8 @@
 // Importer socketManager pour accéder à la socket
 import { socketManager } from '../../Socket/socketManager.js';
 import {BotActionService} from "./WithBot/botActionService.js";
+import {WithFriendsActionService} from "./WithFriends/withFriendsActionService.js";
+import {withFriendsGameService} from "./WithFriends/withFriendsGameService.js";
 import {BotGameService} from "./WithBot/botGameService.js";
 import {config} from "../../Utils/config.js";
 
@@ -51,7 +53,7 @@ export const actionGameService = {
                 BotActionService.placeWallWithBot(datas,callback);
                 break;
             case config.withFriends:
-                //this.placeWallWithFriends(datas,callback);
+                WithFriendsActionService.placeWallWithFriends(datas,callback);
                 break;
             case config.offline:
                 //this.placeWallOffline(datas,callback);
@@ -61,13 +63,15 @@ export const actionGameService = {
         }
     },
 
-    moveCharacter(typeGame,id, row, col, gameId, token, callback){
+    moveCharacter(typeGame,id, row, col, gameId, token, roomId, callback){
+        console.log("MOVE CHARACTER");
+        console.log("typeGame",typeGame);
         switch (typeGame) {
             case config.withBot:
                 BotActionService.moveCharacterWithBot(id, row, col, gameId, token, callback);
                 break;
             case config.withFriends:
-                //this.moveCharacterWithFriends(id, row, col, gameId, token, callback);
+                WithFriendsActionService.moveCharacterWithFriends(id, row, col, gameId, token,roomId, callback);
                 break;
             case config.offline:
                 //this.moveCharacterOffline(id, row, col, gameId, token, callback);
@@ -79,19 +83,16 @@ export const actionGameService = {
 
 
 
-    getPlayerPosition(idPlayer,gameId,callback){
-        // Assurez-vous que la socket est initialisée et connectée
-        if (!socketManager.socket || !socketManager.socket.connected) {
-            console.error('Socket not initialized or not connected.');
-            return
-        }
-        const dataToSend = {idPlayer,gameId};
-        socketManager.socket.emit('getplayerposition',JSON.stringify(dataToSend));
+    getPlayerPosition(typeGame, idPlayer,gameId,callback){
 
-        // Écouter la réponse du serveur sur la même socket
-        socketManager.socket.once('getplayerpositionresponse', (res) => {
-            callback(res);
-        });
+        switch (typeGame) {
+            case config.withBot:
+                BotGameService.getPlayerPositionWithBot(typeGame,idPlayer,gameId,callback);
+                break;
+            case config.withFriends:
+                withFriendsGameService.getPlayerPositionWithFriends(typeGame,idPlayer,gameId,callback);
+                break;
+        }
     },
     updateGameInformation(callback){
         // Assurez-vous que la socket est initialisée et connectée
@@ -119,36 +120,29 @@ export const actionGameService = {
             callback(res);
         });
     },
-    checkWinner(gameId,callback){
-        // Assurez-vous que la socket est initialisée et connectée
-        if (!socketManager.socket || !socketManager.socket.connected) {
-            console.error('Socket not initialized or not connected.');
-            return
+    checkWinner(typeGame,gameId,callback){
+        switch (typeGame) {
+            case config.withBot:
+                BotGameService.checkWinnerWithBot(gameId,callback);
+                break;
+            case config.withFriends:
+                withFriendsGameService.checkWinnerWithFriends(gameId,callback);
+                break;
         }
-        const dataToParse = {gameId};
-        socketManager.socket.emit('checkWinner', JSON.stringify(dataToParse));
 
-        // Écouter la réponse du serveur sur la même socket
-        socketManager.socket.once('checkWinnerResponse', (res) => {
-            callback(res);
-        });
     },
 
     updateGameModel: function(informationsData,callback) {
         console.log("UPDATE GAME MODEL");
         console.log(informationsData);
-        // Assurez-vous que la socket est initialisée et connectée
-        if (!socketManager.socket || !socketManager.socket.connected) {
-            console.error('Socket not initialized or not connected.');
-            return;
+        let typeGame = informationsData[0];
+        switch (typeGame) {
+            case config.withBot:
+                BotGameService.updateGameModelWithBot(informationsData,callback);
+                break;
+            case config.withFriends:
+                withFriendsGameService.updateGameModelWithFriends(informationsData,callback);
+                break;
         }
-
-        // Envoyer la demande de sauvegarde au serveur
-        socketManager.socket.emit('updateGameModel', JSON.stringify(informationsData));
-
-        // Écouter la réponse du serveur sur la même socket
-        socketManager.socket.once('updateGameModelResponse', (response) => {
-            callback(response);
-        });
     },
 };

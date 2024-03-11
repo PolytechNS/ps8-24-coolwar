@@ -6,11 +6,13 @@ import {socketManager} from '../../../Socket/socketManager.js';
 import {config} from "../../../Utils/config.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Assurez-vous que le token est disponible
     const token = localStorage.getItem('token');
-    if (token) {
-        socketManager.initializeSocket(token);
 
+    if(!socketManager.isSocketInitialized(token)) {
+        socketManager.initializeSocket(token);
+    }
+    // Assurez-vous que le token est disponible
+    if (token) {
         // Vérifiez que la socket est prête avant de lancer le jeu
         const checkSocketReady = setInterval(() => {
             if (socketManager.isSocketInitialized()) {

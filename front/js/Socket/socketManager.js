@@ -1,4 +1,6 @@
 import "../socket.io.js";
+import {GamePresenter} from "../Game/Controllers/GamePresenter.js";
+import {getGlobalPresenter} from "../Game/Models/Index/gameIndexWithFriends.js";
 // socketManager.js
 export const socketManager = {
     socket: null,
@@ -15,6 +17,17 @@ export const socketManager = {
 
         this.socket.on('connect_error', (err) => {
             console.log('Connection failed', err.message);
+        });
+
+        this.socket.on('updateGameModelWithFriendsResponse', (response) => {
+            console.log("RESPONSE UPDATE GAME MODEL WITH FRIENDS");
+            console.log(response);
+            getGlobalPresenter().updateInformations(response);
+
+        });
+
+        this.socket.on("test", (res) => {
+            console.log("test PTN",res);
         });
     },
 
