@@ -86,7 +86,7 @@ module.exports = (io, socket) => {
 
 
                     // Stocker l'instance de GameModel dans la map
-                    games.set(gameId.toString(), {gameModel, actionController});
+                    games.set(gameId.toString(), {gameModel, actionController,roomId});
 
                     // Persister le plateau de jeu
                     let gameBoardId = await createGameDb(gameId, playersInfo, gameModel, db); // puis on fournit les token des 2 users pour pouvoir persister leur index dans la db

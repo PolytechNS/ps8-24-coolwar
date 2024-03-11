@@ -1,7 +1,11 @@
-const {ObjectId} = require("mongodb");
+const {ObjectId, MongoClient} = require("mongodb");
 const {playBot} = require("./botController");
+const {MONGO_URL} = require("../Utils/constants");
+const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-async function createGameDb(gameId,playersInfo,gameModelGlobal,db) {
+async function createGameDb(gameId,playersInfo,gameModelGlobal) {
+    await client.connect();
+    const db = client.db();
     const gameBoard = await db.collection('gameboards').insertOne({
         gameId: gameId, // Lier le plateau de jeu à la partie
         nbJoueursMax: gameModelGlobal.nbPlayers, // Nombre maximum de joueurs
@@ -18,7 +22,7 @@ async function createGameDb(gameId,playersInfo,gameModelGlobal,db) {
     const gamePlayers = gameModelGlobal.player_array.getAllPlayers(); // Contient les objets de jeu pour Player1 et Player2
 
 // Aucune association par nom n'est nécessaire car vous définissez arbitrairement les rôles basés sur l'ordre.
-    await db.collection('characters').insertMany(gamePlayers.map((gamePlayer, index) => {
+    await db.collection('character').insertMany(gamePlayers.map((gamePlayer, index) => {
         return {
             ...gamePlayer, // propriétés du modèle de jeu (position, nombre de murs, etc.)
             userId: playersInfo[index]._id, // Assigne l'ID de l'utilisateur du tableau playersInfo basé sur l'ordre

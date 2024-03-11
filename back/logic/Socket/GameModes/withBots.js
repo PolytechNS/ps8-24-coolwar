@@ -13,7 +13,6 @@ const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTop
 
 
 
-let gameModelGlobal = null;
 let actionController = null;
 const games = new Map();
 
@@ -48,10 +47,13 @@ module.exports = (io, socket) => {
             let botIndex = gameModel.currentPlayer;
 
             //on met +1 au current player car 1 c'est nous et 2 c'est le bot
-            setupBotController(botIndex).then((positionBot) => {
+            setupBotController(botIndex).then(async (positionBot) => {
 
                 setUpPositionRealBot(positionBot,gameModel,botIndex);
                 //afficher les player de gameModel
+
+                let playersInfo = [await db.collection('users').findOne({token: userToken}),{_id:-1}];
+                let gameBoardId = await createGameDb(gameId,playersInfo,gameModel);
 
                 // Envoyer l'état initial du jeu au client
                 socket.emit('getGameWithBotResponse', JSON.stringify({
@@ -71,7 +73,6 @@ module.exports = (io, socket) => {
 
             });
             // Persister le plateau de jeu
-            let gameBoardId = await createGameDb(gameId,gameModel,db);
 
         } catch (error) {
             console.error('Error creating game model', error);
@@ -117,16 +118,17 @@ module.exports = (io, socket) => {
     socket.on('placeWallWithBot', async (datas) => {
         try {
             let wallDataDeserialized = JSON.parse(datas);
-            console.log("WALL DATA DESERIALIZED : ",wallDataDeserialized);
             let actionController = games.get(wallDataDeserialized.gameId).actionController;
             let gameModel = games.get(wallDataDeserialized.gameId).gameModel;
 
             let playerID = gameModel.currentPlayer;
             await client.connect();
             const db = client.db();
-
+            console.log("wallDataDeserialized : ", wallDataDeserialized);
+            console.log("playerID : ", playerID);
             // Récupérer le joueur actuel à partir de la base de données
             const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
+            console.log("playerBd : ", playerBd);
             const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
             const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
             let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
@@ -160,7 +162,6 @@ module.exports = (io, socket) => {
 
     socket.on('getplayerposition',(data)=>{
         let dataParse = JSON.parse(data);
-        console.log("DATA PARSE : ",dataParse);
         let actionController = games.get(dataParse.gameId).actionController;
         let response = actionController.getPlayerPosition(dataParse.idPlayer);
         socket.emit('getplayerpositionresponse',response);
@@ -176,8 +177,6 @@ module.exports = (io, socket) => {
     });
     socket.on('checkWinner',(data)=>{
         let dataParse = JSON.parse(data);
-        console.log("DATA PARSE : ",dataParse);
-        console.log("GAMES : ",games);
         let actionController = games.get(dataParse.gameId).actionController;
         let response = actionController.checkWinner();
         socket.emit('checkWinnerResponse',response);
