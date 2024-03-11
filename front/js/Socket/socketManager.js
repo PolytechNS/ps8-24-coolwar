@@ -22,7 +22,7 @@ export const socketManager = {
         this.socket.on('updateGameModelWithFriendsResponse', (response) => {
             console.log("RESPONSE UPDATE GAME MODEL WITH FRIENDS");
             console.log(response);
-            getGlobalPresenter().updateInformations(response);
+            getGlobalPresenter().updateModel(response);
 
         });
 

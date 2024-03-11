@@ -18,11 +18,11 @@ export class GameView {
         // Mettre à jour le plateau
     }
 
-    updateDisplayBot(row,col){
+    updateViewCharacter(row, col,id){
         console.log("updateDisplayBot JOUEUR ADVERSE")
         console.log(row)
         console.log(col)
-        this.boardGrid.updateBotPosition(row,col,2)
+        this.boardGrid.updateCharacterPosition(row,col,id)
     }
 
     displayWall(wall, opacity) {

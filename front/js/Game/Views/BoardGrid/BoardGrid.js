@@ -69,16 +69,19 @@ export class BoardGrid{
         items.item(row * 9 + col).style.backgroundImage = `url(${imgPath})`;
     }
 
-    updateBotPosition(row, col, id){
+    updateCharacterPosition(row, col, id){
 
         //il faudrait find la case qui a le background image /perso2.png et lui enlever le background image
+        
         let items = document.getElementsByClassName('playable_square');
         for(let i=0;i<items.length;i++){
-            if(items.item(i).style.backgroundImage.includes('perso2.png')){
+            if(items.item(i).style.backgroundImage.includes('perso'+id+'.png')){
                 items.item(i).style.backgroundSize = 'cover';
                 items.item(i).style.backgroundImage = ``;
             }
         }
+
+
         this.displayPlayer(row,col,id);
 
     }

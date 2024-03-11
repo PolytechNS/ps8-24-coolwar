@@ -169,7 +169,7 @@ export class GamePresenter {
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                         //ON RETIRE L'ANCIEN STYLE
                         this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
-                        this.updatePage();
+                        this.sendUpdateToBack();
                     }
                 });
             };
@@ -200,7 +200,7 @@ export class GamePresenter {
                         let replaceOBJ = wallToEdit.cloneNode(true);
                         wallToEdit.replaceWith(replaceOBJ);
                     });
-                    this.updatePage();
+                    this.sendUpdateToBack();
                 }
             });
         }
@@ -213,15 +213,20 @@ export class GamePresenter {
             if(callback!==-1){this.cancel_behaviour();}
         });
     }
-    updatePage() {
+    sendUpdateToBack() {
         let informationsData = [this.model.typeGame,this.model.currentPlayer,this.model.gameId];
         actionGameService.updateGameModel(informationsData,(newModel)=>{
-            this.model = JSON.parse(newModel);
-            console.log("MODEL AFTER UPDATE",this.model);
-            this.view.updateDisplayBot(this.model.player_array[1].position.row,this.model.player_array[1].position.col);
-            this.checkEndGame();
-            this.updateInformations();
+
         });
+    }
+
+    updateModel(newModel){
+        this.model = JSON.parse(newModel);
+        console.log("MODEL AFTER UPDATE",this.model);
+        this.view.updateViewCharacter(this.model.player_array[0].position.row,this.model.player_array[0].position.col,1);
+        this.view.updateViewCharacter(this.model.player_array[1].position.row,this.model.player_array[1].position.col,2);
+        this.checkEndGame();
+        this.updateInformations();
     }
     updateInformations(){
         console.log("-----UPDATE INFORMATIONS-----");
