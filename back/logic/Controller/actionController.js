@@ -68,6 +68,7 @@ class ActionController {
 
     moveCharacter(id,row,col) {
         if (this.checkCurrentPlayer(id)) {
+            console.log("le check du current player est bon")
             //VERIFICATION DU DEPLACEMENT
             let player_position = this.model.player_array.getPlayerPosition(id);
             if(this.characterCanBeMoved(row,col,player_position)){
@@ -76,10 +77,14 @@ class ActionController {
                 let playerToMove = this.model.player_array.getPlayer(id);
                 playerToMove.position = new Position(row,col);
                 this.model.setNextPlayer();
+                console.log("retourne true")
+
                 return true;
             }
             else{console.log("JOUEUR NON DEPLACABLE !");}
         }
+        console.log("retourne false")
+
         this.checkWinner();
         return false;
     }

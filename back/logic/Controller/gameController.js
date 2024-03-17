@@ -56,6 +56,10 @@ async function createGameDb(gameId,playersInfo,gameModelGlobal) {
     return gameBoardId;
 }
 
+async function retrieveCharacterFromDb(db,gameBoardId){
+    return await db.collection('character').find({gameBoardId: new ObjectId(gameBoardId)}).toArray();
+}
+
 
 
 async function saveGame(userToken, db, data) {
@@ -216,4 +220,4 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
     }
 }
 
-module.exports = { updatePlayerPositionFromDb,setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };
+module.exports = { retrieveCharacterFromDb,updatePlayerPositionFromDb,setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };

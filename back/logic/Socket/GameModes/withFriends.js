@@ -6,6 +6,7 @@ const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTop
 const {setUpPositionRealBot, createGameDb,
     updatePositionCharacter,
     manageBotMove,
+    retrieveCharacterFromDb,
     updateCurrentPlayerFromDb,
     updateWallsAndVisibilityFromBd
 } = require("../../Controller/gameController");
@@ -111,7 +112,7 @@ module.exports = (io, socket) => {
 
                     // Persister le plateau de jeu
                     let gameBoardId = await createGameDb(gameId, playersInfo, gameModel, db); // puis on fournit les token des 2 users pour pouvoir persister leur index dans la db
-
+                    let characters =await retrieveCharacterFromDb(db,gameBoardId);
 
                     //envoyer les informations de la partie aux joueurs via une fonction où y'a la socket id en paramètre, gameId et gameModel
                     console.log("envoie à player1SocketId : ", player1SocketId);
@@ -131,7 +132,8 @@ module.exports = (io, socket) => {
                         typeGame: gameModel.typeGame,
                         roomId: roomId,
                         test:"pla1",
-                        socketId: player1SocketId
+                        socketId: player1SocketId,
+                        ownIndexPlayer: characters[0].currentPlayerIndex
                     }));
                     console.log("envoie à player2SocketId : ", player2SocketId);
 
@@ -150,7 +152,8 @@ module.exports = (io, socket) => {
                         typeGame: gameModel.typeGame,
                         roomId: roomId,
                         test:"pla2",
-                        socketId: player2SocketId
+                        socketId: player2SocketId,
+                        ownIndexPlayer: characters[1].currentPlayerIndex
                     }));
 
 
@@ -188,19 +191,18 @@ module.exports = (io, socket) => {
             console.log("move character with friends",dataParse);
             //move le personnage
             let responseBoolean = actionController.moveCharacter(dataParse.id,dataParse.row,dataParse.col);
+            console.log("responseBoolean IL PEUT BOUGER ?",responseBoolean);
             await client.connect();
             const db = client.db();
             //on récupère les carrés jouables
             let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
             //afficher les carrés jouables
-            console.log("squareGameModel",squareGameModel);
 
             //on met à jour la position du joueur dans la bd
             let gameBoard = await updatePositionCharacter(dataParse,db,gameModel,squareGameModel);
             //récupérer les playable squares
             let playableSquares = await db.collection('squares').find({gameBoardId: gameBoard._id}).toArray();
             //les afficher
-            console.log("playableSquares FROM DB",playableSquares);
 
             //on met à jour le joueur actuel dans la bd
             await updateCurrentPlayerFromDb(gameBoard,db,gameModel);
@@ -214,6 +216,47 @@ module.exports = (io, socket) => {
             socket.emit('moveCharacterWithBotResponse', false);
         }
 
+    });
+
+    socket.on('placeWallWithFriends', async (datas) => {
+        try {
+            let wallDataDeserialized = JSON.parse(datas);
+            let actionController = games.get(wallDataDeserialized.gameId).actionController;
+            let gameModel = games.get(wallDataDeserialized.gameId).gameModel;
+
+            let playerID = wallDataDeserialized.ownIndexPlayer;
+            await client.connect();
+            const db = client.db();
+            console.log("wallDataDeserialized : ", wallDataDeserialized);
+            console.log("playerID : ", playerID);
+            // Récupérer le joueur actuel à partir de la base de données
+            const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
+            console.log("playerBd : ", playerBd);
+            const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
+            const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+            let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
+            //let actionController = new ActionController(gameModelGlobal);
+
+            //on essaye de placer le mur
+            let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
+
+
+            //si les murs sont placés
+            if(responseBoolean){
+                //on met à jour le nombre de murs restants dans la bd pour le joueur
+                await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModel,db,squareGameModel);
+
+                //on met à jour le joueur actuel dans la bd
+                await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);
+            }
+            // Envoyer la réponse au client
+
+            socket.emit('placeWallWithFriendsResponse', responseBoolean);
+        }
+        catch (error) {
+            console.error('Error placing wall', error);
+            socket.emit('placeWallWithFriendsResponse', false);
+        }
     });
 
     socket.on('getplayerpositionWithFriends',(data)=>{
@@ -233,8 +276,6 @@ module.exports = (io, socket) => {
 
     socket.on('updateGameModelWithFriends', async ( data ) => {
         let datas = JSON.parse(data);
-        console.log("UPDATE GAME MODEL WITH FRIENDS");
-        console.log(datas);
         let gameId = datas[2];
         try {
             await client.connect();
@@ -265,18 +306,19 @@ module.exports = (io, socket) => {
 
                 // Stocker l'instance de GameModel dans la map
                 let gameBeforeUpdate = games.get(gameId.toString());
-                console.log("GAMES BEFORE UPDATE",games);
 
                 gameBeforeUpdate.gameModel = gameModel;
                 gameBeforeUpdate.actionController = actionController;
                 games.set(gameId.toString(), gameBeforeUpdate);
-                console.log("GAMES AFTER UPDATE",games);
 
                 //récupérer les socket des 2 users dans socketIds
                 let player1SocketId= socketIds.get(gameBeforeUpdate.player1Token);
                 let player2SocketId = socketIds.get(gameBeforeUpdate.player2Token);
 
                 let roomId = games.get(gameId.toString()).roomId;
+
+                let characters =await retrieveCharacterFromDb(db,gameBoardSaved._id);
+
 
 
                 io.to(player1SocketId).emit('updateGameModelWithFriendsResponse', JSON.stringify({
@@ -293,7 +335,8 @@ module.exports = (io, socket) => {
                     winner : gameModel.winner,
                     typeGame: gameModel.typeGame,
                     roomId: datas.roomId,
-                    test:"pla1"
+                    test:"pla1",
+                    ownIndexPlayer: characters[0].currentPlayerIndex
 
                 }));
 
@@ -311,7 +354,8 @@ module.exports = (io, socket) => {
                     winner : gameModel.winner,
                     typeGame: gameModel.typeGame,
                     roomId: datas.roomId,
-                    test:"pla2"
+                    test:"pla2",
+                    ownIndexPlayer: characters[1].currentPlayerIndex
 
                 }));
             } else {
