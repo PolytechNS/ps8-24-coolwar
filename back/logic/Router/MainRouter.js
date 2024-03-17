@@ -2,6 +2,7 @@
     const authRouter = require('./authRouter');
     const fs = require('fs');
     const fileManager = require('../Utils/front');
+    const friendsRouter = require('./friendsRouter');
 
     function mainRouter(req, res, db) {
 
@@ -9,6 +10,10 @@
         if (req.url.startsWith('/api/auth')) {
             authRouter(req, res, db);
             return; // Stop further execution after handling /api/auth
+        }
+        if(req.url.startsWith('/api/friends')){
+            friendsRouter(req, res, db);
+            return;
         }
 
         // Serve the index.html file for the base route

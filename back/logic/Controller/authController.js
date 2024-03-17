@@ -18,7 +18,7 @@ function signup(req, res, db) {
                 console.log('User already exist');
                 return;
             }
-            const result = await db.collection('users').insertOne({ username, password, token});
+            const result = await db.collection('users').insertOne({ username, password, token, lvl:1});
             console.log('Utilisateur créé', result);
 
             res.writeHead(201, { 'Content-Type': 'application/json' });
