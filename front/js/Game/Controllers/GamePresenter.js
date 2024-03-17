@@ -191,7 +191,7 @@ export class GamePresenter {
                 wallListObj.push(neighborhood);
             }
 
-            const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId};
+            const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer };
             //CALL BD -
             actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                 if(isAuthorized){

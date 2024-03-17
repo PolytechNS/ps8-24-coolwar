@@ -218,6 +218,47 @@ module.exports = (io, socket) => {
 
     });
 
+    socket.on('placeWallWithFriends', async (datas) => {
+        try {
+            let wallDataDeserialized = JSON.parse(datas);
+            let actionController = games.get(wallDataDeserialized.gameId).actionController;
+            let gameModel = games.get(wallDataDeserialized.gameId).gameModel;
+
+            let playerID = wallDataDeserialized.ownIndexPlayer;
+            await client.connect();
+            const db = client.db();
+            console.log("wallDataDeserialized : ", wallDataDeserialized);
+            console.log("playerID : ", playerID);
+            // Récupérer le joueur actuel à partir de la base de données
+            const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
+            console.log("playerBd : ", playerBd);
+            const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
+            const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+            let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
+            //let actionController = new ActionController(gameModelGlobal);
+
+            //on essaye de placer le mur
+            let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
+
+
+            //si les murs sont placés
+            if(responseBoolean){
+                //on met à jour le nombre de murs restants dans la bd pour le joueur
+                await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModel,db,squareGameModel);
+
+                //on met à jour le joueur actuel dans la bd
+                await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);
+            }
+            // Envoyer la réponse au client
+
+            socket.emit('placeWallWithFriendsResponse', responseBoolean);
+        }
+        catch (error) {
+            console.error('Error placing wall', error);
+            socket.emit('placeWallWithFriendsResponse', false);
+        }
+    });
+
     socket.on('getplayerpositionWithFriends',(data)=>{
         let dataParse = JSON.parse(data);
         let actionController = games.get(dataParse.gameId).actionController;
