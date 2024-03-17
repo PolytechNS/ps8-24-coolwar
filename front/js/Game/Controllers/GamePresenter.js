@@ -160,11 +160,11 @@ export class GamePresenter {
                 //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
                 let oldPosition = null;
-                actionGameService.getPlayerPosition(this.model.typeGame,this.model.currentPlayer,this.model.gameId,(res)=>{
+                actionGameService.getPlayerPosition(this.model.typeGame,this.model.ownIndexPlayer,this.model.gameId,(res)=>{
                     oldPosition = res;
                 });
                 //token
-                actionGameService.moveCharacter(this.model.typeGame,this.model.currentPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),this.roomId,(res)=>{
+                actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),this.roomId,(res)=>{
                     if(res){
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                         //ON RETIRE L'ANCIEN STYLE
