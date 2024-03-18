@@ -23,7 +23,6 @@ export const socketManager = {
             console.log("RESPONSE UPDATE GAME MODEL WITH FRIENDS");
             console.log(response);
             getGlobalPresenter().updateModel(response);
-
         });
 
         this.socket.on("test", (res) => {

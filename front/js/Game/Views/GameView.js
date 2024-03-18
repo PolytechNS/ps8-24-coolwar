@@ -20,12 +20,11 @@ export class GameView {
 
     updateViewCharacter(row, col,id){
         console.log("updateDisplayBot JOUEUR ADVERSE")
-        console.log(row)
-        console.log(col)
         this.boardGrid.updateCharacterPosition(row,col,id)
     }
 
-    displayWall(wall, opacity) {
-        wall.children.item(0).style.opacity = opacity;
+    displayWallHtml(wall, opacity) {
+        wall.style.opacity = opacity;
     }
+
 }

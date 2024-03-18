@@ -23,7 +23,7 @@ export class GamePresenter {
     detachHandlerFromWalls() {
         // Suppression des gestionnaires d'événements pour les murs horizontaux
         this.model.horizontal_Walls.forEach((wall) => {
-            if (wall.isPresent) {
+            if(wall.isPresent) {
                 const wallId = wall.position.row.toString() + "X" + wall.position.col.toString() + "X" + 'H';
                 this.replaceWallElement(wallId);
             }
@@ -31,7 +31,7 @@ export class GamePresenter {
 
         // Suppression des gestionnaires d'événements pour les murs verticaux
         this.model.vertical_Walls.forEach((wall) => {
-            if (wall.isPresent) {
+            if(wall.isPresent) {
                 const wallId = wall.position.row.toString() + "X" + wall.position.col.toString() + "X" + 'V';
                 this.replaceWallElement(wallId);
             }
@@ -196,7 +196,8 @@ export class GamePresenter {
             actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                 if(isAuthorized){
                     wallListObj.forEach((wallToEdit) => {
-                        this.view.displayWall(wallToEdit, 1);
+                        let wallInside = wallToEdit.children.item(0);
+                        this.view.displayWallHtml(wallInside, 1);
                         let replaceOBJ = wallToEdit.cloneNode(true);
                         wallToEdit.replaceWith(replaceOBJ);
                     });
@@ -204,7 +205,6 @@ export class GamePresenter {
                 }
             });
         }
-
     };
 
     checkEndGame(){
@@ -216,7 +216,7 @@ export class GamePresenter {
     sendUpdateToBack() {
         let informationsData = [this.model.typeGame,this.model.currentPlayer,this.model.gameId];
         actionGameService.updateGameModel(informationsData,(newModel)=>{
-
+            this.updateModel(newModel);
         });
     }
 
@@ -225,6 +225,49 @@ export class GamePresenter {
         console.log("MODEL AFTER UPDATE",this.model);
         this.view.updateViewCharacter(this.model.player_array[0].position.row,this.model.player_array[0].position.col,1);
         this.view.updateViewCharacter(this.model.player_array[1].position.row,this.model.player_array[1].position.col,2);
+        //UPDATE LES MURS
+        let horizontalWalls_in_gameModel = this.model.horizontal_Walls;
+        let verticalWalls_in_gameModel = this.model.vertical_Walls;
+
+        let horizontalWalls_in_HTML = document.querySelectorAll('.horizontal_hitbox');
+        let verticalWalls_in_HTML = document.querySelectorAll('.vertical_hitbox');
+
+        //ON PARCOURS LES MURS DU MODEL
+        for(let i=0;i<horizontalWalls_in_gameModel.length;i++){
+            let wall = horizontalWalls_in_gameModel[i];
+            //ON PARCOURS LES MURS DU HTML
+            horizontalWalls_in_HTML.forEach((hitboxHTML)=>{
+                let wallHTML = hitboxHTML.children.item(0);
+                const hoverHandler = this.hoverHandler(hitboxHTML);
+                const leaveHoverHandler = this.leaveHoverHandler(hitboxHTML);
+                const clickHandler = this.clickPlaceWallHandler(hitboxHTML);
+                let position = wallHTML.id.split('X');
+                //SI LE MUR EXISTE ET QU'IL EST PRESENT
+               if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
+                   //ON L'AFFICHE ET ON LUI RETIRE SES COMPORTEMENTS
+                   console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
+                   this.view.displayWallHtml(wallHTML,1);
+                   let replaceOBJ = hitboxHTML.cloneNode(true);
+                   hitboxHTML.replaceWith(replaceOBJ);
+               }
+            });
+        }
+        for(let i=0;i<verticalWalls_in_gameModel.length;i++){
+            let wall = verticalWalls_in_gameModel[i];
+            verticalWalls_in_HTML.forEach((hitboxHTML)=>{
+                let wallHTML = hitboxHTML.children.item(0);
+                const hoverHandler = this.hoverHandler(hitboxHTML);
+                const leaveHoverHandler = this.leaveHoverHandler(hitboxHTML);
+                const clickHandler = this.clickPlaceWallHandler(hitboxHTML);
+                let position = wallHTML.id.split('X');
+                if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
+                    console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
+                    this.view.displayWallHtml(wallHTML,1);
+                    let replaceOBJ = hitboxHTML.cloneNode(true);
+                    hitboxHTML.replaceWith(replaceOBJ);
+                }
+            });
+        }
         this.checkEndGame();
         this.updateInformations();
     }
