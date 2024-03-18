@@ -29,6 +29,19 @@
 .chatMessages .firstUserMessage {
     color: blue;
 }
+.chatMessages .errorMessage {
+    color: white;
+    background-color: red;
+    padding: 5px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    transition: opacity 1s ease-out; /* Durée de l'animation de fondu */
+    opacity: 1; /* Commencez complètement visible */
+}
+
+.chatMessages .errorMessage.fade {
+    opacity: 0; /* Finissez complètement invisible */
+}
 
 .chatMessages .secondUserMessage {
     color: red;
