@@ -12,6 +12,10 @@
     flex-direction: column;
 }
 
+.message{
+    font-size: 15px;
+}
+
 .chatMessages {
     flex-grow: 1;
     overflow-y: auto;
