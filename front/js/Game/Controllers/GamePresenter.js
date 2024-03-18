@@ -290,7 +290,7 @@ export class GamePresenter {
                 }
             }
         });
-
+        let whoIAm = document.querySelectorAll('#playerID');
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let winner_HTML = document.querySelectorAll('#winner');
@@ -300,9 +300,10 @@ export class GamePresenter {
         }
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
-        nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].nbWalls + " walls left";
+        console.log("-----------------------UPDATE NB WALLS-----------------------");
+        console.log(this.model.player_array[this.model.ownIndexPlayer-1].nbWalls);
+        nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.ownIndexPlayer-1].nbWalls + " walls left";
+        console.log("-------------------------------------------------------------")
+        whoIAm.item(0).innerHTML = "You are player "+this.model.ownIndexPlayer;
     }
-
-
-
 }
