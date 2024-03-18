@@ -1,6 +1,7 @@
 import "../socket.io.js";
 import {GamePresenter} from "../Game/Controllers/GamePresenter.js";
-import {getGlobalPresenter} from "../Game/Models/Index/gameIndexWithFriends.js";
+import {getGlobalPresenter, getCurrentGameModel} from "../Game/Models/Index/gameIndexWithFriends.js";
+import {ChatService} from "../Services/Chat/chatService.js";
 // socketManager.js
 export const socketManager = {
     socket: null,
@@ -28,6 +29,13 @@ export const socketManager = {
 
         this.socket.on("test", (res) => {
             console.log("test PTN",res);
+        });
+
+        this.socket.on('receiveChatMessage', (data) => {
+            console.log('Received chat message', data);
+            const { sender, message } = JSON.parse(data);
+
+            ChatService.appendMessageToChatbox(message, sender, 'chatMessages');
         });
     },
 

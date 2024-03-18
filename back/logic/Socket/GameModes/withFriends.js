@@ -368,7 +368,22 @@ module.exports = (io, socket) => {
         }
     });
 
-    // Ajoutez ici d'autres gestionnaires pour startFriendGame, etc.
+    socket.on('sendChatMessage', async (data) => {
+        const { roomId, message, token} = JSON.parse(data);
+        console.log("message received",message);
+
+        if (roomId && message.trim().length > 0) {
+            await client.connect();
+            const db = client.db();
+            const user = await db.collection('users').findOne({ token});
+            console.log("sending message from : ",user);
+            io.to(roomId).emit('receiveChatMessage', JSON.stringify({
+                sender: user.username,  // Vous pouvez utiliser autre chose pour identifier l'expéditeur
+                message: message.trim()
+            }));
+        }
+    });
+
 };
 
 
