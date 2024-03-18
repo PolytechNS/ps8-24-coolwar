@@ -1,0 +1,84 @@
+.chatBox {
+    background-color: #f3f3f3;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    padding: 10px;
+    position: absolute;
+    bottom: 10px; /* Adjust based on your layout */
+    right: 10px; /* Adjust based on your layout */
+    width: 250px; /* Adjust based on your preference */
+    height: 300px; /* Adjust based on your preference */
+    display: flex;
+    flex-direction: column;
+}
+
+.chatMessages {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 5px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.chatMessages div {
+    color: black; /* Assure que le texte à l'intérieur des div de .chatMessages est noir */
+}
+
+.chatMessages .firstUserMessage {
+    color: blue;
+}
+.chatMessages .errorMessage {
+    color: white;
+    background-color: red;
+    padding: 5px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    transition: opacity 1s ease-out; /* Durée de l'animation de fondu */
+    opacity: 1; /* Commencez complètement visible */
+}
+
+.chatMessages .errorMessage.fade {
+    opacity: 0; /* Finissez complètement invisible */
+}
+
+.chatMessages .secondUserMessage {
+    color: red;
+}
+
+.chatBox.closed {
+    display: none; /* Cela cache la chatBox */
+}
+
+
+.chatBoxToggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 16px; /* Ajustez la taille selon vos besoins */
+    color: #333; /* Ajustez la couleur selon vos besoins */
+}
+
+#chatInput {
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: calc(100% - 22px); /* Adjusts width taking padding into account */
+}
+
+#sendChat {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#sendChat:hover {
+    background-color: #45a049;
+}
