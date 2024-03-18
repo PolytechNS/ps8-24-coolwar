@@ -12,30 +12,43 @@ export const ChatService = {
 
     appendMessageToChatbox(message, senderId, chatBoxId) {
     const chatMessages = document.getElementById(chatBoxId);
-    let firstMessageUser = ''; // Garder une trace du premier utilisateur qui envoie un message
 
-    // Vérifiez s'il y a déjà des messages dans le chat
-    if (chatMessages.children.length > 0) {
-        // Si déjà des messages, prenez le senderId du premier message pour identifier le premier utilisateur
-        firstMessageUser = chatMessages.children[0].getAttribute('data-sender');
-    } else {
-        // Si pas de messages, ce message est le premier, donc ce senderId devient le premier utilisateur
-        firstMessageUser = senderId;
-    }
-
+    // Créez un élément pour le message
     const msgElement = document.createElement('div');
-    msgElement.setAttribute('data-sender', senderId); // Stockez le senderId dans l'élément pour des vérifications ultérieures
+    msgElement.textContent = `${senderId ? senderId + ': ' : ''}${message}`;
 
-    // Déterminez la couleur du message selon le senderId
-    if (senderId === firstMessageUser) {
-        msgElement.className = 'message firstUserMessage'; // Classe pour le premier utilisateur
-    } else {
-        msgElement.className = 'message secondUserMessage'; // Classe pour l'autre utilisateur
+        if (!senderId) {
+            msgElement.className = 'message errorMessage';
+            msgElement.textContent = "Message non autorisé";
+            chatMessages.appendChild(msgElement);
+            setTimeout(() => {
+                msgElement.classList.add('fade'); // Ajoutez la classe qui déclenche l'animation de fondu
+            }, 2000); // Commencez à disparaître après 2 secondes
+
+            // Retirez l'élément une fois que l'animation de fondu est terminée
+            msgElement.addEventListener('transitionend', () => {
+                chatMessages.removeChild(msgElement);
+            });
+        } else {
+        // Gestion normale des messages
+        let firstMessageUser = '';
+        if (chatMessages.children.length > 0) {
+            firstMessageUser = chatMessages.children[0].getAttribute('data-sender');
+        } else {
+            firstMessageUser = senderId;
+        }
+        msgElement.setAttribute('data-sender', senderId);
+        if (senderId === firstMessageUser) {
+            msgElement.className = 'message firstUserMessage';
+        } else {
+            msgElement.className = 'message secondUserMessage';
+        }
     }
 
-    msgElement.textContent = `${senderId}: ${message}`;
+    // Ajoutez le message dans la zone de chat
     chatMessages.appendChild(msgElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatMessages.scrollTop = chatMessages.scrollHeight; // Faites défiler vers le bas pour afficher le dernier message
 }
+
 
 }
