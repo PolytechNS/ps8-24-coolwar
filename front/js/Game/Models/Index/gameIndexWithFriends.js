@@ -6,6 +6,10 @@ import {socketManager} from '../../../Socket/socketManager.js';
 import {config} from "../../../Utils/config.js";
 import {withFriendsGameService} from "../../../Services/Games/WithFriends/withFriendsGameService.js";
 
+import {ChatService} from "../../../Services/Chat/chatService.js";
+
+let model = null;
+
 document.addEventListener("DOMContentLoaded", () => {
     // Assurez-vous que le token est disponible
 
@@ -30,7 +34,7 @@ window.onload = function () {
             if (token) {
                 const gameData = JSON.parse(gameInfo);
 
-                const model = gameData // Assurez-vous que ce modèle est correctement formaté
+                 model = gameData // Assurez-vous que ce modèle est correctement formaté
                 console.log("Game initialized with game model");
                 console.log(model);
                     const view = new GameView(model);
@@ -52,5 +56,27 @@ window.onload = function () {
 export function getGlobalPresenter() {
     return globalPresenter;
 }
+
+export function getCurrentGameModel() {
+    return model;
+}
+
+
+document.getElementById('sendChat').addEventListener('click', () => {
+    const message = document.getElementById('chatInput').value;
+    console.log('Sending message', message);
+    ChatService.sendChatMessage(model.roomId, message );
+    document.getElementById('chatInput').value = ''; // Effacer le champ de texte après l'envoi
+});
+
+document.getElementById('chatInput').addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Empêcher le comportement par défaut
+        document.getElementById('sendChat').click();
+    }
+});
+
+
+
 
 
