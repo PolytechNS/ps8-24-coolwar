@@ -167,9 +167,11 @@ export class GamePresenter {
                 actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),this.roomId,(res)=>{
                     if(res){
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
+                        //on dsiplay l'uatre joueur si currentPlayer = 1 alors l'autre joueur est 2 et inversement
                         //ON RETIRE L'ANCIEN STYLE
                         this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
                         this.sendUpdateToBack();
+
                     }
                 });
             };
@@ -215,8 +217,10 @@ export class GamePresenter {
     }
     sendUpdateToBack() {
         let informationsData = [this.model.typeGame,this.model.currentPlayer,this.model.gameId];
+        console.log("INFORMATIONS DATA",informationsData);
         actionGameService.updateGameModel(informationsData,(newModel)=>{
-
+            console.log("GOING TO UPDATE MODEL");
+            this.updateModel(newModel)
         });
     }
 

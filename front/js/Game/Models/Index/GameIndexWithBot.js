@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const presenter = new GamePresenter(model, view);
                     console.log("Game initialized with game model");
+                    console.log("model", model);
                 });
             }
         }, 100); // Vérifiez toutes les 100ms, ajustez selon besoin

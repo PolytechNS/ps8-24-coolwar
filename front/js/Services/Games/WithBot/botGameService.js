@@ -11,6 +11,8 @@ export const BotGameService = {
             return;
         }
 
+        console.log("GET GAME WITH BOT");
+
         // Demander le modèle de jeu en utilisant la socket de socketManager
         socketManager.socket.emit('getGameWithBot', localStorage.getItem('token'));
 
@@ -28,7 +30,8 @@ export const BotGameService = {
             console.error('Socket not initialized or not connected.');
             return
         }
-        const dataToSend = {idPlayer,gameId};
+        let token = localStorage.getItem('token');
+        const dataToSend = {idPlayer,gameId, token};
         socketManager.socket.emit('getplayerposition',JSON.stringify(dataToSend));
 
         // Écouter la réponse du serveur sur la même socket
@@ -59,12 +62,14 @@ export const BotGameService = {
             console.error('Socket not initialized or not connected.');
             return;
         }
-
+        console.log("UPDATE GAME MODEL WITH BOT");
         // Envoyer la demande de sauvegarde au serveur
         socketManager.socket.emit('updateGameModel', JSON.stringify(informationsData));
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('updateGameModelResponse', (response) => {
+            console.log("UPDATE GAME MODEL WITH BOT RESPONSE CALLBACK");
+
             callback(response);
         });
     },

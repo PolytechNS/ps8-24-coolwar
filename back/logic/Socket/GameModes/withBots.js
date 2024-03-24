@@ -87,9 +87,10 @@ module.exports = (io, socket) => {
             //On récupère la partie dans la map
             let actionController = games.get(dataParse.gameId).actionController;
             let gameModel = games.get(dataParse.gameId).gameModel;
+            console.log("dataParse ça move with bot: ", dataParse);
 
-            //move le personnage
-            let responseBoolean = actionController.moveCharacter(dataParse.id,dataParse.row,dataParse.col);
+            //move le personnage on met 1 car on part du principe que le joueur est le premier
+            let responseBoolean = actionController.moveCharacter(gameModel.currentPlayer,dataParse.row,dataParse.col);
             await client.connect();
             const db = client.db();
             //on récupère les carrés jouables
@@ -163,7 +164,9 @@ module.exports = (io, socket) => {
     socket.on('getplayerposition',(data)=>{
         let dataParse = JSON.parse(data);
         let actionController = games.get(dataParse.gameId).actionController;
-        let response = actionController.getPlayerPosition(dataParse.idPlayer);
+        let gameModel = games.get(dataParse.gameId).gameModel;
+        let response = actionController.getPlayerPosition(gameModel.currentPlayer);
+        console.log("response get player position", response);
         socket.emit('getplayerpositionresponse',response);
     });
 
@@ -187,7 +190,7 @@ module.exports = (io, socket) => {
         let datas = JSON.parse(data);
         console.log("UPDATE GAME MODEL");
         console.log(datas);
-        let gameId = datas[1];
+        let gameId = datas[2];
         try {
             await client.connect();
             const db = client.db();
