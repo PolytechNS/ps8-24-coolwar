@@ -5,7 +5,7 @@ const {setUpPositionRealBot, createGameDb,
     updatePositionCharacter,
     manageBotMove,
     updateCurrentPlayerFromDb,
-    updateWallsAndVisibilityFromBd
+    updateWallsAndVisibilityFromBd, retrieveCharacterFromDb
 } = require("../../Controller/gameController");
 const {MongoClient, ObjectId} = require("mongodb");
 const {MONGO_URL} = require("../../Utils/constants");
@@ -38,22 +38,19 @@ module.exports = (io, socket) => {
             let gameModel = new GameModel();
             let actionController = new ActionController(gameModel);
 
-
             // Stocker l'instance de GameModel dans la map
             games.set(gameId.toString(), { gameModel, actionController });
-
 
             // Gestion Bot
             let botIndex = gameModel.currentPlayer;
 
             //on met +1 au current player car 1 c'est nous et 2 c'est le bot
             setupBotController(botIndex).then(async (positionBot) => {
-
                 setUpPositionRealBot(positionBot,gameModel,botIndex);
                 //afficher les player de gameModel
-
                 let playersInfo = [await db.collection('users').findOne({token: userToken}),{_id:-1}];
                 let gameBoardId = await createGameDb(gameId,playersInfo,gameModel);
+                let characters =await retrieveCharacterFromDb(db,gameBoardId);
 
                 // Envoyer l'état initial du jeu au client
                 socket.emit('getGameWithBotResponse', JSON.stringify({
@@ -67,13 +64,12 @@ module.exports = (io, socket) => {
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
                     currentPlayer: gameModel.currentPlayer,
                     roundCounter: gameModel.roundCounter,
-                    winner : gameModel.winner,
-                    typeGame: 'withBot'
+                    winner: gameModel.winner,
+                    typeGame: gameModel.typeGame,
+                    ownIndexPlayer: characters[0].currentPlayerIndex
                 }));
-
             });
             // Persister le plateau de jeu
-
         } catch (error) {
             console.error('Error creating game model', error);
             // Gérer l'erreur, par exemple en envoyant un message d'erreur au client

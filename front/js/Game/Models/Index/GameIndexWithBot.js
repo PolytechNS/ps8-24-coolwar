@@ -8,7 +8,7 @@ import {config} from "../../../Utils/config.js";
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('token');
 
-    if(!socketManager.isSocketInitialized(token)) {
+    if(!socketManager.isSocketInitialized()) {
         socketManager.initializeSocket(token);
     }
     // Assurez-vous que le token est disponible
@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 actionGameService.getGame(config.withBot,(serializedGameModel) => {
                     // Désérialisez le modèle de jeu JSON en objet JavaScript
                     const model = JSON.parse(serializedGameModel); // Assurez-vous que ce modèle est correctement formaté
+                    console.log("MODEL -> ",model);
                     const view = new GameView(model);
-
                     const presenter = new GamePresenter(model, view);
                     console.log("Game initialized with game model");
                 });
