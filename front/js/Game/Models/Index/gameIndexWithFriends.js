@@ -62,21 +62,48 @@ export function getCurrentGameModel() {
 }
 
 
-document.getElementById('sendChat').addEventListener('click', () => {
-    const message = document.getElementById('chatInput').value;
-    console.log('Sending message', message);
-    ChatService.sendChatMessage(model.roomId, message );
-    document.getElementById('chatInput').value = ''; // Effacer le champ de texte après l'envoi
-});
+// Attacher un gestionnaire d'événements au bouton 'sendChat', si celui-ci existe
+const sendChatBtn = document.getElementById('sendChat');
+if (sendChatBtn) {
+    sendChatBtn.addEventListener('click', () => {
+        const chatInput = document.getElementById('chatInput');
+        if (chatInput) {
+            const message = chatInput.value;
+            console.log('Sending message', message);
+            // Ici, je suppose que `model` et `ChatService` sont définis ailleurs et accessibles.
+            // Si ce n'est pas le cas, vous devrez également gérer ces dépendances.
+            ChatService.sendChatMessage(model.roomId, message);
+            chatInput.value = ''; // Effacer le champ de texte après l'envoi
+        }
+    });
+}
 
-document.getElementById('chatInput').addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Empêcher le comportement par défaut
-        document.getElementById('sendChat').click();
+// Attacher un gestionnaire d'événements au champ 'chatInput' pour écouter les frappes de touche
+const chatInputEl = document.getElementById('chatInput');
+if (chatInputEl) {
+    chatInputEl.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Empêcher le comportement par défaut
+            // Utiliser sendChatBtn si disponible
+            if (sendChatBtn) {
+                sendChatBtn.click();
+            }
+        }
+    });
+}
+
+// Attendre que le DOM soit complètement chargé avant de rechercher et de manipuler les éléments
+document.addEventListener('DOMContentLoaded', () => {
+    const chatBox = document.querySelector('.chatBox');
+    const chatBoxToggle = document.querySelector('.chatBoxToggle');
+
+    if (chatBoxToggle) {
+        chatBoxToggle.addEventListener('click', () => {
+            if (chatBox) {
+                chatBox.classList.toggle('closed');
+                console.log("click chatbox");
+            }
+        });
     }
 });
-
-
-
-
 

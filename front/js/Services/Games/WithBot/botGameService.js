@@ -39,7 +39,7 @@ export const BotGameService = {
             callback(res);
         });
     },
-
+    
     checkWinnerWithBot(gameId,callback){
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
