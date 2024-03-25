@@ -211,7 +211,13 @@ export class GamePresenter {
     checkEndGame(){
         actionGameService.checkWinner(this.model.typeGame,this.model.gameId,(callback)=>{
             console.log(callback);
-            if(callback!==-1){this.cancel_behaviour();}
+            if(callback!==-1){
+                this.cancel_behaviour();
+                gameService.getWinner(this.model.typeGame,this.model.gameId,(callback)=>{
+                    this.view.displayWinner(callback);
+                });
+
+            }
         });
     }
     sendUpdateToBack() {

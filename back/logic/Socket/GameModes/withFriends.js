@@ -1,16 +1,19 @@
 const {MongoClient, ObjectId} = require("mongodb");
-const {MONGO_URL} = require("../../Utils/constants");
+const {MONGO_URL, withBot} = require("../../Utils/constants");
 const {GameModel} = require("../../Model/Game/GameModel");
 const {ActionController} = require("../../Controller/actionController");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const {setUpPositionRealBot, createGameDb,
     updatePositionCharacter,
     manageBotMove,
+    updateWinnerAndLooser,
+    updateWinnerAndLooserBot,
     retrieveCharacterFromDb,
     updateCurrentPlayerFromDb,
     updateWallsAndVisibilityFromBd
 } = require("../../Controller/gameController");
 const {verifyMessage} = require("../../Controller/Chat/chatController");
+const {addExpToPlayerWithBot,manageEndGameUser} = require("../../Controller/userController");
 
 
 
@@ -263,11 +266,20 @@ module.exports = (io, socket) => {
         socket.emit('getplayerpositionresponseWithFriends',response);
     });
 
-    socket.on('checkWinnerWithFriends',(data)=>{
+    socket.on('checkWinnerWithFriends',async (data)=>{
         let dataParse = JSON.parse(data);
         console.log("CHECK WINNER WITH FRIENDS : ",dataParse);
         let actionController = games.get(dataParse.gameId).actionController;
         let response = actionController.checkWinner();
+        if(response !==-1){
+            let winner = response;
+            let looser = (winner === 1) ? 2 : 1;
+            manageEndGameUser(dataParse.gameId,winner,looser);
+            updateWinnerAndLooser(dataParse.gameId,winner);
+
+
+
+        }
         socket.emit('checkWinnerWithFriendsResponse',response);
     });
 

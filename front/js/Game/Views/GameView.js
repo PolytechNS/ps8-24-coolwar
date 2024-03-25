@@ -27,4 +27,8 @@ export class GameView {
         wall.style.opacity = opacity;
     }
 
+    displayWinner(winner) {
+        console.log("displayWinner")
+    }
+
 }
