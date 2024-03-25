@@ -31,8 +31,10 @@ export const BotActionService = {
             return
         }
 
+
         let req = {id,row,col,gameId,token};
         let reqSerialized = JSON.stringify(req);
+        console.log("ça move", req);
         socketManager.socket.emit('moveCharacterWithBot',reqSerialized);
 
         // Écouter la réponse du serveur sur la même socket

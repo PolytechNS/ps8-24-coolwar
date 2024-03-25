@@ -46,3 +46,13 @@ export const gameService = {
     }
     // ... Autres méthodes ...
 };
+
+document.addEventListener('DOMContentLoaded', () => {
+    const chatBox = document.querySelector('.chatBox');
+    const chatBoxToggle = document.querySelector('.chatBoxToggle');
+
+    chatBoxToggle.addEventListener('click', () => {
+        chatBox.classList.toggle('closed');
+        console.log("click chatbox");
+    });
+});

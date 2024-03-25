@@ -23,7 +23,7 @@ export class GamePresenter {
     detachHandlerFromWalls() {
         // Suppression des gestionnaires d'événements pour les murs horizontaux
         this.model.horizontal_Walls.forEach((wall) => {
-            if(wall.isPresent) {
+            if (wall.isPresent) {
                 const wallId = wall.position.row.toString() + "X" + wall.position.col.toString() + "X" + 'H';
                 this.replaceWallElement(wallId);
             }
@@ -31,7 +31,7 @@ export class GamePresenter {
 
         // Suppression des gestionnaires d'événements pour les murs verticaux
         this.model.vertical_Walls.forEach((wall) => {
-            if(wall.isPresent) {
+            if (wall.isPresent) {
                 const wallId = wall.position.row.toString() + "X" + wall.position.col.toString() + "X" + 'V';
                 this.replaceWallElement(wallId);
             }
@@ -205,6 +205,7 @@ export class GamePresenter {
                 }
             });
         }
+
     };
 
     checkEndGame(){
@@ -306,4 +307,7 @@ export class GamePresenter {
         console.log("-------------------------------------------------------------")
         whoIAm.item(0).innerHTML = "You are player "+this.model.ownIndexPlayer;
     }
+
+
+
 }
