@@ -219,6 +219,7 @@ class GameModel {
         return wallToAnalys.isPresent;
     }
 
+
     checkWinner(){
         let valueToReturn = -1;
         if(this.roundCounter>=200){console.log("STOP GAME !");valueToReturn = 0;}

@@ -18,7 +18,18 @@ function signup(req, res, db) {
                 console.log('User already exist');
                 return;
             }
-            const result = await db.collection('users').insertOne({ username, password, token, lvl:1});
+            const result = await db.collection('users').insertOne({
+                username,
+                password, // Encore une fois, le mot de passe devrait être hashé.
+                lvl: 1,
+                elo: 0,
+                trophies: 0,
+                skins: { current: 'defaultSkin', owned: ['defaultSkin'] },
+                emotes: ['defaultEmote'],
+                titles: [],
+                achievements: []
+
+            });
             console.log('Utilisateur créé', result);
 
             res.writeHead(201, { 'Content-Type': 'application/json' });
