@@ -55,6 +55,21 @@ export const BotGameService = {
         });
     },
 
+    getWinnerWithBot(gameId,callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return
+        }
+        const dataToParse = {gameId};
+        socketManager.socket.emit('getWinnerBot', JSON.stringify(dataToParse));
+
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('getWinnerBotResponse', (res) => {
+            callback(res);
+        });
+    },
+
 
     updateGameModelWithBot: function(informationsData,callback) {
         // Assurez-vous que la socket est initialisée et connectée

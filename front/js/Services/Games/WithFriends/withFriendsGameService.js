@@ -64,6 +64,21 @@ export const withFriendsGameService = {
         // Écouter la réponse du serveur sur la même socket
 
     },
+
+    getWinnerWithFriends(gameId,callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return;
+        }
+        let data = JSON.stringify({ gameId });
+        // Demander le modèle de jeu en utilisant la socket de socketManager
+        socketManager.socket.emit('getWinnerWithFriends', data);
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('getWinnerWithFriendsResponse', (winner) => {
+            callback(winner);
+        });
+    }
 }
 
 

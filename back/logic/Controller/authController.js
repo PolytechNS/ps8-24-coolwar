@@ -20,8 +20,10 @@ function signup(req, res, db) {
             }
             const result = await db.collection('users').insertOne({
                 username,
+                token : token,
                 password, // Encore une fois, le mot de passe devrait être hashé.
-                lvl: 1,
+                lvl: 0,
+                exp: 0,
                 elo: 0,
                 trophies: 0,
                 skins: { current: 'defaultSkin', owned: ['defaultSkin'] },

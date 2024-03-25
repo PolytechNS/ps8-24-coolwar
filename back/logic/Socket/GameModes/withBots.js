@@ -1,14 +1,16 @@
 const {GameModel} = require("../../Model/Game/GameModel");
 const {ActionController} = require("../../Controller/actionController");
 const {setupBotController} = require("../../Controller/botController");
+const {addExpToPlayerWithBot} = require("../../Controller/userController");
 const {setUpPositionRealBot, createGameDb,
     updatePositionCharacter,
     manageBotMove,
+    updateWinnerAndLooserBot,
     updateCurrentPlayerFromDb,
     updateWallsAndVisibilityFromBd
 } = require("../../Controller/gameController");
 const {MongoClient, ObjectId} = require("mongodb");
-const {MONGO_URL} = require("../../Utils/constants");
+const {MONGO_URL, withBot} = require("../../Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
@@ -182,6 +184,13 @@ module.exports = (io, socket) => {
         let dataParse = JSON.parse(data);
         let actionController = games.get(dataParse.gameId).actionController;
         let response = actionController.checkWinner();
+        if(response !==-1){
+            let winner = response;
+            let looser = (winner === 1) ? 2 : 1;
+            let tokenPlayer1 = dataParse.token;
+            addExpToPlayerWithBot(dataParse.token,withBot);
+            updateWinnerAndLooserBot(dataParse.gameId,winner);
+        }
         socket.emit('checkWinnerResponse',response);
     });
 

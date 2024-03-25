@@ -77,6 +77,42 @@ async function saveGame(userToken, db, data) {
     return gameBoardId;
 }
 
+async function updateWinnerAndLooser(gameId,winner,looser) {
+    await client.connect();
+    const db = client.db();
+    let gameBoard = await db.collection('gameboards').findOne({ gameId: new ObjectId(gameId) });
+    let players = await db.collection('character').find({gameBoardId: new ObjectId(gameBoard._id)}).toArray();
+    console.log("players",players);
+    let player1 = players.find(player => player.currentPlayerIndex === 1);
+    let player2 = players.find(player => player.currentPlayerIndex === 2);
+    let play1Db = await db.collection('users').findOne({_id: new ObjectId(player1.userId)});
+    let play2Db = await db.collection('users').findOne({_id: new ObjectId(player2.userId)});
+    if(winner === 1){
+        await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoard._id) }, { $set: { winner: play1Db._id, looser: play2Db._id } });
+
+    }else{
+        await db.collection('gameboards').updateOne({ _id: new ObjectId(gameBoard._id) }, { $set: { winner: play2Db._id, looser: play1Db._id } });
+
+    }
+}
+
+
+
+async function updateWinnerAndLooserBot(gameId, winner) {
+    await client.connect();
+    const db = client.db();
+    let gameBoard = await db.collection('gameboards').findOne({ gameId: new ObjectId(gameId) });
+    let players = await db.collection('character').find({gameBoardId: gameBoard._id}).toArray();
+    let player1 = players.find(player => player.currentPlayerIndex === 1);
+    let player2 = players.find(player => player.currentPlayerIndex === 2);
+    let play1Db = await db.collection('users').findOne({token: player1.token});
+    let play2Db = "bot";
+    if(winner === 1){
+        await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { winner: play1Db._id, looser: play2Db} });
+    }else{
+        await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { winner: play2Db, looser: play1Db._id } });
+    }
+}
 async function loadGameFromDb(db, savedGame) {
     const gameBoardSaved = await db.collection('gameboards').findOne({ _id: savedGame.gameBoardId });
     //get all walls from gameBoardSaved
@@ -220,4 +256,4 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
     }
 }
 
-module.exports = { retrieveCharacterFromDb,updatePlayerPositionFromDb,setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };
+module.exports = { updateWinnerAndLooserBot,updateWinnerAndLooser,retrieveCharacterFromDb,updatePlayerPositionFromDb,setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };
