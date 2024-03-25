@@ -98,8 +98,6 @@ module.exports = (server) => {
         }
     });
 
-
-
         // socket.on('joinGame', () => {
         //     let responseBoolean = gameController.join()
         //

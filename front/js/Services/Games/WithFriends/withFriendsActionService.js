@@ -5,6 +5,7 @@ export const WithFriendsActionService = {
 
 
     placeWallWithFriends(datas, callback){
+        console.log("DANS PLACING WALL WITH FRIENDS")
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');

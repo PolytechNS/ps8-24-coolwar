@@ -7,9 +7,6 @@ export const withFriendsGameService = {
         // Envoyer une requête pour rejoindre une partie avec le token d'identification de l'utilisateur
         const dataToSend = { token: token };
         socketManager.socket.emit('joinGameWithFriends', JSON.stringify(dataToSend));
-
-
-
     },
 
     waitForOpponent: function(callback) {
@@ -18,8 +15,6 @@ export const withFriendsGameService = {
             console.log("id socket moi",socketManager.socket.id);
             callback(gameInfo);
         });
-
-
     },
 
     getPlayerPositionWithFriends(typeGame, idPlayer,gameId,callback){
@@ -38,10 +33,6 @@ export const withFriendsGameService = {
         socketManager.socket.once('getplayerpositionresponseWithFriends', (res) => {
             callback(res);
         });
-
-
-
-
     },
 
     checkWinnerWithFriends(gameId,callback){
@@ -50,7 +41,6 @@ export const withFriendsGameService = {
             console.error('Socket not initialized or not connected.');
             return
         }
-
         const dataToParse = {gameId};
         console.log("dataToParse", dataToParse);
         socketManager.socket.emit('checkWinnerWithFriends', JSON.stringify(dataToParse));
@@ -71,7 +61,6 @@ export const withFriendsGameService = {
 
         // Envoyer la demande de sauvegarde au serveur
         socketManager.socket.emit('updateGameModelWithFriends', JSON.stringify(informationsData));
-
         // Écouter la réponse du serveur sur la même socket
 
     },

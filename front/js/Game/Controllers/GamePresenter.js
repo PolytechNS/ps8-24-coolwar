@@ -167,11 +167,9 @@ export class GamePresenter {
                 actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),this.roomId,(res)=>{
                     if(res){
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
-                        //on dsiplay l'uatre joueur si currentPlayer = 1 alors l'autre joueur est 2 et inversement
                         //ON RETIRE L'ANCIEN STYLE
                         this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
                         this.sendUpdateToBack();
-
                     }
                 });
             };
@@ -198,7 +196,8 @@ export class GamePresenter {
             actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                 if(isAuthorized){
                     wallListObj.forEach((wallToEdit) => {
-                        this.view.displayWall(wallToEdit, 1);
+                        let wallInside = wallToEdit.children.item(0);
+                        this.view.displayWallHtml(wallInside, 1);
                         let replaceOBJ = wallToEdit.cloneNode(true);
                         wallToEdit.replaceWith(replaceOBJ);
                     });
@@ -217,10 +216,8 @@ export class GamePresenter {
     }
     sendUpdateToBack() {
         let informationsData = [this.model.typeGame,this.model.currentPlayer,this.model.gameId];
-        console.log("INFORMATIONS DATA",informationsData);
         actionGameService.updateGameModel(informationsData,(newModel)=>{
-            console.log("GOING TO UPDATE MODEL");
-            this.updateModel(newModel)
+            this.updateModel(newModel);
         });
     }
 
@@ -229,6 +226,49 @@ export class GamePresenter {
         console.log("MODEL AFTER UPDATE",this.model);
         this.view.updateViewCharacter(this.model.player_array[0].position.row,this.model.player_array[0].position.col,1);
         this.view.updateViewCharacter(this.model.player_array[1].position.row,this.model.player_array[1].position.col,2);
+        //UPDATE LES MURS
+        let horizontalWalls_in_gameModel = this.model.horizontal_Walls;
+        let verticalWalls_in_gameModel = this.model.vertical_Walls;
+
+        let horizontalWalls_in_HTML = document.querySelectorAll('.horizontal_hitbox');
+        let verticalWalls_in_HTML = document.querySelectorAll('.vertical_hitbox');
+
+        //ON PARCOURS LES MURS DU MODEL
+        for(let i=0;i<horizontalWalls_in_gameModel.length;i++){
+            let wall = horizontalWalls_in_gameModel[i];
+            //ON PARCOURS LES MURS DU HTML
+            horizontalWalls_in_HTML.forEach((hitboxHTML)=>{
+                let wallHTML = hitboxHTML.children.item(0);
+                const hoverHandler = this.hoverHandler(hitboxHTML);
+                const leaveHoverHandler = this.leaveHoverHandler(hitboxHTML);
+                const clickHandler = this.clickPlaceWallHandler(hitboxHTML);
+                let position = wallHTML.id.split('X');
+                //SI LE MUR EXISTE ET QU'IL EST PRESENT
+               if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
+                   //ON L'AFFICHE ET ON LUI RETIRE SES COMPORTEMENTS
+                   console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
+                   this.view.displayWallHtml(wallHTML,1);
+                   let replaceOBJ = hitboxHTML.cloneNode(true);
+                   hitboxHTML.replaceWith(replaceOBJ);
+               }
+            });
+        }
+        for(let i=0;i<verticalWalls_in_gameModel.length;i++){
+            let wall = verticalWalls_in_gameModel[i];
+            verticalWalls_in_HTML.forEach((hitboxHTML)=>{
+                let wallHTML = hitboxHTML.children.item(0);
+                const hoverHandler = this.hoverHandler(hitboxHTML);
+                const leaveHoverHandler = this.leaveHoverHandler(hitboxHTML);
+                const clickHandler = this.clickPlaceWallHandler(hitboxHTML);
+                let position = wallHTML.id.split('X');
+                if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
+                    console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
+                    this.view.displayWallHtml(wallHTML,1);
+                    let replaceOBJ = hitboxHTML.cloneNode(true);
+                    hitboxHTML.replaceWith(replaceOBJ);
+                }
+            });
+        }
         this.checkEndGame();
         this.updateInformations();
     }
@@ -251,7 +291,7 @@ export class GamePresenter {
                 }
             }
         });
-
+        let whoIAm = document.querySelectorAll('#playerID');
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let winner_HTML = document.querySelectorAll('#winner');
@@ -261,7 +301,11 @@ export class GamePresenter {
         }
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
-        nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].nbWalls + " walls left";
+        console.log("-----------------------UPDATE NB WALLS-----------------------");
+        console.log(this.model.player_array[this.model.ownIndexPlayer-1].nbWalls);
+        nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.ownIndexPlayer-1].nbWalls + " walls left";
+        console.log("-------------------------------------------------------------")
+        whoIAm.item(0).innerHTML = "You are player "+this.model.ownIndexPlayer;
     }
 
 

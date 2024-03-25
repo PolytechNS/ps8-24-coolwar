@@ -201,9 +201,6 @@ module.exports = (io, socket) => {
 
             //on met à jour la position du joueur dans la bd
             let gameBoard = await updatePositionCharacter(dataParse,db,gameModel,squareGameModel);
-            //récupérer les playable squares
-            let playableSquares = await db.collection('squares').find({gameBoardId: gameBoard._id}).toArray();
-            //les afficher
 
             //on met à jour le joueur actuel dans la bd
             await updateCurrentPlayerFromDb(gameBoard,db,gameModel);
@@ -240,7 +237,6 @@ module.exports = (io, socket) => {
 
             //on essaye de placer le mur
             let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
-
 
             //si les murs sont placés
             if(responseBoolean){
@@ -320,8 +316,6 @@ module.exports = (io, socket) => {
 
                 let characters =await retrieveCharacterFromDb(db,gameBoardSaved._id);
 
-
-
                 io.to(player1SocketId).emit('updateGameModelWithFriendsResponse', JSON.stringify({
                     gameId: gameBoardSaved.gameId, // ID de la partie
                     gameBoardId: gameBoardSaved._id, // ID du plateau de jeu
@@ -357,8 +351,8 @@ module.exports = (io, socket) => {
                     roomId: datas.roomId,
                     test:"pla2",
                     ownIndexPlayer: characters[1].currentPlayerIndex
-
                 }));
+                console.log("GAME MODEL SENDING !");
             } else {
                 console.log(' UPDATE GAME MODEL ERROR');
                 socket.emit('error', 'No saved game found for this user.');
