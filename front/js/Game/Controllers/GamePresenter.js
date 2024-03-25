@@ -211,12 +211,10 @@ export class GamePresenter {
     checkEndGame(){
         actionGameService.checkWinner(this.model.typeGame,this.model.gameId,(callback)=>{
             console.log(callback);
-            if(callback!==-1){
+            if(callback===1  || callback===2){
+                let winner_HTML = document.querySelectorAll('#winner');
+                winner_HTML.item(0).innerHTML = "Winner = "+callback;
                 this.cancel_behaviour();
-                gameService.getWinner(this.model.typeGame,this.model.gameId,(callback)=>{
-                    this.view.displayWinner(callback);
-                });
-
             }
         });
     }
@@ -300,11 +298,8 @@ export class GamePresenter {
         let whoIAm = document.querySelectorAll('#playerID');
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
-        let winner_HTML = document.querySelectorAll('#winner');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
-        if(!this.model.winner === -1){
-            winner_HTML.item(0).innerHTML = "Winner = "+this.model.winner.toString();
-        }
+
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
         console.log("-----------------------UPDATE NB WALLS-----------------------");

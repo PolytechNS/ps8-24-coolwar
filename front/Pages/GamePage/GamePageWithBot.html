@@ -11,12 +11,14 @@
     <body>
         <main>
             <div class="left">
-                <div class="menu">
-                    <div class="dropdown">
-                        <button id="save">Save</button>
-                        <button> Options </button>
-                        <a href="../PlayPage/PlayPage.html" class="theButton"><button>Leave</button></a>
-                    </div>
+                <input type="checkbox" id="menu-toggle"/>
+                <label id="trigger" for="menu-toggle"></label>
+                <label id="burger" for="menu-toggle"></label>
+                <ul id="menu">
+                    <li><a id="save">Save</a></li>
+                    <li><a href="#">Options</a></li>
+                    <li><a href="../PlayPage/PlayPage.html">Leave</a></li>
+                </ul>
 
                     <div class="modal" id="modal">
                         <div class="modal-back"></div>
