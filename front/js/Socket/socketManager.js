@@ -1,6 +1,6 @@
 import "../socket.io.js";
 import {GamePresenter} from "../Game/Controllers/GamePresenter.js";
-import {getGlobalPresenter, getCurrentGameModel} from "../Game/Models/Index/gameIndexWithFriends.js";
+import {getGlobalPresenter} from "../Game/Models/Index/gameIndexWithFriends.js";
 import {ChatService} from "../Services/Chat/chatService.js";
 // socketManager.js
 export const socketManager = {
