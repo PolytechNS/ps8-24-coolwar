@@ -9,34 +9,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (token) {
         userService.getUserInfo((userInfo) => {
-            console.log("User info", userInfo);
             // Mettre à jour le nom d'utilisateur
             const usernameElement = document.querySelector('.nameAndLogout .username');
             if (usernameElement) {
                 usernameElement.textContent = userInfo.username;
             }
 
-            // Mettre à jour le niveau et la progression de l'expérience
-            // Ici, vous devrez ajuster les sélecteurs en fonction de votre structure HTML
-            const levelElement = document.querySelector('.level'); // Remplacer '.level' par le sélecteur correct pour votre numéro de niveau
-            const expProgressElement = document.querySelector('.expProgress'); // Remplacer '.expProgress' par le sélecteur correct pour votre barre de progression
-            // Mettre à jour le DOM avec les informations de l'utilisateur
-            document.querySelector('.nameAndLogout .username').textContent = userInfo.username; // Mettre à jour le nom d'utilisateur
-            document.querySelector('.levelDisplay .userLevel').textContent = userInfo.lvl; // Mettre à jour le niveau
+            // Mettre à jour le niveau actuel et le niveau suivant
+            const currentLevelElement = document.querySelector('.level-progress-info .level-range .current-level');
+            const nextLevelElement = document.querySelector('.level-progress-info .level-range .next-level');
+            const levelElement = document.querySelector('.level-circle .level-number');
 
-
-            if (levelElement) {
-                levelElement.textContent = userInfo.lvl; // Mettre à jour avec le niveau de l'utilisateur
+            // Mettre à jour les éléments avec les informations de l'utilisateur
+            if (currentLevelElement && nextLevelElement && levelElement) {
+                currentLevelElement.textContent = userInfo.lvl; // Niveau actuel
+                nextLevelElement.textContent = userInfo.lvl + 1; // Niveau suivant
+                levelElement.textContent = userInfo.lvl; // Niveau actuel
             }
-            if (expProgressElement) {
-                // Mettre à jour avec la progression de l'expérience de l'utilisateur
-                // Cela dépend de la manière dont votre barre de progression est implémentée.
-                // Par exemple, si c'est une largeur de style CSS, cela pourrait ressembler à :
-                // expProgressElement.style.width = `${(userInfo.exp / maxExp) * 100}%`;
-                // où maxExp est l'expérience nécessaire pour atteindre le prochain niveau
+
+            // Mettre à jour l'expérience et la barre de progression
+            const currentExpElement = document.querySelector('.level-progress-info .level-points .current-exp');
+            const nextLevelExpElement = document.querySelector('.level-progress-info .level-points .next-level-exp');
+            const progressBarFill = document.querySelector('.progress-bar .progress-bar-fill');
+
+            const expBase = 100;
+            const expFactor = 1.5;
+            const nextLvlExp = Math.round(Math.pow(expFactor, userInfo.lvl) * expBase); // Expérience nécessaire pour le prochain niveau, arrondie
+
+            if (currentExpElement && nextLevelExpElement) {
+                currentExpElement.textContent = userInfo.exp; // Expérience actuelle
+                nextLevelExpElement.textContent = nextLvlExp; // Expérience nécessaire pour le niveau suivant
+            }
+            if (progressBarFill) {
+                // Calcule la largeur de la barre de progression en fonction de l'expérience actuelle
+                const expForCurrentLevel = Math.pow(expFactor, userInfo.lvl - 1) * expBase; // Expérience au début du niveau actuel
+                const percentage = ((userInfo.exp - expForCurrentLevel) / (nextLvlExp - expForCurrentLevel)) * 100;
+                const calculatedWidth = ((userInfo.exp - expForCurrentLevel) / (nextLvlExp - expForCurrentLevel)) * 100;
+                progressBarFill.style.width = `${Math.max(calculatedWidth, 1)}%`; // Assure au moins 1% pour visibilité
+
+
+                console.log(`Current Exp: ${userInfo.exp}, Exp for current level: ${expForCurrentLevel}, Next level Exp: ${nextLvlExp}, Width: ${percentage}%`); // Pour le débogage
             }
         });
     } else {
         console.error("No token found. Please log in.");
     }
 });
+

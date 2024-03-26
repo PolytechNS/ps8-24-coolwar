@@ -1,45 +1,62 @@
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <link rel="stylesheet" href="../style.css">
-            <link rel="stylesheet" href="MainMenuPageStyle.css">
-            <title>Main Menu Page</title>
-        </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="MainMenuPageStyle.css">
+    <title>Main Menu Page</title>
+</head>
 
-        <body>
-            <header class="head">
-                <img class="logo" src="../../assets/logo.png"/>
-                <h1>CoolWar</h1>
-                <div class="user">
-                    <img class="profilePicture" src="../../assets/profilePicture.png">
-                    <div class="nameAndLogout">
-                        <p class="username">Nom</p>
-                        <a href="../Login/login.html">
-                            
-                            <button class="logout" >Logout</button>
-                        </a>
-                    </div>
-                    <img class="level" src="../../assets/level.png">
+<body>
+<header class="head">
+    <img class="logo" src="../../assets/logo.png"/>
+    <h1>CoolWar</h1>
+    <div class="user">
+        <img class="profilePicture" src="../../assets/profilePicture.png">
+        <div class="nameAndLogout">
+            <p class="username">Nom</p>
+            <a href="../Login/login.html">
+                <button class="logout">Logout</button>
+            </a>
+        </div>
+        <!-- Début de la section de niveau d'utilisateur modifiée -->
+        <div class="level-container">
+            <div class="level-circle">
+                <span class="level-number">42</span>
+            </div>
+            <div class="level-progress-info">
+                <div class="level-range">
+                    <span class="current-level">42</span> → <span class="next-level">43</span>
                 </div>
-            </header>
-            <main class="grid">
-                <div></div>
-                <div class="cadre">
-                    <h2>Main Menu</h2>
-                    <a href="../PlayPage/PlayPage.html" class="theButton"><button>Play</button></a>
-                    <a href="ProfilePage/ProfilePage.html" class="theButton"><button>Profile</button></a>
-                    <a href="FriendsPage/FriendsPage.html" class="theButton"><button>Friends</button></a>
-                    <a href="SettingsPage/SettingsPage.html" class="theButton"><button>Settings</button></a>
-                    <a href="NotificationPage/NotificationPage.html" class="theButton"><button>Notification</button></a>
-                    <a href="LeaderboardPage/LeaderboardPage.html" class="theButton"><button>Leaderboard</button></a>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: 70%;"></div>
                 </div>
-                <a href="../WelcomePage/WelcomePage.html" id="backButton"><button> &lt; Back</button></a>
-            </main>
-        </body>
-    </html>
-    <script type="module" src="../../js/User/userInfo.js"></script>
+                <div class="level-points">
+                    <span class="current-exp">700</span> / <span class="next-level-exp">1000</span>
+                </div>
+            </div>
+        </div>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
-    </style>
+        <!-- Fin de la section de niveau d'utilisateur modifiée -->
+    </div>
+</header>
+<main class="grid">
+    <div></div>
+    <div class="cadre">
+        <h2>Main Menu</h2>
+        <a href="../PlayPage/PlayPage.html" class="theButton"><button>Play</button></a>
+        <a href="ProfilePage/ProfilePage.html" class="theButton"><button>Profile</button></a>
+        <a href="FriendsPage/FriendsPage.html" class="theButton"><button>Friends</button></a>
+        <a href="SettingsPage/SettingsPage.html" class="theButton"><button>Settings</button></a>
+        <a href="NotificationPage/NotificationPage.html" class="theButton"><button>Notification</button></a>
+        <a href="LeaderboardPage/LeaderboardPage.html" class="theButton"><button>Leaderboard</button></a>
+    </div>
+    <a href="../WelcomePage/WelcomePage.html" id="backButton"><button>&lt; Back</button></a>
+</main>
+</body>
+</html>
+<script type="module" src="../../js/User/userInfo.js"></script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>
