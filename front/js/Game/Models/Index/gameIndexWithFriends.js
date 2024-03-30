@@ -10,26 +10,10 @@ import {ChatService} from "../../../Services/Chat/chatService.js";
 import {userService} from "../../../Services/User/userService.js";
 
 let model = null;
-
-document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem('token');
-    if (!socketManager.isSocketInitialized(token)) {
-        socketManager.initializeSocket(token);
-    }
-    if (token) {
-        userService.getUserInfo((userInfo) => {
-            console.log("PROFILE USER info", userInfo);
-            if(userInfo.achievements.includes("tu_fais_le_fou.jpg")){
-                insertSoundCloudPlayer();
-            }
-        });
-    } else {
-        console.error("No token found. Please log in.");
-    }
-
-});
-
 let globalPresenter; // Définissez ceci dans une portée accessible là où vous en avez besoin
+
+
+
 
 window.onload = function () {
     console.log('Waiting room');
@@ -68,6 +52,90 @@ window.onload = function () {
     }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        // Ensure the socket is initialized and attach the listener
+        if (!socketManager.isSocketInitialized()) {
+            // Initialize the socket and attach the listener in the 'connect' event handler
+            socketManager.initializeSocket(token);
+            socketManager.socket.on('connect', () => {
+                console.log("Socket id:", socketManager.socket.id);
+                attachAchievementsListener();
+            });
+        } else {
+            attachAchievementsListener();
+        }
+
+        userService.getUserInfo((userInfo) => {
+            console.log("PROFILE USER info", userInfo);
+            if (userInfo.achievements && userInfo.achievements.includes("tu_fais_le_fou.jpg")) {
+                insertSoundCloudPlayer();
+            }
+        });
+    } else {
+        console.error("No token found. Please log in.");
+    }
+});
+
+function attachAchievementsListener() {
+    console.log('Attaching achievements listener');
+    socketManager.socket.on('achievementsUnlocked', (data) => {
+        const achievementsUnlocked = JSON.parse(data);
+        console.log('Achievements unlocked:', achievementsUnlocked);
+        displayUnlockedAchievements(achievementsUnlocked);
+    });
+    displayUnlockedAchievements([{ name: 'First win', description: 'You won your first game!', imagePath: 'first_win.png' }]);
+}
+
+function displayUnlockedAchievements(achievements) {
+    console.log("JE DISPLAY LES ACHIEVEMENTS");
+    achievements.forEach(achievement => {
+        // Create the popup container
+        const alertContainer = document.createElement('div');
+        alertContainer.classList.add('achievement-alert');
+
+        // Create the image element
+        const achievementImage = document.createElement('img');
+
+        achievementImage.src = `../../../../assets/achievements/${achievement.imagePath}`; // Adjust the path as necessary
+        achievementImage.alt = achievement.name;
+        achievementImage.classList.add('achievement-image');
+
+        // Create the name element
+        const achievementName = document.createElement('p');
+        achievementName.textContent = achievement.name;
+        achievementName.classList.add('achievement-name');
+
+        // Create the description element
+        const achievementDescription = document.createElement('p');
+        achievementDescription.textContent = achievement.description;
+        achievementDescription.classList.add('achievement-description');
+
+        // Create a close button
+        const closeButton = document.createElement('button');
+        closeButton.textContent = '×';
+        closeButton.classList.add('close-button');
+        closeButton.onclick = () => document.body.removeChild(alertContainer);
+
+        // Append elements to the container
+        alertContainer.appendChild(achievementImage);
+        alertContainer.appendChild(achievementName);
+        alertContainer.appendChild(achievementDescription);
+        alertContainer.appendChild(closeButton);
+
+        // Append the container to the body
+        document.body.appendChild(alertContainer);
+
+        // Set a timeout to automatically remove the alert after 5 seconds
+        setTimeout(() => {
+            if (document.body.contains(alertContainer)) {
+                document.body.removeChild(alertContainer);
+            }
+        }, 10000000); // Adjust time as necessary
+    });
+}
+
 function insertSoundCloudPlayer() {
     const soundCloudContainer = document.getElementById('soundcloud-container');
     if (soundCloudContainer) {
@@ -88,15 +156,6 @@ function insertSoundCloudPlayer() {
         soundCloudContainer.innerHTML = playerHtml;
         leftColumn.insertBefore(soundCloudContainer, leftColumn.firstChild);
     }
-}
-
-
-export function getGlobalPresenter() {
-    return globalPresenter;
-}
-
-export function getCurrentGameModel() {
-    return model;
 }
 
 
@@ -144,4 +203,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+
+
+
+export function getGlobalPresenter() {
+    return globalPresenter;
+}
+
+export function getCurrentGameModel() {
+    return model;
+}
 

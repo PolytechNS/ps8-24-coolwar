@@ -275,12 +275,14 @@ module.exports = (io, socket) => {
             console.log("GAME FINISHED");
             let winner = response;
             let looser = (winner === 1) ? 2 : 1;
-            manageEndGameUser(dataParse.gameId,winner,looser);
-            updateWinnerAndLooser(dataParse.gameId,winner);
-            checkAchievements(games.get(dataParse.gameId).player1Token);
+            await manageEndGameUser(dataParse.gameId,winner,looser);
+            await updateWinnerAndLooser(dataParse.gameId,winner);
+            let achievementsUnlockedPl1 = await checkAchievements(games.get(dataParse.gameId).player1Token);
             //faudrait que ça retourne ls achievements du joueur 1
-            checkAchievements(games.get(dataParse.gameId).player2Token);
+            let achievementsUnlockedPl2 = await checkAchievements(games.get(dataParse.gameId).player2Token);
 
+            await sendNotifToUser(io,games.get(dataParse.gameId).player1Token,achievementsUnlockedPl1);
+            await sendNotifToUser(io,games.get(dataParse.gameId).player2Token,achievementsUnlockedPl2);
             //ensuite on emit la réponse des achievements
             //Et cote front on a une méthode dans l'indexFriends qui va écouter cette réponse et afficher les achievements sur une pop up
 
@@ -288,6 +290,27 @@ module.exports = (io, socket) => {
         }
         socket.emit('checkWinnerWithFriendsResponse',response);
     });
+
+    async function sendNotifToUser(ioServer,token, unlockedAchievementIds) {
+        try {
+            await client.connect();
+            const db = client.db();
+            console.log("sending notification ACHIEVEMENTS");
+            console.log("achievemnts unlocked",unlockedAchievementIds);
+            // Récupérer tous les achievements de la base de données
+            let allAchievements = await db.collection('achievements').find({}).toArray();
+
+            // Filtrer pour obtenir seulement les détails des achievements débloqués
+            let unlockedAchievementsDetails = allAchievements.filter(achievement => unlockedAchievementIds.achievements.includes(achievement._id));
+
+            let socketId = socketIds.get(token);
+            console.log("socketId to send notif",socketId);
+            // Envoyer les détails des achievements débloqués à l'utilisateur
+            ioServer.to(socketIds.get(token)).emit('achievementsUnlocked', JSON.stringify(unlockedAchievementsDetails));
+        } catch (error) {
+            console.error('Error sending notifications to user', error);
+        }
+    }
 
     socket.on('updateGameModelWithFriends', async ( data ) => {
         let datas = JSON.parse(data);
@@ -408,6 +431,7 @@ module.exports = (io, socket) => {
     });
 
 };
+
 
 
 

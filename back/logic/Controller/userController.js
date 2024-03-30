@@ -109,31 +109,33 @@ async function checkAchievements(token) {
         if (!user) {
             return { success: false, message: 'User not found' };
         }
-        console.log('User achievements : ', user);
-        // Récupérer les succès de l'utilisateur
-        const achievements = user.achievements;
 
-        // Vérifier si l'utilisateur a déjà débloqué l'achievement
-        if (!achievements.includes('first_win.png')) {
-            // Vérifier si l'utilisateur a gagné une partie
-            if (user.wins > 0) {
-                // Mettre à jour les succès de l'utilisateur
-                await db.collection('users').updateOne({ token }, { $push: { achievements: 'first_win.png' } });
-                return { success: true, message: 'Achievement unlocked: First Win' };
-            }
-        }
-        if(!achievements.includes('tu_fais_le_fou.jpg')){
-            if (user.wins > 9) {
-                // Mettre à jour les succès de l'utilisateur
-                await db.collection('users').updateOne({ token }, { $push: { achievements: 'tu_fais_le_fou.jpg' } });
-                return { success: true, message: 'Achievement unlocked: tu fais le fou' };
-            }
+        const achievements = user.achievements || [];
+        let unlockedAchievements = []; // Pour stocker les achievements débloqués
+
+        // Vérifier chaque condition d'achievement et mettre à jour le tableau des débloqués
+        if (!achievements.includes('first_win.png') && user.wins > 0) {
+            await db.collection('users').updateOne({ token }, { $push: { achievements: 'first_win.png' } });
+            unlockedAchievements.push('first_win.png');
         }
 
-        return { success: true, message: 'No new achievements unlocked' };
+        if (!achievements.includes('tu_fais_le_fou.jpg') && user.wins > 9) {
+            await db.collection('users').updateOne({ token }, { $push: { achievements: 'tu_fais_le_fou.jpg' } });
+            unlockedAchievements.push('tu_fais_le_fou.jpg');
+        }
+
+        // ... Ajoutez d'autres vérifications d'achievements ici ...
+
+        // Si des achievements ont été débloqués, retournez-les
+        if (unlockedAchievements.length > 0) {
+            return { success: true, achievements: unlockedAchievements, message: 'New achievements unlocked' };
+        }
+
+        // Si aucun nouvel achievement n'a été débloqué
+        return { success: true, achievements: [], message: 'No new achievements unlocked' };
     } catch (error) {
         console.error('Error checking achievements of player', error);
-        return { success: false, message: 'Error checking achievements of player' };
+        return { success: false, message: 'Error checking achievements of player', error: error };
     }
 }
 
