@@ -1,6 +1,5 @@
 import "../socket.io.js";
 import {GamePresenter} from "../Game/Controllers/GamePresenter.js";
-import {getGlobalPresenter} from "../Game/Models/Index/gameIndexWithFriends.js";
 import {ChatService} from "../Services/Chat/chatService.js";
 // socketManager.js
 export const socketManager = {
@@ -20,22 +19,13 @@ export const socketManager = {
             console.log('Connection failed', err.message);
         });
 
-        this.socket.on('updateGameModelWithFriendsResponse', (response) => {
-            console.log("RESPONSE UPDATE GAME MODEL WITH FRIENDS");
-            console.log(response);
-            getGlobalPresenter().updateModel(response);
-        });
+
 
         this.socket.on("test", (res) => {
             console.log("test PTN",res);
         });
 
-        this.socket.on('receiveChatMessage', (data) => {
-            console.log('Received chat message', data);
-            const { sender, message } = JSON.parse(data);
 
-            ChatService.appendMessageToChatbox(message, sender, 'chatMessages');
-        });
     },
 
     // Ajoutez une méthode pour vérifier si la socket est initialisée

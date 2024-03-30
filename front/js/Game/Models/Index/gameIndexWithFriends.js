@@ -23,6 +23,9 @@ window.onload = function () {
         if(!socketManager.isSocketInitialized(token)) {
             socketManager.initializeSocket(token);
         }
+
+        initializeListener();
+
         withFriendsGameService.joinGame(token);
 
         withFriendsGameService.waitForOpponent((gameInfo) => {
@@ -77,6 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("No token found. Please log in.");
     }
 });
+
+function initializeListener() {
+    socketManager.socket.on('updateGameModelWithFriendsResponse', (response) => {
+        console.log("RESPONSE UPDATE GAME MODEL WITH FRIENDS");
+        console.log(response);
+        getGlobalPresenter().updateModel(response);
+    });
+
+    socketManager.socket.on('receiveChatMessage', (data) => {
+        console.log('Received chat message', data);
+        const { sender, message } = JSON.parse(data);
+
+        ChatService.appendMessageToChatbox(message, sender, 'chatMessages');
+    });
+}
 
 function attachAchievementsListener() {
     console.log('Attaching achievements listener');
