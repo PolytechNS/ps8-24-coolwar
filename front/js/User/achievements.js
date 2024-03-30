@@ -33,6 +33,53 @@ function addSoundCloudPlayer() {
     document.body.appendChild(soundCloudContainer);
 }
 
+function showAchievementDetails(achievement) {
+    // Supprime une pop-up existante si elle est déjà ouverte
+    const existingPopup = document.querySelector('.popup-container');
+    if (existingPopup) {
+        document.body.removeChild(existingPopup);
+    }
+
+    // Créer le conteneur de la pop-up
+    const popupContainer = document.createElement('div');
+    popupContainer.classList.add('popup-container');
+
+    // Ajouter un fond semi-transparent
+    const overlay = document.createElement('div');
+    overlay.classList.add('popup-overlay');
+    overlay.addEventListener('click', () => document.body.removeChild(popupContainer));
+
+    // Construire le contenu de la pop-up
+    const popupContent = document.createElement('div');
+    popupContent.classList.add('popup-content');
+
+    const image = document.createElement('img');
+    image.src = '../../../../assets/' + achievement.imagePath;
+    image.alt = achievement.name;
+    image.classList.add('popup-image');
+
+    const title = document.createElement('h3');
+    title.textContent = achievement.name;
+    title.classList.add('popup-title');
+
+    const description = document.createElement('p');
+    description.textContent = achievement.description;
+    description.classList.add('popup-description');
+
+    // Assembler la pop-up
+    popupContent.appendChild(image);
+    popupContent.appendChild(title);
+    popupContent.appendChild(description);
+
+    popupContainer.appendChild(overlay);
+    popupContainer.appendChild(popupContent);
+
+    document.body.appendChild(popupContainer);
+}
+
+
+
+
 function updateAchievements(achievements) {
     const achievementsContainer = document.querySelector(".listAchievements");
     achievementsContainer.innerHTML = ''; // Clear current achievements
@@ -62,6 +109,9 @@ function updateAchievements(achievements) {
         achievementElement.appendChild(lineDiv);
         achievementElement.appendChild(achievementName);
 
+        achievementsContainer.appendChild(achievementElement);
+
+        achievementElement.addEventListener('click', () => showAchievementDetails(achievement));
         achievementsContainer.appendChild(achievementElement);
 
         // Exemple de gestion d'événement spécifique
