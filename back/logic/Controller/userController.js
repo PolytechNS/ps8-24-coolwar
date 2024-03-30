@@ -16,11 +16,11 @@ async function addExpToPlayerWithBot(token, typeGame) {
             return { success: false, message: 'User not found' };
         }
         let newExp;
-        if(typeGame === withBot ){
+        if(winner ===1){
             newExp = user.exp + exp_earned_bot;
-
-        }else{
-            newExp = user.exp + exp_earned_online;
+        }
+        else{
+            newExp = user.exp + ex_earned_bot_looser;
         }
         await db.collection('users').updateOne({ token }, { $set: { exp: newExp } });
         manageLvl(token);
@@ -32,7 +32,7 @@ async function addExpToPlayerWithBot(token, typeGame) {
     }
 }
 
-async function manageEndGameUser(gameId, winner,looser) {
+    async function manageEndGameUser(gameId, winner,looser) {
     await client.connect();
     const db = client.db();
     let gameBoard = await db.collection('gameboards').findOne({ gameId: new ObjectId(gameId) });
@@ -50,16 +50,20 @@ async function manageEndGameUser(gameId, winner,looser) {
     //checker qui est winner
     if(winner === 1){
         let newExp = play1Db.exp + exp_earned_online;
-        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId)}, { $set: { exp: newExp } });
+        let newWins = play1Db.wins + 1;
+        let newLosses = play2Db.losses + 1;
+        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId)}, { $set: { exp: newExp, wins:newWins } });
         let newExp2 = play2Db.exp + ex_earned_online_looser;
-        await db.collection('users').updateOne({ _id: new ObjectId(player2.userId) }, { $set: { exp: newExp2 } });
+        await db.collection('users').updateOne({ _id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses: newLosses } });
 
     }
     else{
-        let newExp = play1Db.exp + exp_earned_bot;
-        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId) }, { $set: { exp: newExp } });
-        let newExp2 = play2Db.exp + ex_earned_bot_looser;
-        await db.collection('users').updateOne({_id: new ObjectId(player2.userId) }, { $set: { exp: newExp2 } });
+        let newExp = play1Db.exp + ex_earned_online_looser;
+        let newWins = play2Db.wins + 1;
+        let newLosses = play1Db.losses + 1;
+        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId) }, { $set: { exp: newExp, wins :newWins } });
+        let newExp2 = play2Db.exp + exp_earned_online;
+        await db.collection('users').updateOne({_id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses:newLosses } });
     }
     manageLvl(play1Db.token);
     manageLvl(play2Db.token);
@@ -97,8 +101,45 @@ async function manageLvl(token) {
     }
 }
 
+async function checkAchievements(token) {
+    try {
+        await client.connect();
+        const db = client.db();
+        const user = await db.collection('users').findOne({ token });
+        if (!user) {
+            return { success: false, message: 'User not found' };
+        }
+        console.log('User achievements : ', user);
+        // Récupérer les succès de l'utilisateur
+        const achievements = user.achievements;
+
+        // Vérifier si l'utilisateur a déjà débloqué l'achievement
+        if (!achievements.includes('first_win.png')) {
+            // Vérifier si l'utilisateur a gagné une partie
+            if (user.wins > 0) {
+                // Mettre à jour les succès de l'utilisateur
+                await db.collection('users').updateOne({ token }, { $push: { achievements: 'first_win.png' } });
+                return { success: true, message: 'Achievement unlocked: First Win' };
+            }
+        }
+        if(!achievements.includes('tu_fais_le_fou.jpg')){
+            if (user.wins > 9) {
+                // Mettre à jour les succès de l'utilisateur
+                await db.collection('users').updateOne({ token }, { $push: { achievements: 'tu_fais_le_fou.jpg' } });
+                return { success: true, message: 'Achievement unlocked: tu fais le fou' };
+            }
+        }
+
+        return { success: true, message: 'No new achievements unlocked' };
+    } catch (error) {
+        console.error('Error checking achievements of player', error);
+        return { success: false, message: 'Error checking achievements of player' };
+    }
+}
+
 
 module.exports = {
     addExpToPlayerWithBot,
-    manageEndGameUser
+    manageEndGameUser,
+    checkAchievements
 };

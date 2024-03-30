@@ -21,8 +21,15 @@ class dbController {
 
         // Peuplement des achievements
         const achievements = [
-            { _id: 'firstWin', name: 'Première Victoire', description: 'Gagner votre première partie de Quoridor.', imagePath: '/achievements/firstWin.png' },
-            { _id: 'quoridorMaster', name: 'Maître de Quoridor', description: 'Gagner 100 parties de Quoridor.', imagePath: '/achievements/quoridorMaster.png' }
+            { _id: 'first_win.png', name: 'Première Victoire', description: 'Gagner votre première partie de Quoridor.', imagePath: 'achievements/first_win.png' },
+            {_id: "tu_fais_le_fou.jpg", name: "Tu fais le fou", description: "Gagner une partie en utilisant 10 murs", imagePath: "achievements/tu_fais_le_fou.jpg"},
+            { _id: 'quoridorMaster', name: 'Maître de Quoridor', description: 'Gagner 100 parties de Quoridor.', imagePath: 'achievements/maitre_quoridor.png' },
+            {_id : "speedMaster", name: "Maître de la Rapidité", description: "Gagner 10 parties en moins de 5 minutes", imagePath: "achievements/speed_master.png"},
+            {_id : "strategist", name: "Stratège", description: "Gagner 10 parties en plus de 15 minutes", imagePath: "achievements/strategic_genius.png"},
+            {_id : "wallMaster", name: "Maître des Murs", description: "Gagner 10 parties en bloquant l'adversaire avec un mur", imagePath: "achievements/fortress_defender.png"},
+            {_id : "pathMaster", name: "Maître des Chemins", description: "Gagner 10 parties en bloquant l'adversaire avec votre pion", imagePath: "achievements/pathfinder.png"},
+            {_id : "quickThinker", name: "Penseur Rapide", description: "Gagner 10 parties en moins de 10 minutes", imagePath: "achievements/quick_thinker.png"},
+            {_id : "moonWalker", name: "MoonWalk d'MJ", description: "Gagner 10 parties en sautant par-dessus l'adversaire", imagePath: "achievements/moonwalk.png"},
         ];
         for (const achievement of achievements) {
             await db.collection('achievements').updateOne({ _id: achievement._id }, { $setOnInsert: achievement }, { upsert: true });

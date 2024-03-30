@@ -25,6 +25,8 @@ function signup(req, res, db) {
                 lvl: 0,
                 exp: 0,
                 elo: 0,
+                wins: 0,
+                losses: 0,
                 trophies: 0,
                 skins: { current: 'defaultSkin', owned: ['defaultSkin'] },
                 emotes: ['defaultEmote'],
