@@ -188,7 +188,7 @@ module.exports = (io, socket) => {
             let winner = response;
             let looser = (winner === 1) ? 2 : 1;
             let tokenPlayer1 = dataParse.token;
-            addExpToPlayerWithBot(dataParse.token,withBot);
+            addExpToPlayerWithBot(dataParse.token,withBot, winner);
             updateWinnerAndLooserBot(dataParse.gameId,winner);
         }
         socket.emit('checkWinnerResponse',response);

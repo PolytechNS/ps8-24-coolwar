@@ -117,11 +117,38 @@ module.exports = (server) => {
             }
         });
 
-        // socket.on('joinGame', () => {
-        //     let responseBoolean = gameController.join()
-        //
-        //     socket.emit('placewallResponse',responseBoolean);
-        // });
+        // Récupérer les succès de l'utilisateur
+        socket.on('get all achievements', async (data) => {
+            try {
+                await client.connect();
+                const db = client.db();
+                console.log('Received request to get all achievements:', data);
+
+                // Récupération de l'utilisateur basé sur le token fourni
+                let userToken = JSON.parse(data);
+                let user = await db.collection('users').findOne({ token: userToken });
+
+                // Récupération de tous les achievements de la base de données
+                let allAchievements = await db.collection('achievements').find({}).toArray();
+
+                // Marquage des achievements comme visibles ou non pour l'utilisateur
+                let achievementsWithVisibility = allAchievements.map(achievement => {
+                    return {
+                        ...achievement,
+                        isVisible: user.achievements.includes(achievement._id)
+                    };
+                });
+
+                console.log('User achievements with visibility: ', achievementsWithVisibility);
+
+                // Envoi des achievements avec l'indicateur isVisible au client
+                socket.emit('get all achievements response', JSON.stringify(achievementsWithVisibility));
+            } catch (error) {
+                console.error('Error getting all achievements', error);
+                socket.emit('get all achievements response', JSON.stringify({ success: false }));
+            }
+        });
+
 
     });
 

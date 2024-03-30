@@ -21,8 +21,9 @@ class dbController {
 
         // Peuplement des achievements
         const achievements = [
-            { _id: 'firstWin', name: 'Première Victoire', description: 'Gagner votre première partie de Quoridor.', imagePath: '/achievements/firstWin.png' },
-            { _id: 'quoridorMaster', name: 'Maître de Quoridor', description: 'Gagner 100 parties de Quoridor.', imagePath: '/achievements/quoridorMaster.png' }
+            { _id: 'first_win.png', name: 'Première Victoire', description: 'Gagner votre première partie de Quoridor.', imagePath: 'achievements/first_win.png' },
+            {_id: "tu_fais_le_fou.jpg", name: "Tu fais le fou", description: "Gagner une partie en utilisant 10 murs", imagePath: "achievements/tu_fais_le_fou.jpg"},
+            { _id: 'quoridorMaster', name: 'Maître de Quoridor', description: 'Gagner 100 parties de Quoridor.', imagePath: 'achievements/maitre_quoridor.png' }
         ];
         for (const achievement of achievements) {
             await db.collection('achievements').updateOne({ _id: achievement._id }, { $setOnInsert: achievement }, { upsert: true });

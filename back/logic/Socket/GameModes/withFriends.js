@@ -13,7 +13,7 @@ const {setUpPositionRealBot, createGameDb,
     updateWallsAndVisibilityFromBd
 } = require("../../Controller/gameController");
 const {verifyMessage} = require("../../Controller/Chat/chatController");
-const {addExpToPlayerWithBot,manageEndGameUser} = require("../../Controller/userController");
+const {addExpToPlayerWithBot,manageEndGameUser,checkAchievements} = require("../../Controller/userController");
 
 
 
@@ -272,11 +272,17 @@ module.exports = (io, socket) => {
         let actionController = games.get(dataParse.gameId).actionController;
         let response = actionController.checkWinner();
         if(response !==-1){
+            console.log("GAME FINISHED");
             let winner = response;
             let looser = (winner === 1) ? 2 : 1;
             manageEndGameUser(dataParse.gameId,winner,looser);
             updateWinnerAndLooser(dataParse.gameId,winner);
+            checkAchievements(games.get(dataParse.gameId).player1Token);
+            //faudrait que ça retourne ls achievements du joueur 1
+            checkAchievements(games.get(dataParse.gameId).player2Token);
 
+            //ensuite on emit la réponse des achievements
+            //Et cote front on a une méthode dans l'indexFriends qui va écouter cette réponse et afficher les achievements sur une pop up
 
 
         }

@@ -7,11 +7,25 @@ import {config} from "../../../Utils/config.js";
 import {withFriendsGameService} from "../../../Services/Games/WithFriends/withFriendsGameService.js";
 
 import {ChatService} from "../../../Services/Chat/chatService.js";
+import {userService} from "../../../Services/User/userService.js";
 
 let model = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Assurez-vous que le token est disponible
+    const token = localStorage.getItem('token');
+    if (!socketManager.isSocketInitialized(token)) {
+        socketManager.initializeSocket(token);
+    }
+    if (token) {
+        userService.getUserInfo((userInfo) => {
+            console.log("PROFILE USER info", userInfo);
+            if(userInfo.achievements.includes("tu_fais_le_fou.jpg")){
+                insertSoundCloudPlayer();
+            }
+        });
+    } else {
+        console.error("No token found. Please log in.");
+    }
 
 });
 
@@ -29,6 +43,7 @@ window.onload = function () {
 
         withFriendsGameService.waitForOpponent((gameInfo) => {
             console.log('Opponent found:', gameInfo);
+
 
             const token = localStorage.getItem('token');
             if (token) {
@@ -52,6 +67,29 @@ window.onload = function () {
         // Redirigez l'utilisateur vers la page de connexion si nécessaire
     }
 }
+
+function insertSoundCloudPlayer() {
+    const soundCloudContainer = document.getElementById('soundcloud-container');
+    if (soundCloudContainer) {
+        const playerHtml = `
+            <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1788018703%3Fsecret_token%3Ds-uqqvuwf8xj5&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+            <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+                <a href="https://soundcloud.com/leomendesmusic" title="leomendesmusic" target="_blank" style="color: #cccccc; text-decoration: none;">leomendesmusic</a> · 
+                <a href="https://soundcloud.com/leomendesmusic/drip-man-tu-fais-le-fou-vella-ps8/s-uqqvuwf8xj5" title="Drip Man - Tu fais le fou (Vella PS8)" target="_blank" style="color: #cccccc; text-decoration: none;">Drip Man - Tu fais le fou (Vella PS8)</a>
+            </div>
+        `;
+        soundCloudContainer.innerHTML = playerHtml;
+    }
+
+    const leftColumn = document.querySelector('.left');
+    // Vérifiez que leftColumn n'est pas null
+    if (leftColumn) {
+        const soundCloudContainer = document.createElement('div');
+        soundCloudContainer.innerHTML = playerHtml;
+        leftColumn.insertBefore(soundCloudContainer, leftColumn.firstChild);
+    }
+}
+
 
 export function getGlobalPresenter() {
     return globalPresenter;

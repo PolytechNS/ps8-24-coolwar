@@ -17,6 +17,24 @@ main{
     align-items: center;
 }
 
+.left{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the top */
+    align-items: center; /* Center items horizontally */
+    width: 250px; /* Set a fixed width for the sidebar */
+    height: 100vh; /* Full height of the viewport */
+    overflow-y: auto; /* Enable scrolling if content is too long */
+}
+/* Add styles for the SoundCloud container */
+.soundcloud-container {
+    /* Assurez-vous que cette classe n'affecte pas la grille */
+    width: 300px; /* Ou la largeur souhaitée pour le lecteur SoundCloud */
+    margin: 70px 0; /* Alignez-le verticalement avec la grille */
+    /* Autres styles au besoin */
+}
+
+
 .playable_square{
     height: 60px;
     width: auto;
@@ -58,11 +76,6 @@ p{
     margin: 0;
 }
 
-.left{
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-}
 
 .walls{
     display: flex;
