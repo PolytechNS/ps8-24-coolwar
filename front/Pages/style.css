@@ -86,12 +86,12 @@ button{
 .user{
     display: flex;
     flex-direction: row;
-    background-color: #fff;
+    background-color: rgba(253, 253, 253, 0.6);
     color: black;
     font-size: 30px;
     align-items: center;
     position: absolute;
-    right: 1.15%;
+    right: 1.20%;
 }
 
 .nameAndLogout{
@@ -124,4 +124,98 @@ button{
 .level{
     max-height: 120px;
     margin: 10px;
+}
+
+.tank {
+    width: 150px;
+    height: 80px;
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.body {
+    width: 100px;
+    height: 60px;
+    background-color: #22341A;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.turret {
+    width: 60px;
+    height: 20px;
+    background-color: #22341A;
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-100%, -50%);
+    z-index: 2;
+}
+
+.bullet {
+    width: 5px;
+    height: 5px;
+    background-color: lightgreen;
+    position: absolute;
+}
+
+
+
+
+.level-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+
+}
+
+.level-circle {
+    border-radius: 50%;
+    width: 70px; /* Diameter of the circle */
+    height: 70px; /* Diameter of the circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: 6px solid green; /* Border color of the level circle */
+    margin-top: 10px;
+}
+
+.level-number {
+    color: black; /* Text color for the level number */
+    font-size: 1.5rem; /* Size of the level number */
+    font-weight: bold;
+}
+
+.level-progress-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.level-range, .level-points {
+    font-size: 0.8rem;
+    color: black; /* Text color for the level range and points */
+}
+
+.progress-bar {
+    width: 100px; /* Width of the progress bar */
+    height: 20px; /* Height of the progress bar */
+    background-color: #555; /* Background color of the progress bar */
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: green; /* Fill color of the progress bar */
+    border-radius: 10px;
 }
