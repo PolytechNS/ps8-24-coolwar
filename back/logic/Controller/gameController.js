@@ -101,11 +101,12 @@ async function updateWinnerAndLooser(gameId,winner,looser) {
 async function updateWinnerAndLooserBot(gameId, winner) {
     await client.connect();
     const db = client.db();
+    console.log("update winner and looser bot");
     let gameBoard = await db.collection('gameboards').findOne({ gameId: new ObjectId(gameId) });
     let players = await db.collection('character').find({gameBoardId: gameBoard._id}).toArray();
     let player1 = players.find(player => player.currentPlayerIndex === 1);
     let player2 = players.find(player => player.currentPlayerIndex === 2);
-    let play1Db = await db.collection('users').findOne({token: player1.token});
+    let play1Db = await db.collection('users').findOne({_id: new ObjectId(player1.userId)});
     let play2Db = "bot";
     if(winner === 1){
         await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { winner: play1Db._id, looser: play2Db} });
