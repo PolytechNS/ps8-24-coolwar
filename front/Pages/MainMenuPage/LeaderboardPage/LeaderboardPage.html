@@ -16,11 +16,28 @@
         <div class="nameAndLogout">
             <p class="username">Nom</p>
             <a href="../../Login/login.html">
-                <button class="logout" >Logout</button>
-
+                <button class="logout">Logout</button>
             </a>
         </div>
-        <img class="level" src="../../../assets/level.png">
+        <!-- Début de la section de niveau d'utilisateur modifiée -->
+        <div class="level-container">
+            <div class="level-circle">
+                <span class="level-number">42</span>
+            </div>
+            <div class="level-progress-info">
+                <div class="level-range">
+                    <span class="current-level">42</span> → <span class="next-level">43</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: 70%;"></div>
+                </div>
+                <div class="level-points">
+                    <span class="current-exp">700</span> / <span class="next-level-exp">1000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fin de la section de niveau d'utilisateur modifiée -->
     </div>
 </header>
 <main class="grid">

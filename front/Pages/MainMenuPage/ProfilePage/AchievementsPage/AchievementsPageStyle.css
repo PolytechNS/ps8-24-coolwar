@@ -59,7 +59,7 @@ p{
     max-height: 120px;
     max-width: 120px;
     display: block; /* Pour centrer l'image à l'intérieur de son conteneur */
-    margin: 0 auto; /* Pour centrer l'image horizontalement */
+    margin: 0 auto 10px;
 }
 
 .achievementName{
@@ -86,7 +86,7 @@ p{
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.21);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .popup-content {
@@ -101,6 +101,7 @@ p{
     align-items: center;
     text-align: center;
     color: #000;
+    z-index: 2;
 }
 
 .popup-image {
