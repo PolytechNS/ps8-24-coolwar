@@ -113,6 +113,12 @@ function displayUnlockedAchievements(achievements) {
         const alertContainer = document.createElement('div');
         alertContainer.classList.add('achievement-alert');
 
+        // Create a close button
+        const closeButton = document.createElement('button');
+        closeButton.textContent = '×';
+        closeButton.classList.add('close-button');
+        closeButton.onclick = () => document.body.removeChild(alertContainer);
+
         // Create the image element
         const achievementImage = document.createElement('img');
 
@@ -130,17 +136,11 @@ function displayUnlockedAchievements(achievements) {
         achievementDescription.textContent = achievement.description;
         achievementDescription.classList.add('achievement-description');
 
-        // Create a close button
-        const closeButton = document.createElement('button');
-        closeButton.textContent = '×';
-        closeButton.classList.add('close-button');
-        closeButton.onclick = () => document.body.removeChild(alertContainer);
-
         // Append elements to the container
+        alertContainer.appendChild(closeButton);
         alertContainer.appendChild(achievementImage);
         alertContainer.appendChild(achievementName);
         alertContainer.appendChild(achievementDescription);
-        alertContainer.appendChild(closeButton);
 
         // Append the container to the body
         document.body.appendChild(alertContainer);
@@ -156,7 +156,7 @@ function displayUnlockedAchievements(achievements) {
 
 function insertSoundCloudPlayer() {
     const soundCloudContainer = document.getElementById('soundcloud-container');
-    if (soundCloudContainer) {
+    if (true) {
         const playerHtml = `
             <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1788018703%3Fsecret_token%3Ds-uqqvuwf8xj5&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
             <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
@@ -209,18 +209,29 @@ if (chatInputEl) {
 
 // Attendre que le DOM soit complètement chargé avant de rechercher et de manipuler les éléments
 document.addEventListener('DOMContentLoaded', () => {
-    const chatBox = document.querySelector('.chatBox');
+    const chatBoxWrapper = document.getElementById('chatWrapper');
     const chatBoxToggle = document.querySelector('.chatBoxToggle');
+    const chatPlaceholder = document.querySelector('.chatPlaceholder');
+    const chatBox = document.querySelector('.chatBox');
 
     if (chatBoxToggle) {
         chatBoxToggle.addEventListener('click', () => {
             if (chatBox) {
                 chatBox.classList.toggle('closed');
+                chatPlaceholder.style.display = 'block';
                 console.log("click chatbox");
             }
         });
     }
+
+    if (chatPlaceholder) {
+        chatPlaceholder.addEventListener('click', () => {
+            chatBox.classList.remove('closed');
+            chatPlaceholder.style.display = 'none';
+        });
+    }
 });
+
 
 
 

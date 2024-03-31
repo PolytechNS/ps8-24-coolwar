@@ -54,9 +54,9 @@ export class BoardGrid{
         document.getElementById('validateTurn').addEventListener('click', function(e) {
             document.getElementById('modal').style.display = 'block'
         });
-        document.getElementById('modalClose').addEventListener('click', function(e) {
-            document.getElementById('modal').style.display = 'none'
-        });
+        //document.getElementById('modalClose').addEventListener('click', function(e) {
+        //    document.getElementById('modal').style.display = 'none'
+        //});
     }
 
     //affiche le personnage sur une case jouable
@@ -72,7 +72,7 @@ export class BoardGrid{
     updateCharacterPosition(row, col, id){
 
         //il faudrait find la case qui a le background image /perso2.png et lui enlever le background image
-        
+
         let items = document.getElementsByClassName('playable_square');
         for(let i=0;i<items.length;i++){
             if(items.item(i).style.backgroundImage.includes('perso'+id+'.png')){

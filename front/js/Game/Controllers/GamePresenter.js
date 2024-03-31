@@ -218,6 +218,7 @@ export class GamePresenter {
             }
         });
     }
+
     sendUpdateToBack() {
         let informationsData = [this.model.typeGame,this.model.currentPlayer,this.model.gameId];
         actionGameService.updateGameModel(informationsData,(newModel)=>{
@@ -284,9 +285,9 @@ export class GamePresenter {
             for(let i=0;i<this.model.playable_squares.length;i++){
                 let backSquare = this.model.playable_squares[i];
                 if(parseInt(backSquare.position.row)===parseInt(position[0]) && parseInt(backSquare.position.col)===parseInt(position[1])) {
-                    playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
-                    playable_case.style.color = "white";
-                    if(backSquare.visibility <=0 && this.model.currentPlayer === 1){
+                    //playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
+                    //playable_case.style.color = "white";
+                    if(backSquare.visibility <=0 && this.model.currentPlayer === 1) {
                         playable_case.style.backgroundColor = "#22341A";
                     }
                     if(backSquare.visibility >= 0 && this.model.currentPlayer === 2){

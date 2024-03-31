@@ -41,9 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatBox = document.querySelector('.chatBox');
     const chatBoxToggle = document.querySelector('.chatBoxToggle');
 
-    chatBoxToggle.addEventListener('click', () => {
-        chatBox.classList.toggle('closed');
-        console.log("click chatbox");
-    });
+    if (chatBoxToggle) {
+        console.log(chatBoxToggle); // Vérifier si l'élément chatBoxToggle est correctement sélectionné
+        chatBoxToggle.addEventListener('click', () => {
+            if (chatBox) {
+                chatBox.classList.toggle('closed');
+                console.log("click chatbox");
+            }
+        });
+    }
 });
 

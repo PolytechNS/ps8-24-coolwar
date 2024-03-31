@@ -25,34 +25,37 @@
       <div class="modal" id="modal">
         <div class="modal-back"></div>
         <div class="modal-container">
-          GamePlayer<br />
-          Your turn<br />
-          Ready ?<br />
-          <button id="modalClose">Play</button>
+          <div class="loader">
+            <h1>LOADING</h1>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="PlayerID">
-      <p id="playerID"></p>
-    </div>
-
-    <div>
-      <div class="walls">
-        <img src="../../datas/horizontal_wall_texture.png" class="wall"/>
-        <p id="nbWallsLeft"></p>
+    <div class="infos">
+      <div class="PlayerID">
+        <p id="playerID"></p>
       </div>
 
-      <div class="validate">
-        <img id="validateTurn"/>
-        <img/>
-        <img/>
+      <div>
+        <div class="walls">
+          <img src="../../datas/horizontal_wall_texture.png" class="wall"/>
+          <p id="nbWallsLeft"></p>
+        </div>
+
+        <div class="validate">
+          <img id="validateTurn"/>
+          <img/>
+          <img/>
+        </div>
+      </div>
+
+      <div class="soundcloud-container" id="soundcloud-container">
+        <!-- Le lecteur SoundCloud sera inséré ici -->
       </div>
     </div>
-  </div>
-
-  <div class="soundcloud-container" id="soundcloud-container">
-    <!-- Le lecteur SoundCloud sera inséré ici -->
   </div>
 
   <div id="plate" class="plate"></div>
@@ -66,13 +69,15 @@
       <div id="winner"></div>
     </div>
 
-    <div class="chatBox"></div>
   </div>
-  <div class="chatBox">
-    <div class="chatBoxToggle">✖</div> <!-- Ajoutez cette ligne -->
-    <div class="chatMessages" id="chatMessages"></div>
-    <input type="text" id="chatInput" placeholder="Type a message..." />
-    <button id="sendChat">Send</button>
+  <div id="chatWrapper" class="chatWrapper">
+    <div id="chatPlaceholder" class="chatPlaceholder">Chat</div>
+    <div class="chatBox closed">
+      <div class="chatBoxToggle">✖</div>
+      <div class="chatMessages" id="chatMessages"></div>
+      <input type="text" id="chatInput" placeholder="Type a message..." />
+      <button id="sendChat">Send</button>
+    </div>
   </div>
 </main>
 

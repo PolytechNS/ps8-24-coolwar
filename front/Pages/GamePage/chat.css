@@ -1,8 +1,25 @@
+.chatWrapper {
+    position: relative;
+}
+
+.chatPlaceholder {
+    position: absolute;
+    bottom: 10px; /* Adjust based on your layout */
+    right: 10px; /* Adjust based on your layout */
+    width: 250px; /* Adjust based on your preference */
+    background-color: #45a049;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
 .chatBox {
     background-color: #f3f3f3;
     border: 1px solid #d3d3d3;
     border-radius: 5px;
-    padding: 10px;
+    padding: 30px 10px 10px;
     position: absolute;
     bottom: 10px; /* Adjust based on your layout */
     right: 10px; /* Adjust based on your layout */
@@ -51,7 +68,7 @@
     color: red;
 }
 
-.chatBox.closed {
+.closed {
     display: none; /* Cela cache la chatBox */
 }
 
