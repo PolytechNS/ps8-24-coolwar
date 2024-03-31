@@ -13,9 +13,10 @@ async function startServer() {
         console.log('Connecté à la base de données MongoDB');
 
         const db = client.db(); // Ajoutez la logique nécessaire pour utiliser 'db'
+        await dbController.populateDb(db);
+
         const server = http.createServer((req, res) => {
           // Vous pouvez passer 'db' à mainRouter si nécessaire
-            dbController.populateDb(db);
             mainRouter.handle(req, res, db);
 
         });

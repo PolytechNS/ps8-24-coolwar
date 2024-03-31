@@ -17,173 +17,235 @@ const {addExpToPlayerWithBot,manageEndGameUser,checkAchievements} = require("../
 
 
 
-
+/*
 const games = new Map();
 const waitingPlayers = new Map(); // Clé : token de l'utilisateur, Valeur : ID de la room
 const socketIds = new Map(); // Nouvelle map pour stocker les ID des sockets des joueurs
 
 
-module.exports = (io, socket) => {
-    socket.on('joinGameWithFriends', async (token) => {
-        if (!token) return;
-        const tokenParsed = JSON.parse(token).token;
-        let roomId;
+ */
+
+// Variables globales pour la gestion des rooms et des joueurs
+const games = new Map();
+const waitingPlayersForInstantGame = new Map();
+const waitingRoomsForFriends = new Map();
+const socketIds = new Map();
+
+
+
+
+async function joinInstantGame(io, socket, tokenParsed) {
+    // Recherche d'un joueur en attente
+    const opponentToken = [...waitingPlayersForInstantGame.keys()].find(t => t !== tokenParsed);
+
+    if (opponentToken) {
+        // Un adversaire est trouvé, préparation de la partie
+        const opponentSocketId = waitingPlayersForInstantGame.get(opponentToken);
+        const roomId = `instant_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+        // Faire rejoindre le socket actuel à la room
+        socket.join(roomId);
+        socketIds.set(tokenParsed, socket.id);
+        // Trouver le socket de l'adversaire et le faire rejoindre la room
+        const opponentSocket = io.sockets.sockets.get(opponentSocketId);
+        opponentSocket.join(roomId);
+
+        // Continuer avec la logique de mise en place de la partie...
+        const playerTokens = [tokenParsed, opponentToken];
+        const playersSocketIds = [socket.id, opponentSocketId];
+
+        let gamesToSend = await createGame(roomId, playerTokens, playersSocketIds);
+        if (!gamesToSend) {
+            console.log("error creating game");
+            return;
+        }
+
+        io.to(socket.id).emit('opponentFound', JSON.stringify(gamesToSend.gamePlayerOne));
+        io.to(opponentSocketId).emit('opponentFound', JSON.stringify(gamesToSend.gamePlayerTwo));
+
+        // Nettoyer
+        waitingPlayersForInstantGame.delete(tokenParsed);
+        waitingPlayersForInstantGame.delete(opponentToken);
+    } else {
+        // Aucun adversaire trouvé, mise en attente du joueur
+        waitingPlayersForInstantGame.set(tokenParsed, socket.id);
+        socketIds.set(tokenParsed, socket.id);
+
+    }
+}
+
+async function createGame(roomId,playerTokens, playersSocketIds){
+
+    try {
         await client.connect();
         const db = client.db();
+        let player1Token = playerTokens[0];
+        let player2Token = playerTokens[1];
+        let player1SocketId = playersSocketIds[0];
+        let player2SocketId = playersSocketIds[1];
 
-        // Trouvez une salle avec exactement un joueur
-
-        socket.emit('test',socket.id);
-
-
-
-
-        const existingRoomId = Array.from(waitingPlayers.values()).find(roomId => io.sockets.adapter.rooms.get(roomId)?.size === 1);
-        console.log("existingRoomId",existingRoomId);
-        if (existingRoomId) {
-            roomId = existingRoomId;
-            socket.join(roomId);
-
-            // Enregistrer l'ID de la socket pour chaque joueur
-            socketIds.set(tokenParsed, socket.id);
-
-            // Récupérer les tokens et les ID de socket des deux joueurs
-            const entries = [...waitingPlayers.entries()]; // récupérer les entrées de la map
-
-            const player1Entry = entries.find(([_, rId]) => rId === existingRoomId);// Récupérer l'entrée correspondant à la salle
-            const player1Token = player1Entry ? player1Entry[0] : null; //si l'entrée existe, récupérer le token
-            const player1SocketId = player1Token ? socketIds.get(player1Token) : null; // Récupérer l'ID de la socket du premier joueur
-            const player2Token = tokenParsed;
-            const player2SocketId = socket.id; // L'ID de la socket du joueur actuel
-
-            //afficher les socket id des 2 joueurs
-            console.log("socket dans socketIds",socketIds);
-            if (player1Token && player2Token && player1SocketId && player2SocketId && player1Token !== player2Token) {
-                // Les vérifications sont passées, continuez avec la logique du jeu
-            } else {
-                console.error("Invalid tokens or socket IDs for the players.");
-                return;
+        let playersInfo = [];
+        for (const token of playerTokens) {
+            const userInfo = await db.collection('users').findOne({ token: token });
+            if (userInfo) {
+                playersInfo.push(userInfo);
             }
-            // Vérifiez si les deux tokens sont disponibles
-            if (player1Token && player2Token && player1Token !== player2Token) {
-                //permet de vérifier si les token sont bien récupérés et sont différents
-            } else {
-                // Gérez le cas où les tokens ne sont pas correctement récupérés ou sont identiques
-                console.error("Invalid tokens for the players.");
-                return;
-            }
-
-            // Supprimer les tokens de la liste d'attente
-            waitingPlayers.delete(player1Token);
-            waitingPlayers.delete(player2Token);
-
-            const playerTokens = [player1Token, player2Token];
-
-            try {
-                await client.connect();
-                const db = client.db();
-
-                let playersInfo = [];
-                for (const token of playerTokens) {
-                    const userInfo = await db.collection('users').findOne({ token: token });
-                    console.log("userInfo : ", userInfo);
-                    if (userInfo) {
-                        playersInfo.push(userInfo);
-                    }
-                }
-
-                if (playersInfo.length === 2) {
-                    const user = await db.collection('users').findOne({token: tokenParsed});
-                    const newGame = await db.collection('games').insertOne({
-                        fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
-                        creator_id: user.username, // ID de l'utilisateur qui a créé la partie
-                        typeGame: 'withFriends', // Type de partie
-                        game_name: 'New Game' // Nom de la partie, peut-être fourni par l'utilisateur
-                    });
-                    const gameId = newGame.insertedId;
-
-                    let config = {
-                        typeGame: 'withFriends',
-                    }
-                    // Créer un nouveau GameModel
-                    let gameModel = new GameModel(config);
-
-                    let actionController = new ActionController(gameModel);
-
-
-                    // Stocker l'instance de GameModel dans la map
-                    games.set(gameId.toString(), {gameModel, actionController,roomId,player1Token,player2Token });
-
-                    // Persister le plateau de jeu
-                    let gameBoardId = await createGameDb(gameId, playersInfo, gameModel, db); // puis on fournit les token des 2 users pour pouvoir persister leur index dans la db
-                    let characters =await retrieveCharacterFromDb(db,gameBoardId);
-
-                    //envoyer les informations de la partie aux joueurs via une fonction où y'a la socket id en paramètre, gameId et gameModel
-                    console.log("envoie à player1SocketId : ", player1SocketId);
-                    // Envoyer les informations de la partie aux joueurs
-                    io.to(player1SocketId).emit('opponentFound', JSON.stringify({
-                        gameId: gameId, // ID de la partie
-                        gameBoardId: gameBoardId, // ID du plateau de jeu
-                        nbLignes: gameModel.nbLignes, // Nombre de lignes
-                        nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                        player_array: gameModel.player_array.getAllPlayers(),
-                        horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
-                        vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                        playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
-                        currentPlayer: gameModel.currentPlayer,
-                        roundCounter: gameModel.roundCounter,
-                        winner: gameModel.winner,
-                        typeGame: gameModel.typeGame,
-                        roomId: roomId,
-                        test:"pla1",
-                        socketId: player1SocketId,
-                        ownIndexPlayer: characters[0].currentPlayerIndex
-                    }));
-                    console.log("envoie à player2SocketId : ", player2SocketId);
-
-                    io.to(player2SocketId).emit('opponentFound', JSON.stringify({
-                        gameId: gameId, // ID de la partie
-                        gameBoardId: gameBoardId, // ID du plateau de jeu
-                        nbLignes: gameModel.nbLignes, // Nombre de lignes
-                        nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                        player_array: gameModel.player_array.getAllPlayers(),
-                        horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
-                        vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                        playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
-                        currentPlayer: gameModel.currentPlayer,
-                        roundCounter: gameModel.roundCounter,
-                        winner: gameModel.winner,
-                        typeGame: gameModel.typeGame,
-                        roomId: roomId,
-                        test:"pla2",
-                        socketId: player2SocketId,
-                        ownIndexPlayer: characters[1].currentPlayerIndex
-                    }));
-
-
-                }
-
-            } catch (error) {
-                console.error('Error setting up game for friends', error);
-                // Gérer l'erreur
-            }
-        } else {
-            roomId = `room_${Date.now()}_${Math.random().toString(36).substr(2, 9)}_${socket.id}`;
-            console.log("roomId CREE",roomId);
-            socket.join(roomId);
-            waitingPlayers.set(tokenParsed, roomId);
-            socketIds.set(tokenParsed, socket.id); // Enregistrer l'ID de la socket lors de la mise en attente
         }
+
+        if (playersInfo.length === 2) {
+            const user = await db.collection('users').findOne({token: player1Token});
+            const newGame = await db.collection('games').insertOne({
+                fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
+                creator_id: user.username, // ID de l'utilisateur qui a créé la partie
+                typeGame: 'withFriends', // Type de partie
+                game_name: 'New Game' // Nom de la partie, peut-être fourni par l'utilisateur
+            });
+            const gameId = newGame.insertedId;
+
+            let config = {
+                typeGame: 'withFriends',
+            }
+            // Créer un nouveau GameModel
+            let gameModel = new GameModel(config);
+
+            let actionController = new ActionController(gameModel);
+
+
+            // Stocker l'instance de GameModel dans la map
+            games.set(gameId.toString(), {gameModel, actionController,roomId,player1Token,player2Token });
+
+            // Persister le plateau de jeu
+            let gameBoardId = await createGameDb(gameId, playersInfo, gameModel, db); // puis on fournit les token des 2 users pour pouvoir persister leur index dans la db
+            let characters =await retrieveCharacterFromDb(db,gameBoardId);
+
+            //envoyer les informations de la partie aux joueurs via une fonction où y'a la socket id en paramètre, gameId et gameModel
+            console.log("envoie à player1SocketId : ", player1SocketId);
+
+            let gamePlayerOne = {
+                gameId: gameId, // ID de la partie
+                gameBoardId: gameBoardId, // ID du plateau de jeu
+                nbLignes: gameModel.nbLignes, // Nombre de lignes
+                nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
+                player_array: gameModel.player_array.getAllPlayers(),
+                horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
+                vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
+                playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                currentPlayer: gameModel.currentPlayer,
+                roundCounter: gameModel.roundCounter,
+                winner: gameModel.winner,
+                typeGame: gameModel.typeGame,
+                roomId: roomId,
+                test:"pla1",
+                socketId: player1SocketId,
+                ownIndexPlayer: characters[0].currentPlayerIndex
+            };
+            let gamePlayerTwo = {
+                gameId: gameId, // ID de la partie
+                gameBoardId: gameBoardId, // ID du plateau de jeu
+                nbLignes: gameModel.nbLignes, // Nombre de lignes
+                nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
+                player_array: gameModel.player_array.getAllPlayers(),
+                horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
+                vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
+                playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                currentPlayer: gameModel.currentPlayer,
+                roundCounter: gameModel.roundCounter,
+                winner: gameModel.winner,
+                typeGame: gameModel.typeGame,
+                roomId: roomId,
+                test:"pla2",
+                socketId: player2SocketId,
+                ownIndexPlayer: characters[1].currentPlayerIndex
+            };
+            return {gamePlayerOne,gamePlayerTwo};
+        }
+
+
+    } catch (error) {
+        console.error('Error setting up game for friends', error);
+        // Gérer l'erreur
+    }
+
+}
+
+async function joinGameWithFriend(io, socket, token) {
+    // Implementation for "waitingForFriends" mode
+    const roomId = `friend_${token}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    waitingRoomsForFriends.set(token, roomId);
+    socketIds.set(token, socket.id);
+
+    socket.join(roomId);
+
+    socket.emit('friendGameCreated', { roomId });
+    // Now, you need to handle the process by which the friend joins the room
+    // using the room ID. This could be done via another socket event.
+}
+
+
+
+module.exports = (io, socket) => {
+    socket.on('joinGameWithFriends', async (data) => {
+        let dataParse = JSON.parse(data);
+        let token = dataParse.token;
+        let gameMode = dataParse.gameMode;
+        console.log("JOIN GAME WITH FRIENDS",dataParse);
+        if (gameMode === 'playNow') {
+            joinInstantGame(io, socket, token);
+        }
+        // Jouer avec un ami
+        else if (gameMode === 'waitingForFriends') {
+            joinGameWithFriend(io, socket, token);
+        }
+
     });
 
-    socket.on('disconnect', () => {
-        // Gérer la déconnexion de l'utilisateur
-        // Vous pourriez vouloir informer l'autre joueur, ou supprimer la salle d'attente si nécessaire
-        const roomId = waitingPlayers.get(socket.handshake.query.token);
-        if (roomId) {
-            waitingPlayers.delete(socket.handshake.query.token);
-            socket.leave(roomId);
+    socket.on('disconnect', async () => {
+        // Identifier le joueur par son socket.id et le supprimer des listes d'attente
+        let foundToken;
+        for (let [token, sid] of waitingPlayersForInstantGame.entries()) {
+            if (sid === socket.id) {
+                foundToken = token;
+                break;
+            }
         }
+
+        if (foundToken) {
+            waitingPlayersForInstantGame.delete(foundToken);
+            console.log(`Player with token ${foundToken} removed from instant game waiting list.`);
+        }
+
+        // Suppression pour les joueurs en attente de jouer avec des amis
+        foundToken = undefined; // Réinitialisation de foundToken
+        for (let [token, roomId] of waitingRoomsForFriends.entries()) {
+            const room = io.sockets.adapter.rooms.get(roomId);
+            if (room && room.sockets[socket.id]) {
+                foundToken = token;
+                break;
+            }
+        }
+
+        if (foundToken) {
+            waitingRoomsForFriends.delete(foundToken);
+            console.log(`Room for playing with friends removed due to disconnect of player with token ${foundToken}.`);
+        }
+
+        // Suppression des références socketIds
+        foundToken = undefined; // Réinitialisation de foundToken
+        for (let [token, sid] of socketIds.entries()) {
+            if (sid === socket.id) {
+                foundToken = token;
+                break;
+            }
+        }
+
+        if (foundToken) {
+            socketIds.delete(foundToken);
+            console.log(`Socket ID reference removed for player with token ${foundToken}.`);
+        }
+
+        // Traitement supplémentaire pour les joueurs déjà en partie
+        // Vous devrez ajuster cette partie en fonction de la logique spécifique de votre jeu
+        // Par exemple, notifier l'autre joueur, terminer la partie, etc.
     });
 
     socket.on('moveCharacterWithFriends', async(data)=>{
@@ -315,6 +377,7 @@ module.exports = (io, socket) => {
     socket.on('updateGameModelWithFriends', async ( data ) => {
         let datas = JSON.parse(data);
         let gameId = datas[2];
+        console.log("UPDATE GAME MODEL WITH FRIENDS",datas);
         try {
             await client.connect();
             const db = client.db();

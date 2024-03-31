@@ -104,11 +104,9 @@ module.exports = (server) => {
                 // Récupérer l'ID de l'utilisateur à partir du token
                 await client.connect();
                 const db = client.db();
-                console.log('Received request to get info user:', data);
                 let userToken = JSON.parse(data);
                 //Sauvegarder l'état du jeu dans la base de données
                 let user = await db.collection('users').findOne( {token: userToken} );
-                console.log('user', user);
                 // Confirmer la sauvegarde au client
                 socket.emit('get info user response', JSON.stringify(user));
             } catch (error) {
