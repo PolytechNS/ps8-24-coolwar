@@ -1,5 +1,5 @@
 const { parseJSON } = require('../Utils/utils'); // Assurez-vous d'importer correctement
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId} = require("mongodb");
 const { MONGO_URL } = require("../Utils/constants");
 
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -222,6 +222,170 @@ async function listFriendRequests(req, res) {
     }
 }
 
+async function listGameRequest(req, res) {
+    const token = extractToken(req.headers.authorization);
+
+    try {
+        await client.connect();
+        const db = client.db();
+        const user = await db.collection('users').findOne({ token: token });
+
+        if (!user) {
+            res.writeHead(401, { 'Content-Type': 'text/plain' });
+            res.end('Unauthorized');
+            return;
+        }
+
+        // Récupérer toutes les invitations de jeu en attente pour cet utilisateur
+        const gameRequests = await db.collection('gameInvites').find({
+            'invitedUser.id': user._id,
+            status: 'pending'
+        }).toArray();
+
+        // Récupérer les IDs de jeu des invitations
+        const gameIds = gameRequests.map(request => request.gameId);
+
+        // Récupérer les noms des jeux correspondants
+        const games = await db.collection('games').find({
+            _id: { $in: gameIds.map(id =>  new ObjectId(id)) }
+        }).toArray();
+
+        // Créer un mappage de gameId à gameName
+        const gameIdToNameMap = games.reduce((acc, game) => {
+            acc[game._id.toString()] = game.game_name;
+            return acc;
+        }, {});
+
+        // Formater les invitations de jeu pour le client en incluant les noms des jeux
+        const formattedGameRequests = gameRequests.map(request => ({
+            gameId: request.gameId,
+            gameName: gameIdToNameMap[request.gameId.toString()],
+            invitingUsername: request.invitingUser.username,
+            invitedUsername: request.invitedUser.username,
+            status: request.status
+        }));
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(formattedGameRequests)); // Envoyer la liste des invitations de jeu au client
+    } catch (error) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Error fetching game requests');
+        console.error('Error fetching game requests', error);
+    } finally {
+        await client.close();
+    }
+}
+
+async function invitePlayer(req, res) {
+    parseJSON(req, async (err, data) => {
+        if (err) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Invalid JSON');
+            return;
+        }
+
+        const { token, username, gameId } = data;
+
+        try {
+            await client.connect();
+            const db = client.db();
+
+            const invitingUser = await db.collection('users').findOne({ token });
+            const invitedUser = await db.collection('users').findOne({ username });
+
+            if (!invitingUser || !invitedUser) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('User not found');
+                return;
+            }
+
+            const invitationExists = await db.collection('gameInvites').findOne({ gameId: new ObjectId(gameId), 'invitedUser.username': username });
+
+            if (invitationExists) {
+                res.writeHead(400, { 'Content-Type': 'text/plain' });
+                res.end('Game invitation already exists');
+                return;
+            }
+
+            await db.collection('gameInvites').insertOne({
+                gameId: new ObjectId(gameId),
+                invitingUser: {
+                    id: invitingUser._id,
+                    username: invitingUser.username
+                },
+                invitedUser: {
+                    id: invitedUser._id,
+                    username: invitedUser.username
+                },
+                status: 'pending'
+            });
+
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Game invitation sent successfully' }));
+        } catch (error) {
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Error sending game invitation');
+            console.error('Error sending game invitation', error);
+        } finally {
+            await client.close();
+        }
+    });
+}
+
+async function acceptGameInvitation(req, res) {
+    parseJSON(req, async (err, data) => {
+        if (err) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Invalid JSON');
+            return;
+        }
+
+        const { token, gameId } = data;
+
+        try {
+            await client.connect();
+            const db = client.db();
+
+            const user = await db.collection('users').findOne({ token });
+
+            if (!user) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('User not found');
+                return;
+            }
+
+            const gameInvite = await db.collection('gameInvites').findOne({
+                gameId: new ObjectId(gameId),
+                'invitedUser.id': user._id,
+                status: 'pending'
+            });
+
+            if (!gameInvite) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('Game invitation not found or already accepted/rejected');
+                return;
+            }
+
+            await db.collection('gameInvites').updateOne(
+                { _id: gameInvite._id },
+                { $set: { status: 'accepted' } }
+            );
+
+            // Ici, ajoutez la logique pour ajouter l'utilisateur à la partie, par exemple en le mettant à jour dans une collection 'gameParticipants'
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Game invitation accepted' , gameId:gameId}));
+        } catch (error) {
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Error accepting game invitation');
+            console.error('Error accepting game invitation', error);
+        } finally {
+            await client.close();
+        }
+    });
+}
+
+
 
 function extractToken(header) {
     if (!header) return null;
@@ -230,4 +394,4 @@ function extractToken(header) {
     return null;
 }
 
-module.exports = { listFriendRequests,sendFriendRequest, listFriends,rejectFriendRequest,acceptFriendRequest };
+module.exports = { invitePlayer,acceptGameInvitation,listGameRequest,listFriendRequests,sendFriendRequest, listFriends,rejectFriendRequest,acceptFriendRequest };

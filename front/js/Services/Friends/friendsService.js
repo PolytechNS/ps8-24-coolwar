@@ -66,7 +66,7 @@ const friendsService = {
     },
 
     sendGameRequest(gameId, username, token) {
-        return fetch(`${config.API_ENDPOINT}/api/game/invite`, {
+        return fetch(`${config.API_ENDPOINT}/api/friends/invite`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,6 +76,33 @@ const friendsService = {
         })
             .then(response => response.json());
     },
+
+    acceptGameRequest(gameId, token) {
+        return fetch(`${config.API_ENDPOINT}/api/friends/accept`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ gameId, token }) // Envoie les données nécessaires
+        })
+            .then(response => response.json());
+    },
+
+    getGameRequests(token) {
+        return fetch(`${config.API_ENDPOINT}/api/friends/gameRequest`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        });
+    }
 
 }
 

@@ -1,4 +1,5 @@
 const friendsController = require("../Controller/friendsController");
+const creatingGameController = require("../Controller/creatingGameController");
 
 function handleFriendsRoutes(req, res,db) {
     // You might want to parse the URL and method more carefully in a production app
@@ -16,6 +17,19 @@ function handleFriendsRoutes(req, res,db) {
     }
     else if (url.pathname === '/api/friends/listRequest' && req.method === 'GET') {
         friendsController.listFriendRequests(req, res, db);
+    }
+    else if (url.pathname === '/api/friends/gameRequest' && req.method === 'GET') {
+        friendsController.listGameRequest(req, res, db);
+    }
+    else if (url.pathname === '/api/friends/accept' && req.method === 'POST') {
+        friendsController.acceptGameInvitation(req, res, db);
+    }
+    else if (url.pathname === '/api/friends/rejectGameRequest' && req.method === 'POST') {
+        //friendsController.(req, res, db);
+    }
+    else if (url.pathname === '/api/friends/invite' && req.method === 'POST') {
+        friendsController.invitePlayer(req, res, db);
+
     }
     else {
         // Not Found

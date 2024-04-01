@@ -8,6 +8,7 @@ function handleGameRoutes(req, res,db) {
         console.log("Creating game");
         creatingGameController.createGame(req, res, db);
     }
+
     else {
         // Not Found
         res.writeHead(404, { 'Content-Type': 'text/plain' });

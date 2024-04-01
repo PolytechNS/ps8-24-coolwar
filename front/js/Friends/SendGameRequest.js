@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 friendDiv.addEventListener('click', () => {
                     friendsService.sendGameRequest(gameId, friend.username, token)
                         .then(response => {
+                            console.log('Game invitation response:', response);
                             if (response.success) {
                                 alert(`Invitation sent to ${friend.username}`);
                             } else {

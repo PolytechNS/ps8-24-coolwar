@@ -5,6 +5,7 @@ const {parseJSON} = require("../Utils/utils");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
+
 async function createGame(req, res,db) {
     parseJSON(req, async (err, data) => {
         if (err) {
@@ -34,6 +35,9 @@ async function createGame(req, res,db) {
     });
 
 }
+
+
+
 
 
 module.exports = { createGame };

@@ -43,7 +43,7 @@ module.exports = (io, socket) => {
         }
         // Jouer avec un ami
         else if (gameMode === 'waitingForFriends') {
-            joinGameWithFriend(io, socket, token);
+            joinGameWithFriend(io, socket, dataParse);
         }
 
     });
@@ -463,6 +463,20 @@ async function joinInstantGame(io, socket, tokenParsed) {
     }
 }
 
+async function joinGameWithFriend(io, socket, token) {
+    // Implementation for "waitingForFriends" mode
+    const roomId = `friend_${token}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    waitingRoomsForFriends.set(token, roomId);
+    socketIds.set(token, socket.id);
+
+    socket.join(roomId);
+
+    socket.emit('friendGameCreated', { roomId });
+    // Now, you need to handle the process by which the friend joins the room
+    // using the room ID. This could be done via another socket event.
+}
+
+
 async function createGame(roomId,playerTokens, playersSocketIds){
 
     try {
@@ -557,18 +571,6 @@ async function createGame(roomId,playerTokens, playersSocketIds){
 
 }
 
-async function joinGameWithFriend(io, socket, token) {
-    // Implementation for "waitingForFriends" mode
-    const roomId = `friend_${token}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    waitingRoomsForFriends.set(token, roomId);
-    socketIds.set(token, socket.id);
-
-    socket.join(roomId);
-
-    socket.emit('friendGameCreated', { roomId });
-    // Now, you need to handle the process by which the friend joins the room
-    // using the room ID. This could be done via another socket event.
-}
 
 
 
