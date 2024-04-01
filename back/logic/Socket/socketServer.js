@@ -6,7 +6,7 @@ const { MongoClient,ObjectId } = require('mongodb');
 const {MONGO_URL} = require("../Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const {playBot, setupBotController, nextMoveBotController} = require('../Controller/botController.js');
-const {updatePlayerPositionFromDb,createGameDb,setUpPositionRealBot, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd} = require('../Controller/gameController.js');
+const {updatePlayerPositionFromDb,createGameDb,setUpPositionRealBot, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd} = require('../Controller/gameUserController.js');
 
 const handleWithFriendsMode = require('./GameModes/withFriends.js');
 const handleWithBotsMode = require('./GameModes/withBots');

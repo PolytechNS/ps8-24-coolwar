@@ -9,6 +9,12 @@ export const withFriendsGameService = {
         socketManager.socket.emit('joinGameWithFriends', JSON.stringify({token: token, gameMode:"playNow"}));
     },
 
+    joinGameRequest: function(token,gameId) {
+        // Envoyer une requête pour rejoindre une partie avec le token d'identification de l'utilisateur
+        const dataToSend = { token: token, gameId: gameId };
+        socketManager.socket.emit('joinGameWithFriends', JSON.stringify({token: token, gameMode:"playNow", gameId:gameId}));
+    },
+
     waitForOpponent: function(callback) {
         socketManager.socket.on('opponentFound', (gameInfo) => {
             //Afficher l'id de la socket
