@@ -3,6 +3,7 @@
     const fs = require('fs');
     const fileManager = require('../Utils/front');
     const friendsRouter = require('./friendsRouter');
+    const handleGameRoutes = require('./GameRouter');
 
     function mainRouter(req, res, db) {
 
@@ -13,6 +14,11 @@
         }
         if(req.url.startsWith('/api/friends')){
             friendsRouter(req, res, db);
+            return;
+        }
+
+        if(req.url.startsWith('/api/game')){
+            handleGameRoutes(req, res, db);
             return;
         }
 

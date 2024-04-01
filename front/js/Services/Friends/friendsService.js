@@ -63,7 +63,19 @@ const friendsService = {
             },
             body: JSON.stringify({ token,username }) // Envoyez le nom d'utilisateur de la personne qui a envoyé la demande
         }).then(response => response.json());
-    }
+    },
+
+    sendGameRequest(gameId, username, token) {
+        return fetch(`${config.API_ENDPOINT}/api/game/invite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ gameId, username, token }) // Envoie les données nécessaires
+        })
+            .then(response => response.json());
+    },
 
 }
 

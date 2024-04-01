@@ -8,7 +8,7 @@ const {setUpPositionRealBot, createGameDb,
     updateWinnerAndLooserBot,
     updateCurrentPlayerFromDb,
     updateWallsAndVisibilityFromBd
-} = require("../../Controller/gameController");
+} = require("../../Controller/gameUserController");
 const {MongoClient, ObjectId} = require("mongodb");
 const {MONGO_URL, withBot} = require("../../Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
