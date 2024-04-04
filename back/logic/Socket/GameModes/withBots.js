@@ -144,6 +144,10 @@ module.exports = (io, socket) => {
             //on essaye de placer le mur
             let responseBoolean = actionController.placeWall(wallDataDeserialized,currentPlayerID);
             console.log("CURRENT PLAYER AFTER PLACEWALL AND BEFORE BOT MOVE --> ", gameModel.currentPlayer);
+            //on met à jour le nombre de murs restants dans la bd pour le joueur
+            await updateWallsAndVisibilityFromBd(wallDataDeserialized, realPlayerBD, gameBoardIdDb, gameModel, db, squareGameModel);
+            //on met à jour le joueur actuel dans la bd
+            await updateCurrentPlayerFromDb(gameBoardIdDb, db, gameModel);
 
             //si les murs du joueur sont placés
             if(responseBoolean){
@@ -168,6 +172,7 @@ module.exports = (io, socket) => {
                         currentPlayerID = gameModel.currentPlayer;
                         const BotPlayerBD = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: currentPlayerID });
                         actionController.placeWall(wallPosition, 2);
+
                         //on met à jour le nombre de murs restants dans la bd pour le joueur
                         await updateWallsAndVisibilityFromBd(wallDataDeserialized, BotPlayerBD, gameBoardIdDb, gameModel, db, squareGameModel);
                         //on met à jour le joueur actuel dans la bd
