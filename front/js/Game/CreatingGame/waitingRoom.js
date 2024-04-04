@@ -9,8 +9,7 @@ window.addEventListener('load', () => {
     console.log('Tout est chargé');
 
     // Récupérer le token et gameId stockés, peut-être lors de la création du jeu.
-    const token = localStorage.getItem('token'); // Assurez-vous que le token est stocké au préalable
-    const gameId = localStorage.getItem("gameId"); // Ou stockez-le dans localStorage si préféré
+    const token = localStorage.getItem('token');
 
     const readyButton = document.querySelector('.ready');
 
@@ -18,7 +17,7 @@ window.addEventListener('load', () => {
         console.log('Player ready');
 
         // Envoie de l'état "ready" au serveur via Socket.IO
-        socketManager.socket.emit('ready', JSON.stringify({ token, gameId }));
+        socketManager.socket.emit('ready', JSON.stringify({ token }));
 
     });
 

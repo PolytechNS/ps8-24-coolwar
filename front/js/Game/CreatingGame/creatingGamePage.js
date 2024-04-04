@@ -16,8 +16,7 @@ window.addEventListener('load', () => {
             creatingGameService.createGame(token, gameName)
                 .then(data => {
                     console.log("create game data", data);
-                    if (data.gameId!=null && data.message === 'Game created successfully') {
-                        localStorage.setItem('gameId', data.gameId);
+                    if (data.message === 'Game created successfully') {
                         window.location.href = './GameReadyPage/GameReadyPage.html';
                     } else {
                         console.error('Failed to create game:', data.message);

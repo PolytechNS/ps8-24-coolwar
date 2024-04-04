@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="banner" data-game-id="${request.gameId}">
                         <div class="leftSide">
                             <p>${index + 1}.</p>
-                            <p>${request.gameName}</p>
+                            <p>${request.invitedUsername}</p>
                         </div>
                         <div class="middleSide">
                             <p>VS</p>
@@ -35,14 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="footer">
                         <button class="decline" data-game-id="${request.gameId}">Decline</button>
-                        <button class="join" data-game-id="${request.gameId}">Join</button>
+                        <button class="join" data-inviting-user-name="${request.invitingUsername}">Join</button>
                     </div>
                 `;
                 listGameRequestDiv.appendChild(gameRequestDiv);
 
                 // Ajout des écouteurs d'événement pour les boutons Decline et Join
-                gameRequestDiv.querySelector('.decline').addEventListener('click', function() { declineGameRequest(this.getAttribute('data-game-id'), token); });
-                gameRequestDiv.querySelector('.join').addEventListener('click', function() { joinGameRequest(this.getAttribute('data-game-id'), token); });
+                gameRequestDiv.querySelector('.decline').addEventListener('click', function() { declineGameRequest(this.getAttribute('data-inviting-user-name'), token); });
+                gameRequestDiv.querySelector('.join').addEventListener('click', function() { joinGameRequest(this.getAttribute('data-inviting-user-name'), token); });
             });
         })
         .catch(error => {
@@ -57,15 +57,14 @@ function declineGameRequest(gameId, token) {
     // Vous aurez besoin d'appeler une API ou une fonction de service pour refuser l'invitation
 }
 
-function joinGameRequest(gameId, token) {
-    //clear local storage
-    localStorage.removeItem('gameId');
-    console.log(`Joining game ${gameId}`);
-    friendsService.acceptGameRequest(gameId, token)
+function joinGameRequest(invitingUserName, token) {
+
+    console.log('Joining game request');
+    console.log(`Joining game ${invitingUserName}`);
+    friendsService.acceptGameRequest(invitingUserName, token)
         .then(response => {
-            console.log('Game request response:', response);
+            console.log('Game request response:', invitingUserName);
             if(response.message === "Game invitation accepted"){
-                localStorage.setItem('gameId', gameId);
                 window.location.href = '../../../../PlayPage/CreateGamePage/GameReadyPage/GameReadyPage.html';
 
             }
