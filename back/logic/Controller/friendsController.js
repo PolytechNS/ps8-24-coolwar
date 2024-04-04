@@ -304,7 +304,9 @@ async function invitePlayer(req, res) {
                 return;
             }
             console.log("invitingUser",invitingUser);
-            const gameCreated = await db.collection('games').findOne({creator_id: new ObjectId(invitingUser._id)});
+            const gameCreated = await db.collection('games').find({
+                creator_id: new ObjectId(invitingUser._id)
+            }).sort({ createdAt: -1 }).limit(1).next();
             console.log("gameCreated",gameCreated);
             const invitationExists = await db.collection('gameInvites').findOne({
                 'invitingUser.id': invitingUser._id,
