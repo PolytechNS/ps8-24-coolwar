@@ -300,6 +300,7 @@ export class GamePresenter {
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
+        console.log(this.model.ownIndexPlayer);
 
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;

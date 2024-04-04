@@ -22,12 +22,12 @@
             return;
         }
 
-        // Serve the index.html file for the base route
+        // Serve the login.html file for the base route
         if(req.url === '/' || req.url === '') {
-            fs.readFile('./front/Pages/WelcomePage/WelcomePage.html', function(err, data) {
+            fs.readFile('./front/Pages/Login/login.html', function(err, data) {
                 if (err) {
                     res.writeHead(500);
-                    res.end('Error loading index.html');
+                    res.end('Error loading login.html');
                     return; // Stop further execution in case of error
                 }
                 res.setHeader('Content-Type', 'text/html');
