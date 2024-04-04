@@ -192,7 +192,7 @@ export class GamePresenter {
             }
 
             const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer };
-            //CALL BD -
+            console.log(" -> ",dataToSend);
             actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                 if(isAuthorized){
                     wallListObj.forEach((wallToEdit) => {

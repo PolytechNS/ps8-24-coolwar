@@ -32,13 +32,13 @@ function setup(AIplay) {
         let position = null;
         let rand = Math.round(Math.random() * 8) + 1;
         if(AIplay === 1){
-            position = rand.toString()+"1";
-            finishLine = parseInt("9");
+            position = rand.toString()+"9";
+            finishLine = parseInt("1");
             console.log("FINISH LINE AFTER INIT : ",finishLine);
         }
         else{
-            position = rand.toString()+"9";
-            finishLine = parseInt("1");
+            position = rand.toString()+"1";
+            finishLine = parseInt("9");
             console.log("FINISH LINE AFTER INIT : ",finishLine);
         }
         console.log("------END SETUP IA------");
@@ -475,7 +475,7 @@ function Real_nextMove(gameState) {
         for (let i = 0; i < 9; i++) {
             let endNode = graph.getNodeFromCoordinates( i, finishLine-1);
             if(endNode!==null){
-                let res = djikstra(graph, ownNode, endNode);
+                let res = Djikstra.prototype.compute_djikstra(graph, ownNode, endNode);
                 if (bestRes === null) {bestRes = res;}
                 else if (res.distance < bestRes.distance) {bestRes = res;}
             }
@@ -1070,7 +1070,7 @@ function convertGameStateToGamemodel(gameState){
 
     let opponentPlayOrder = playOrder === 1 ? 2 : 1;
     gameState.opponentWalls.forEach(function (wall){
-        let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[1]);
+        let wallPosition = new Position(wall[0].split("")[0],wall[0].split("")[2]);
         console.log("WALL POSITION : ",wallPosition.row,wallPosition.col);
         //SI MUR HORIZONTAL
         if(parseInt(wall[1])===parseInt("0")){

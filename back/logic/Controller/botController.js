@@ -29,8 +29,7 @@ exports.setupBotController = function (currentPlayerIndex) {
 
 
 exports.nextMoveBotController = function (gameModel) {
-    let gameState = convertGameModelToGameState(gameModel.playable_squares.playableSquares, gameModel.horizontal_Walls.wallList, gameModel.vertical_Walls.wallList, 2);
-    console.log(gameState);
+    let gameState = convertGameModelToGameState(gameModel.playable_squares, gameModel.horizontal_Walls.wallList, gameModel.vertical_Walls.wallList, 2, gameModel.player_array);
     let board = computeVisibilityPlayableSquare(gameModel, gameModel.currentPlayer);
     let opponentWalls = getWallOpponent(gameModel);
     let ownWalls = getOwnWalls(gameModel);
@@ -47,22 +46,20 @@ function convertOurCoordinatesToVellaCooordinates(row,col){
     return [parseInt(col)+1,9-parseInt(row)];
 }
 
-function convertGameModelToGameState(playableSquares, horizontalWalls, verticalWalls, playOrder) {
+function convertGameModelToGameState(playableSquares, horizontalWalls, verticalWalls, playOrder, players) {
     let gameState = {
         board: Array(9).fill().map(() => Array(9).fill(0)), // Initialiser le plateau de jeu
         ownWalls: [],
         opponentWalls: []
     };
 
-    // Traitement des cases jouables
-    playableSquares.forEach((square) => {
-        let position = convertOurCoordinatesToVellaCooordinates(square.position.row, square.position.col);
-        if (square.player !== null) {
-            // Attribuer 1 pour le joueur actuel, 2 pour l'opposant
-            gameState.board[position.row][position.col] = square.player === playOrder ? 1 : 2;
-        }
-        // Les cases visibles ou avec une visibilité spécifique peuvent être traitées ici si nécessaire
-    });
+    if(playableSquares.getPlayableSquare(players.players[0].position.row,players.players[0].position.col).visibility >= 0 ){
+        gameState.board[players.players[0].position.row][players.players[0].position.col] = 2;
+    }
+
+    if(players.players[1].position !== null){
+        gameState.board[players.players[1].position.row][players.players[1].position.col] = 1;
+    }
 
     // Fonction d'aide pour traiter les murs et les ajouter à gameState
     function addWallsToGameState(walls, isHorizontal) {

@@ -1,6 +1,6 @@
 const {GameModel} = require("../../Model/Game/GameModel");
 const {ActionController} = require("../../Controller/actionController");
-const {setupBotController} = require("../../Controller/botController");
+const {setupBotController, playBot, nextMoveBotController} = require("../../Controller/botController");
 const {addExpToPlayerWithBot} = require("../../Controller/userController");
 const {setUpPositionRealBot, createGameDb,
     updatePositionCharacter,
@@ -11,6 +11,8 @@ const {setUpPositionRealBot, createGameDb,
 } = require("../../Controller/gameUserController");
 const {MongoClient, ObjectId} = require("mongodb");
 const {MONGO_URL, withBot} = require("../../Utils/constants");
+const {Wall} = require("../../Model/Objects/Wall");
+const {WallDictionary} = require("../../Model/Objects/WallDictionary");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
@@ -50,7 +52,6 @@ module.exports = (io, socket) => {
 
             //on met +1 au current player car 1 c'est nous et 2 c'est le bot
             setupBotController(botIndex).then(async (positionBot) => {
-
                 setUpPositionRealBot(positionBot,gameModel,botIndex);
                 //afficher les player de gameModel
 
@@ -103,7 +104,8 @@ module.exports = (io, socket) => {
             let gameBoard = await updatePositionCharacter(dataParse,db,gameModel,squareGameModel);
 
             ///GESTION BOT --action de bouger
-            await manageBotMove(squareGameModel,gameBoard,gameModel,actionController,db);
+            let nextMoveRAW = await manageBotMove(squareGameModel,gameBoard,gameModel);
+            console.log(nextMoveRAW);
 
             //on met à jour le joueur actuel dans la bd
             await updateCurrentPlayerFromDb(gameBoard,db,gameModel);
@@ -125,33 +127,53 @@ module.exports = (io, socket) => {
             let actionController = games.get(wallDataDeserialized.gameId).actionController;
             let gameModel = games.get(wallDataDeserialized.gameId).gameModel;
 
-            let playerID = gameModel.currentPlayer;
+            let currentPlayerID = gameModel.currentPlayer;
             await client.connect();
             const db = client.db();
             console.log("wallDataDeserialized : ", wallDataDeserialized);
-            console.log("playerID : ", playerID);
+            console.log("playerID : ", currentPlayerID);
             // Récupérer le joueur actuel à partir de la base de données
-            const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
-            console.log("playerBd : ", playerBd);
+
+            const realPlayerBD = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: currentPlayerID });
+            console.log("realPlayerBD : ", realPlayerBD);
             const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
             const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
             let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
             //let actionController = new ActionController(gameModelGlobal);
 
             //on essaye de placer le mur
-            let responseBoolean = actionController.placeWall(wallDataDeserialized,playerID);
+            let responseBoolean = actionController.placeWall(wallDataDeserialized,currentPlayerID);
+            console.log("CURRENT PLAYER AFTER PLACEWALL AND BEFORE BOT MOVE --> ", gameModel.currentPlayer);
 
-
-            //si les murs sont placés
+            //si les murs du joueur sont placés
             if(responseBoolean){
-                //on met à jour le nombre de murs restants dans la bd pour le joueur
-                await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModel,db,squareGameModel);
+                //on demande le
+                manageBotMove(gameModel).then(async (nextBotmove) => {
+                    console.log("nextBotmove : ", nextBotmove);
+                    let actionBOT = nextBotmove.action;
+                    let positionBOT = nextBotmove.value[0];
+                    let walltypeBOT = nextBotmove.value[1];
 
-                //Gestion Bot DEBILE--action de bouger
-                await manageBotMove(squareGameModel,gameBoardIdDb,gameModel,actionController,db);
-
-                //on met à jour le joueur actuel dans la bd
-                await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);
+                    if (actionBOT === "move") {
+                        actionController.moveCharacter(2, positionBOT.toString().charAt(0), positionBOT.toString().charAt(1));
+                    } else if (actionBOT === "wall") {
+                        let wallPosition = [];
+                        if (walltypeBOT === 1) {
+                            wallPosition = {wallList: [positionBOT.toString().charAt(0) + 'X' + positionBOT.toString().charAt(1) + 'XV', positionBOT.toString().charAt(0) + 'X' + (parseInt(positionBOT.toString().charAt(1)) + 1) + 'XV']};
+                            console.log(wallPosition);
+                        } else if (walltypeBOT === 0) {
+                            wallPosition = {wallList: [positionBOT.toString().charAt(0) + 'X' + positionBOT.toString().charAt(1) + 'XV', (positionBOT.toString().charAt(0) + 1) + 'X' + parseInt(positionBOT.toString().charAt(1)) + 'XH']};
+                            console.log(wallPosition);
+                        }
+                        currentPlayerID = gameModel.currentPlayer;
+                        const BotPlayerBD = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: currentPlayerID });
+                        actionController.placeWall(wallPosition, 2);
+                        //on met à jour le nombre de murs restants dans la bd pour le joueur
+                        await updateWallsAndVisibilityFromBd(wallDataDeserialized, BotPlayerBD, gameBoardIdDb, gameModel, db, squareGameModel);
+                        //on met à jour le joueur actuel dans la bd
+                        await updateCurrentPlayerFromDb(gameBoardIdDb, db, gameModel);
+                    }
+                });
             }
             // Envoyer la réponse au client
 

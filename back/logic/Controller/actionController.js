@@ -15,6 +15,7 @@ class ActionController {
     }
 
     placeWall(walls,playerID) {
+        console.log("PLACE WALL --> ACTIONCONTROLLER",walls);
         if (!this.checkCurrentPlayer(playerID)) {return false;}
         let wallBack = null;
 
