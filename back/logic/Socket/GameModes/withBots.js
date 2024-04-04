@@ -32,7 +32,8 @@ module.exports = (io, socket) => {
                 fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
                 creator_id: user.username , // ID de l'utilisateur qui a créé la partie
                 typeGame: 'withBot', // Type de partie
-                game_name: 'New Game' // Nom de la partie, peut-être fourni par l'utilisateur
+                game_name: 'New Game', // Nom de la partie, peut-être fourni par l'utilisateur
+                createdAt: new Date()
             });
             const gameId = newGame.insertedId;
 

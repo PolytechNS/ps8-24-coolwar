@@ -24,14 +24,16 @@ async function createGame(req, res,db) {
         //create game with the data like name and token of the user
         const newGame = await db.collection('games').insertOne({
             fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
-            creator_id: user.username, // ID de l'utilisateur qui a créé la partie
+            creator_id: user._id, // ID de l'utilisateur qui a créé la partie
             typeGame: 'withFriends', // Type de partie
-            game_name: gameName // Nom de la partie, peut-être fourni par l'utilisateur
+            game_name: gameName, // Nom de la partie, peut-être fourni par l'utilisateur
+            createdAt: new Date()
         });
-        console.log("newGame", newGame);
+        ;
+        console.log("newGame", newGame.insertedId);
         // Send the response
         res.writeHead(201, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({message: 'Game created successfully', gameId: newGame.insertedId}));
+        res.end(JSON.stringify({message: 'Game created successfully'}));
     });
 
 }
