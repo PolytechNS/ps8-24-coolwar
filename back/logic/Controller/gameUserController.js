@@ -1,5 +1,5 @@
 const {ObjectId, MongoClient} = require("mongodb");
-const {playBot} = require("./botController");
+const {playBot, nextMoveBotController} = require("./botController");
 const {MONGO_URL} = require("../Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -158,9 +158,7 @@ async function  manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionCo
     let botCharacter = await db.collection('character').findOne({ gameBoardId: new ObjectId(gameBoard._id), currentPlayerIndex: gameModelGlobal.currentPlayer });
     let botCharacterGameModel = gameModelGlobal.player_array.getPlayer(gameModelGlobal.currentPlayer);
 
-    playBot(gameModelGlobal, actionController);
-
-
+    nextMoveBotController(gameModelGlobal).then((nextMove) => {});
 
     //code dupliqué mais pas grave
     for(let square of squareGameModel){

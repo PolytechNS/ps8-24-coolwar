@@ -39,6 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         .then(response => {
                             console.log('Game invitation response:', response);
                             if (response.success) {
+                                const notif = document.querySelector('.notif');
+                                const notifSpan = document.createElement('span');
+                                notifSpan.className='notifcation';
+                                notif.appendChild(notifSpan);
                                 alert(`Invitation sent to ${friend.username}`);
                             } else {
                                 alert(`Failed to send invitation to ${friend.username}`);
