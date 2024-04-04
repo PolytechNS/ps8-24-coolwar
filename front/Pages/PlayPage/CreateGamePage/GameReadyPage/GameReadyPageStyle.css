@@ -69,3 +69,42 @@ button{
     max-height: 100px;
     margin: 0 20px;
 }
+
+.popup {
+    position: fixed;
+    width: 600px;
+    height: 800px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    z-index: 1000; /* Assurez-vous que cela apparaît au-dessus des autres contenus */
+    overflow: auto; /* Pour gérer les listes d'amis longues */
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.closePopup {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+}
+
+.invite{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+.sent{
+    color: #497637;
+    margin-left: 30px;
+}
+
+#friendsListPopup h2{
+    color: black;
+}
+
