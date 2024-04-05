@@ -108,3 +108,9 @@ button{
     color: black;
 }
 
+.countdown {
+    color: #d9534f; /* Rouge pour l'urgence, mais vous pouvez choisir une autre couleur */
+    font-size: 20px;
+    margin: 10px 0;
+}
+

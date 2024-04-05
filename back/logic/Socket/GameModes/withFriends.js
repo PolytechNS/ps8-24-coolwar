@@ -146,29 +146,51 @@ module.exports = (io, socket) => {
 
         try {
             await client.connect();
-            // Trouver l'utilisateur par token pour obtenir son ID
-            const user = await client.db().collection('users').findOne({ token:token });
+            const user = await client.db().collection('users').findOne({ token: token });
             if (!user) {
                 console.error('User not found');
                 return;
             }
             userId = user._id.toString();
 
-            // Mettre à jour l'état 'ready' du joueur dans la salle d'attente
             let updated = false;
             for (let [gameId, room] of waitingRoomsForFriends.entries()) {
                 if (room.players[userId]) {
-                    console.log("room",room);
-                    console.log("PARTIE TROUVE JE METS A JOUR LE USER READY",userId);
-                    //mettre l'inverse de l'état ready
                     room.players[userId].ready = !room.players[userId].ready;
-                    waitingRoomsForFriends.set(gameId, room); // Pas nécessaire si room est une référence, mais bon pour la clarté
                     updated = true;
-
-                    // Émettre l'état mis à jour de la room à tous les joueurs de la salle
                     io.to(room.roomId).emit('join waiting room response', room);
-
                     console.log(`Player ${userId} is ready in game ${gameId}`);
+
+                    const allReady = Object.values(room.players).every(player => player.ready);
+                    if (allReady) {
+                        let countdown = 5; // Durée du compte à rebours en secondes
+                        const intervalId = setInterval(() => {
+                            // Envoyer la mise à jour du compte à rebours à la salle
+                            io.to(room.roomId).emit('launch clock', countdown);
+                            countdown--;
+
+                            // Vérifier si le compte à rebours est terminé
+                            if (countdown < 0) {
+                                clearInterval(intervalId); // Arrêter l'intervalle
+                                // Vérifier une dernière fois si tous les joueurs sont toujours prêts
+                                const stillAllReady = Object.values(room.players).every(player => player.ready);
+                                if (stillAllReady) {
+                                    io.to(room.roomId).emit('startGameWithFriend', { gameId });
+                                    console.log(`Game ${gameId} is starting after countdown.`);
+                                }
+                            }
+                        }, 1000); // 1000 millisecondes équivalent à 1 seconde
+
+                        // Annuler le compte à rebours si un joueur se déclare non prêt
+                        Object.keys(room.players).forEach(playerId => {
+                            socket.on(`not ready ${playerId}`, () => {
+                                clearInterval(intervalId);
+                                io.to(room.roomId).emit('launch clock cancelled');
+                                console.log(`Countdown cancelled for game ${gameId}.`);
+                            });
+                        });
+                    }
+
                     break;
                 }
             }
@@ -182,6 +204,7 @@ module.exports = (io, socket) => {
             await client.close();
         }
     });
+
 
 
     socket.on('moveCharacterWithFriends', async(data)=>{

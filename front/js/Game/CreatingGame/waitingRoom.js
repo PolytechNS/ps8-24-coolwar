@@ -23,6 +23,8 @@ function setupEventListeners(token) {
     // Réponse à la jointure de la salle d'attente
     socketManager.socket.on('join waiting room response', handleJoinWaitingRoomResponse);
 
+    socketManager.socket.on('launch clock', handleClockLaunch);
+
     // Bouton "Prêt"
     const readyButton = document.querySelector('.ready');
     readyButton.addEventListener('click', () => emitPlayerReady(token));
@@ -40,6 +42,7 @@ function setupEventListeners(token) {
     if (closeButton) {
         closeButton.addEventListener('click', closePopup);
     }
+
 }
 
 // Tentative de rejoindre la salle d'attente
@@ -52,7 +55,23 @@ function attemptToJoinWaitingRoom(token) {
 // Gestion du démarrage de la partie
 function handleGameStart() {
     console.log('Game is starting...');
-    // Redirection si nécessaire
+
+}
+
+function handleClockLaunch(seconds) {
+    console.log(`Game starting in ${seconds} seconds...`);
+    // Mettre à jour l'interface utilisateur avec le compte à rebours
+    const countdownElement = document.getElementById('countdown'); // Assurez-vous d'avoir cet élément dans votre HTML
+    if (!countdownElement) {
+        console.error('Countdown element not found');
+        return;
+    }
+    countdownElement.innerText = `Game starting in ${seconds} seconds...`;
+
+    // Si le compte à rebours atteint 0, vous pouvez choisir de masquer l'élément ou de mettre à jour le texte
+    if (seconds === 0) {
+        countdownElement.innerText = 'Starting game...';
+    }
 }
 
 // Gestion de la réponse à la jointure de la salle d'attente
