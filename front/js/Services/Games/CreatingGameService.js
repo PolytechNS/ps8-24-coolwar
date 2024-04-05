@@ -23,17 +23,7 @@ const creatingGameService = {
             });
     },
 
-    joinWaitingRoom: function(callback) {
-        let token = localStorage.getItem('token');
-        const data = JSON.stringify({ token, gameMode : "waitingForFriends" });
-        console.log("data", data);
-        socketManager.socket.emit('joinGameWithFriends', data);
 
-        socketManager.socket.once('join waiting room response', (response) => {
-            callback(response);
-        });
-
-    }
 };
 
 export { creatingGameService };

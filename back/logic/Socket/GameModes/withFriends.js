@@ -477,30 +477,32 @@ async function joinGameWithFriend(io, socket, data) {
         await client.close();
         return;
     }
+    const userInfo = {
+        ready: false, // Prêt à jouer ou non
+        username: user.username, // Nom d'utilisateur pour affichage
+        level: user.lvl, // Niveau de l'utilisateur, supposons que cela existe dans votre modèle d'utilisateur
+    };
+
+    console.log("user",user);
+    console.log("userInfo",userInfo);
 
     const invitations = await db.collection('gameInvites').find({
         'invitedUser.id': user._id,
         status: 'accepted'
     }).toArray();
-    console.log("invitations",invitations);
 
     let foundRoom = false;
 
-    console.log("all rooms for now: ",waitingRoomsForFriends);
     for (let invitation of invitations) {
         if (waitingRoomsForFriends.has(invitation.invitingUser.id.toString())) {
             const room = waitingRoomsForFriends.get(invitation.invitingUser.id.toString());
-            console.log("room get ?",room);
-            console.log("room.gameId",room.gameId.toString());
-            console.log("invitation.gameId",invitation.gameId.toString());
             // Vérifier si la salle est celle attendue pour le jeu invité
             if (room.gameId.toString() === invitation.gameId.toString()) {
-                console.log("room found !!");
                 // Faire rejoindre la socket à la room
                 socket.join(room.roomId);
 
                 // Mettre à jour le statut du joueur dans la room
-                room.players[user._id.toString()] = { ready: false };
+                room.players[user._id.toString()] = { ready: false, ...userInfo};
                 waitingRoomsForFriends.set(invitation.invitingUser.id.toString(), room);
 
                 // Émettre tout l'objet room à la roomId
@@ -519,13 +521,12 @@ async function joinGameWithFriend(io, socket, data) {
         const latestGameCreatedByUser = await db.collection('games').find({
             creator_id: user._id
         }).sort({ createdAt: -1 }).limit(1).next();
-        console.log("latestGameCreatedByUser",latestGameCreatedByUser);
         // Si aucune salle d'attente correspondante n'est trouvée, créer une nouvelle salle
         const newRoomId = `friend_${user._id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const newRoom = {
             gameId: latestGameCreatedByUser._id, // Utiliser le premier jeu invité comme référence
             roomId: newRoomId,
-            players: { [user._id.toString()]: { ready: false } }
+            players: { [user._id.toString()]: { ready: false, ...userInfo } }
         };
 
         // Faire rejoindre la socket à la nouvelle room
@@ -535,7 +536,6 @@ async function joinGameWithFriend(io, socket, data) {
 
         // Émettre l'objet room au client
         socket.emit('join waiting room response', newRoom);
-        console.log(`New waiting room created for user ${user.username} and game ${newRoom.gameId}`);
         console.log("all waiting rooms",waitingRoomsForFriends);
     }
 
