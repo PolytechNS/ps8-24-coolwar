@@ -1,7 +1,7 @@
 const {MongoClient, ObjectId} = require("mongodb");
-const {MONGO_URL, withBot} = require("../../Utils/constants");
-const {GameModel} = require("../../Model/Game/GameModel");
-const {ActionController} = require("../../Controller/actionController");
+const {MONGO_URL, withBot} = require("../../Utils/constants.js");
+const {GameModel} = require("../../Model/Game/GameModel.js");
+const {ActionController} = require("../../Controller/actionController.js");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 const {setUpPositionRealBot, createGameDb,
     updatePositionCharacter,
@@ -11,9 +11,9 @@ const {setUpPositionRealBot, createGameDb,
     retrieveCharacterFromDb,
     updateCurrentPlayerFromDb,
     updateWallsAndVisibilityFromBd
-} = require("../../Controller/gameUserController");
-const {verifyMessage} = require("../../Controller/Chat/chatController");
-const {addExpToPlayerWithBot,manageEndGameUser,checkAchievements} = require("../../Controller/userController");
+} = require("../../Controller/gameUserController.js");
+const {verifyMessage} = require("../../Controller/Chat/chatController.js");
+const {addExpToPlayerWithBot,manageEndGameUser,checkAchievements} = require("../../Controller/userController.js");
 
 
 
@@ -233,7 +233,7 @@ module.exports = (io, socket) => {
             //si les murs sont placés
             if(responseBoolean){
                 //on met à jour le nombre de murs restants dans la bd pour le joueur
-                await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModel,db,squareGameModel);
+                await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModel,db);
 
                 //on met à jour le joueur actuel dans la bd
                 await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);

@@ -155,8 +155,7 @@ async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameMo
     return gameBoard;
 }
 async function manageBotMove(gameModelGlobal){
-    const nextMove = await nextMoveBotController(gameModelGlobal);
-    return nextMove;
+    return await nextMoveBotController(gameModelGlobal);
 }
 
 
@@ -189,12 +188,14 @@ function setUpPositionRealBot(positionBot,gameModelGlobal,botIndex){
     gameModelGlobal.resetSquaresVisibility();
     gameModelGlobal.computeSquaresVisibility();
 }
-async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db,squareGameModel){
+async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db){
+    console.log("playerBD INSIDE UPDATEWALLS BD ->",playerBd);
     let nbWalls = playerBd.nbWalls - 1;
     await db.collection('character').updateOne({ _id: new ObjectId(playerBd._id) }, { $set: { nbWalls : nbWalls } });
     for (let wallString of wallDataDeserialized.wallList) {
         // Extrait la ligne, la colonne et le type à partir de la chaîne de caractères
         let [row, col, type] = wallString.split('X');
+        console.log("row",row,"col",col,"type",type);
         // Convertit les valeurs de la ligne et de la colonne en nombres
         row = parseInt(row, 10);
         col = parseInt(col, 10);
@@ -228,11 +229,12 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
                 }
             }
 
+            console.log("wall to put ->", wallToCopy);
             // Met à jour la visibilité du mur dans la base de données
             await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
             const wallUpdated = await db.collection('walls').findOne({_id: new ObjectId(wall._id)});
 
-            for (let square of squareGameModel) {
+            for (let square of gameModelGlobal.playable_squares.getAllPlayableSquares()) {
                 //update db
                 await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
             }

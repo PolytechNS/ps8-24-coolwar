@@ -15,7 +15,6 @@ class ActionController {
     }
 
     placeWall(walls,playerID) {
-        console.log("PLACE WALL --> ACTIONCONTROLLER",walls);
         if (!this.checkCurrentPlayer(playerID)) {return false;}
         let wallBack = null;
 
@@ -68,6 +67,7 @@ class ActionController {
 
 
     moveCharacter(id,row,col) {
+        console.log("MOVE CHARACTER --> ACTIONCONTROLLER",id,row,col);
         if (this.checkCurrentPlayer(id)) {
             console.log("le check du current player est bon")
             //VERIFICATION DU DEPLACEMENT

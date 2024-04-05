@@ -55,10 +55,12 @@ function convertGameModelToGameState(playableSquares, horizontalWalls, verticalW
 
     if(playableSquares.getPlayableSquare(players.players[0].position.row,players.players[0].position.col).visibility >= 0 ){
         gameState.board[players.players[0].position.row][players.players[0].position.col] = 2;
+        console.log("on voit le mec youpi");
     }
 
     if(players.players[1].position !== null){
         gameState.board[players.players[1].position.row][players.players[1].position.col] = 1;
+        console.log("our position on the board converted", players.players[1].position.row,players.players[1].position.col);
     }
 
     // Fonction d'aide pour traiter les murs et les ajouter à gameState

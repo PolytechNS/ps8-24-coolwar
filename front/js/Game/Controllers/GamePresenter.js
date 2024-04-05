@@ -164,7 +164,7 @@ export class GamePresenter {
                     oldPosition = res;
                 });
                 //token
-                actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),this.roomId,(res)=>{
+                actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
                     if(res){
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                         //ON RETIRE L'ANCIEN STYLE
