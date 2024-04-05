@@ -48,6 +48,17 @@ module.exports = (io, socket) => {
 
     });
 
+    socket.on("ready", async (data) => {
+      const tokenParsed = JSON.parse(data).token;
+
+      //
+
+
+      io.to(socket.id).emit("player ready response", JSON.stringify({}));
+
+
+    },
+
     socket.on('disconnect', async () => {
         // Identifier le joueur par son socket.id et le supprimer des listes d'attente
         let foundToken;
@@ -92,10 +103,8 @@ module.exports = (io, socket) => {
             console.log(`Socket ID reference removed for player with token ${foundToken}.`);
         }
 
-        // Traitement supplémentaire pour les joueurs déjà en partie
-        // Vous devrez ajuster cette partie en fonction de la logique spécifique de votre jeu
-        // Par exemple, notifier l'autre joueur, terminer la partie, etc.
-    });
+
+    }));
 
 
 
@@ -132,45 +141,45 @@ module.exports = (io, socket) => {
 
     //ready
     socket.on('ready', async (data) => {
-        const { token, gameId } = JSON.parse(data);
-        console.log("les data ",data);
-        console.log(`Player with token ${token} is ready for game ${gameId}`);
-        // Vérifier si la room existe
-        if (waitingRoomsForFriends.has(gameId)) {
-            const room = waitingRoomsForFriends.get(gameId);
+        const { token } = JSON.parse(data);
+        let userId;
 
-            // Marquer le joueur comme prêt
-            room.players[token].ready = true;
+        try {
+            await client.connect();
+            // Trouver l'utilisateur par token pour obtenir son ID
+            const user = await client.db().collection('users').findOne({ token:token });
+            if (!user) {
+                console.error('User not found');
+                return;
+            }
+            userId = user._id.toString();
 
-            // Vérifier si tous les joueurs sont prêts
-            const allPlayersReady = Object.values(room.players).every(player => player.ready);
+            // Mettre à jour l'état 'ready' du joueur dans la salle d'attente
+            let updated = false;
+            for (let [gameId, room] of waitingRoomsForFriends.entries()) {
+                if (room.players[userId]) {
+                    console.log("room",room);
+                    console.log("PARTIE TROUVE JE METS A JOUR LE USER READY",userId);
+                    //mettre l'inverse de l'état ready
+                    room.players[userId].ready = !room.players[userId].ready;
+                    waitingRoomsForFriends.set(gameId, room); // Pas nécessaire si room est une référence, mais bon pour la clarté
+                    updated = true;
 
-            if (allPlayersReady) {
-                // Tous les joueurs sont prêts
-                console.log(`All players are ready for game ${gameId}. Starting game...`);
+                    // Émettre l'état mis à jour de la room à tous les joueurs de la salle
+                    io.to(room.roomId).emit('join waiting room response', room);
 
-                // Émettre un événement pour démarrer le jeu
-                io.to(`game_${gameId}`).emit('startGameWithFriend', { gameId });
-
-                // Ici, vous pourriez aussi initialiser la partie dans votre logique de serveur,
-                // comme en créant un état de jeu initial ou en chargeant la configuration de la partie.
-
-                // Optionnel: Nettoyer la room après le démarrage de la partie
-                // Cela dépend de votre logique de jeu et de comment vous gérez les états de partie.
-                waitingRoomsForFriends.delete(gameId);
-
-            } else {
-                // Pas tous les joueurs sont prêts
-
-                console.log(`Player with token ${token} is ready for game ${gameId}. Waiting for others...`);
-
-                // Émettre un événement pour indiquer qu'un joueur est prêt, si nécessaire
-                // Cela pourrait être utile pour mettre à jour l'UI côté client
-                //io.to(`game_${gameId}`).emit('playerReady', { token, ready: true });
+                    console.log(`Player ${userId} is ready in game ${gameId}`);
+                    break;
+                }
             }
 
-            // Ne pas oublier de mettre à jour la room dans la map après modification
-            waitingRoomsForFriends.set(gameId, room);
+            if (!updated) {
+                console.log('Player not found in any waiting room');
+            }
+        } catch (error) {
+            console.error('Error setting player to ready', error);
+        } finally {
+            await client.close();
         }
     });
 
@@ -514,8 +523,6 @@ async function joinGameWithFriend(io, socket, data) {
             }
         }
     }
-
-
 
     if (!foundRoom) {
         const latestGameCreatedByUser = await db.collection('games').find({

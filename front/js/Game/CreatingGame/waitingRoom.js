@@ -88,6 +88,12 @@ function updatePlayersList(players) {
 function emitPlayerReady(token) {
     console.log('Player ready');
     socketManager.socket.emit('ready', JSON.stringify({ token }));
+
+
+    socketManager.socket.on('readyResponse', (data) => {
+        console.log('player ready response');
+        console.log(data);
+    });
 }
 
 // Affichage de la popup des amis
