@@ -527,7 +527,7 @@ class GameModel {
             //COMPUTE POUR TOUTE LA LIGNE
             let isImpossibleToReach = true;
             let DjikstraClass = new Djikstra();
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 9; i++) {
                 let res = DjikstraClass.compute_djikstra(graph, playerNode, graph.getNodeFromCoordinates(finishLine, i));
                 if(res.distance!==Infinity){isImpossibleToReach = false;}
             }

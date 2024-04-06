@@ -164,7 +164,7 @@ export class GamePresenter {
                     oldPosition = res;
                 });
                 //token
-                actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,localStorage.getItem('token'),this.roomId,(res)=>{
+                actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
                     if(res){
                         this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                         //ON RETIRE L'ANCIEN STYLE
@@ -192,7 +192,7 @@ export class GamePresenter {
             }
 
             const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer };
-            //CALL BD -
+            console.log(" -> ",dataToSend);
             actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                 if(isAuthorized){
                     wallListObj.forEach((wallToEdit) => {
@@ -300,6 +300,7 @@ export class GamePresenter {
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
+        console.log(this.model.ownIndexPlayer);
 
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;

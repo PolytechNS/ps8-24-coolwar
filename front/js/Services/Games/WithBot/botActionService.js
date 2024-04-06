@@ -19,10 +19,11 @@ export const BotActionService = {
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('placeWallWithBotResponse', (res) => {
+            console.log("PLACE WALL RESPONSE");
             callback(res);
         });
     },
-    moveCharacterWithBot(id, row, col, gameId, token, callback){
+    moveCharacterWithBot(id, row, col, gameId, gameBoardId, token, callback){
 
         console.log("moveCharacterWithBot");
         // Assurez-vous que la socket est initialisée et connectée
@@ -32,13 +33,14 @@ export const BotActionService = {
         }
 
 
-        let req = {id,row,col,gameId,token};
+        let req = {id,row,col,gameId,gameBoardId,token};
         let reqSerialized = JSON.stringify(req);
         console.log("ça move", req);
         socketManager.socket.emit('moveCharacterWithBot',reqSerialized);
 
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('moveCharacterWithBotResponse', (res) => {
+            console.log("REPONSE DE MOVE CHARACTER");
             callback(res);
         });
     },

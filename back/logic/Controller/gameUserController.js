@@ -1,5 +1,5 @@
 const {ObjectId, MongoClient} = require("mongodb");
-const {playBot} = require("./botController");
+const {playBot, nextMoveBotController} = require("./botController");
 const {MONGO_URL} = require("../Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -139,7 +139,8 @@ async function loadGameFromDb(db, savedGame) {
     return config;
 }
 
-async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameModel){
+async function updatePositionCharacter(dataParse,db,gameModelGlobal){
+    console.log("UPDATE POSITION CHARACTER -> DATAPARSE : ",dataParse)
     const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(dataParse.gameId) });
     console.log("gameIdDb",gameIdDb);
     const gameBoard = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
@@ -149,7 +150,7 @@ async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameMo
     //find square where is the player
 
     //on met à jour la position du joueur dans la bd
-    for (let square of squareGameModel) {
+    for (let square of gameModelGlobal.playable_squares.getAllPlayableSquares()) {
         if(parseInt(square.position.row) === parseInt(playerCharacter.position.row) && parseInt(square.position.col) === parseInt(playerCharacter.position.col)){
             //update db
             await db.collection('character').updateOne({ _id: playerCharacter._id , gameBoardId: gameBoard._id}, { $set: { position: { row: dataParse.row, col: dataParse.col } } });
@@ -159,25 +160,10 @@ async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameMo
     }
     return gameBoard;
 }
-async function  manageBotMove(squareGameModel,gameBoard,gameModelGlobal,actionController,db){
-    let botCharacter = await db.collection('character').findOne({ gameBoardId: new ObjectId(gameBoard._id), currentPlayerIndex: gameModelGlobal.currentPlayer });
-    let botCharacterGameModel = gameModelGlobal.player_array.getPlayer(gameModelGlobal.currentPlayer);
-
-    playBot(gameModelGlobal, actionController);
-
-
-
-    //code dupliqué mais pas grave
-    for(let square of squareGameModel){
-        if(parseInt(square.position.row) === parseInt(botCharacter.position.row) && parseInt(square.position.col) === parseInt(botCharacter.position.col)){
-
-            //update db
-            await db.collection('character').updateOne({ _id: botCharacter._id , gameBoardId: gameBoard._id}, { $set: { position: { row: botCharacterGameModel.position.row, col: botCharacterGameModel.position.col } } });
-            let botCharacterUpdated = await db.collection('character').findOne({ _id: new ObjectId(botCharacter._id)});
-            console.log('Bot position updated', botCharacterUpdated.position.row + " " + botCharacterUpdated.position.col);
-        }
-    }
+async function manageBotMove(gameModelGlobal){
+    return await nextMoveBotController(gameModelGlobal);
 }
+
 
 async function updatePlayerPositionFromDb(squareGameModel,db,gameBoard,gameModelGlobal){
     let botCharacter = await db.collection('character').findOne({ gameBoardId: new ObjectId(gameBoard._id), currentPlayerIndex: gameModelGlobal.currentPlayer });
@@ -208,12 +194,14 @@ function setUpPositionRealBot(positionBot,gameModelGlobal,botIndex){
     gameModelGlobal.resetSquaresVisibility();
     gameModelGlobal.computeSquaresVisibility();
 }
-async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db,squareGameModel){
+async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db){
+    console.log("playerBD INSIDE UPDATEWALLS BD ->",playerBd);
     let nbWalls = playerBd.nbWalls - 1;
     await db.collection('character').updateOne({ _id: new ObjectId(playerBd._id) }, { $set: { nbWalls : nbWalls } });
     for (let wallString of wallDataDeserialized.wallList) {
         // Extrait la ligne, la colonne et le type à partir de la chaîne de caractères
         let [row, col, type] = wallString.split('X');
+        console.log("row",row,"col",col,"type",type);
         // Convertit les valeurs de la ligne et de la colonne en nombres
         row = parseInt(row, 10);
         col = parseInt(col, 10);
@@ -247,11 +235,12 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
                 }
             }
 
+            console.log("wall to put ->", wallToCopy);
             // Met à jour la visibilité du mur dans la base de données
             await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
             const wallUpdated = await db.collection('walls').findOne({_id: new ObjectId(wall._id)});
 
-            for (let square of squareGameModel) {
+            for (let square of gameModelGlobal.playable_squares.getAllPlayableSquares()) {
                 //update db
                 await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
             }
