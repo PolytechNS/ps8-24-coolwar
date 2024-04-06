@@ -17,6 +17,10 @@ async function createGameDb(gameId,playersInfo,gameModelGlobal) {
         // autres données du plateau de jeu
     });
     const gameBoardId = gameBoard.insertedId;
+    console.log("gameBoardId",gameBoardId);
+    //retrieveGameBoardId
+    let gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameId });
+    console.log("gameBoardIdDb",gameBoardIdDb);
 
     // Supposons que 'playersInfo' contient des informations des deux joueurs récupérées de la base de données.
     const gamePlayers = gameModelGlobal.player_array.getAllPlayers(); // Contient les objets de jeu pour Player1 et Player2
@@ -137,6 +141,7 @@ async function loadGameFromDb(db, savedGame) {
 
 async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameModel){
     const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(dataParse.gameId) });
+    console.log("gameIdDb",gameIdDb);
     const gameBoard = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
     const currentPlayer = gameBoard.currentPlayer;
     let playerCharacter = await db.collection('character').findOne({ gameBoardId: gameBoard._id, currentPlayerIndex: currentPlayer });

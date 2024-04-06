@@ -38,6 +38,9 @@ module.exports = (io, socket) => {
         else if (gameMode === 'waitingForFriends') {
             joinGameWithFriend(io, socket, dataParse);
         }
+        else if (gameMode === 'launchGameWithFriends') {
+            launchGameWithFriends(io, socket, dataParse);
+        }
 
     });
 
@@ -445,6 +448,89 @@ module.exports = (io, socket) => {
 
 };
 
+const waitingPlayersForLaunchingGame = new Map();
+
+async function launchGameWithFriends(io, socket, data) {
+    const token = data.token;
+    let userId, userRoomId, gameId;
+
+    try {
+        await client.connect();
+        // Trouver l'utilisateur par token pour obtenir son ID et des informations supplémentaires
+        const user = await client.db().collection('users').findOne({token});
+        if (!user) {
+            console.error('User not found');
+            return;
+        }
+        userId = user._id.toString();
+        // Identifier la salle d'attente où les deux joueurs sont prêts
+        let roomForGame;
+        for (let [gameIdRoom, room] of waitingRoomsForFriends.entries()) {
+            if (room.players[userId] && Object.values(room.players).every(player => player.ready)) {
+                roomForGame = room;
+                gameId = room.gameId;
+                break;
+            }
+        }
+        if(roomForGame){
+            const playerIds = Object.keys(roomForGame.players);
+            const opponentId = playerIds.find(id => id !== userId); // Trouver l'ID de l'opposant
+
+            // Récupérer les informations de l'opposant, y compris son token
+            const opponent = await client.db().collection('users').findOne({ _id: new ObjectId(opponentId) });
+            if (!opponent) {
+                console.error('Opponent not found');
+                return;
+            }
+            let opponentToken = opponent.token;
+
+
+            if (waitingPlayersForLaunchingGame.has(opponentToken)) {
+                // Un adversaire est trouvé, préparation de la partie
+                const opponentSocketId = waitingPlayersForLaunchingGame.get(opponentToken);
+                const roomId = `instant_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+                // Faire rejoindre le socket actuel à la room
+                socket.join(roomId);
+                socketIds.set(token, socket.id);
+                // Trouver le socket de l'adversaire et le faire rejoindre la room
+                const opponentSocket = io.sockets.sockets.get(opponentSocketId);
+                opponentSocket.join(roomId);
+
+                // Continuer avec la logique de mise en place de la partie...
+                const playerTokens = [token, opponentToken];
+                const playersSocketIds = [socket.id, opponentSocketId];
+
+                let gamesToSend = await createGame(roomId, playerTokens, playersSocketIds, gameId);
+                if (!gamesToSend) {
+                    console.log("error creating game");
+                    return;
+                }
+
+                io.to(socket.id).emit('joinGameWithFriendsResponse', JSON.stringify(gamesToSend.gamePlayerOne));
+                io.to(opponentSocketId).emit('joinGameWithFriendsResponse', JSON.stringify(gamesToSend.gamePlayerTwo));
+
+                // Nettoyer
+                waitingPlayersForLaunchingGame.delete(token);
+                waitingPlayersForLaunchingGame.delete(opponentToken);
+
+
+
+            } else {
+                //si la room n'est pas trouvée dans la salle d'attente
+                waitingPlayersForLaunchingGame.set(token, socket.id);
+                socketIds.set(token, socket.id);
+
+            }
+        }else{
+            console.log("Room not found");
+        }
+    } catch (error) {
+        console.error('Error launching game with friends', error);
+    }
+
+}
+
 
 async function joinInstantGame(io, socket, tokenParsed) {
     // Recherche d'un joueur en attente
@@ -485,6 +571,7 @@ async function joinInstantGame(io, socket, tokenParsed) {
 
     }
 }
+
 
 async function joinGameWithFriend(io, socket, data) {
     await client.connect();
@@ -566,7 +653,7 @@ async function joinGameWithFriend(io, socket, data) {
 
 
 
-async function createGame(roomId,playerTokens, playersSocketIds){
+async function createGame(roomId,playerTokens, playersSocketIds, gameId){
 
     try {
         await client.connect();
@@ -587,18 +674,22 @@ async function createGame(roomId,playerTokens, playersSocketIds){
         if (playersInfo.length === 2) {
             const user = await db.collection('users').findOne({token: player1Token});
             const user2 = await db.collection('users').findOne({token: player2Token});
-            const newGame = await db.collection('games').insertOne({
-                fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
-                creator_id: user.username, // ID de l'utilisateur qui a créé la partie
-                typeGame: 'withFriends', // Type de partie
-                game_name: 'New Game', // Nom de la partie, peut-être fourni par l'utilisateur
-                createdAt: new Date()
-            });
-            const gameId = newGame.insertedId;
 
+            if(gameId===undefined){
+                const newGame = await db.collection('games').insertOne({
+                    fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
+                    creator_id: user.username, // ID de l'utilisateur qui a créé la partie
+                    typeGame: 'withFriends', // Type de partie
+                    game_name: 'New Game', // Nom de la partie, peut-être fourni par l'utilisateur
+                    createdAt: new Date()
+                });
+                gameId = newGame.insertedId;
+            }
             let config = {
                 typeGame: 'withFriends',
             }
+
+            console.log("gameId WHEN CREATING GAAAAAMMMMEEEEE HALO: ", gameId);
             // Créer un nouveau GameModel
             let gameModel = new GameModel(config);
 

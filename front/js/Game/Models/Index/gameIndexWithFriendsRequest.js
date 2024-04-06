@@ -28,8 +28,8 @@ window.onload = function () {
 
         initializeListener();
 
-            /*
-            const token = localStorage.getItem('token');
+        withFriendsGameService.joinGameRequest(token,(gameInfo) => {
+
             if (token) {
                 const gameData = JSON.parse(gameInfo);
 
@@ -46,7 +46,9 @@ window.onload = function () {
                 // Redirigez l'utilisateur vers la page de connexion si nécessaire
             }
 
-             */
+        });
+
+
     }
 }
 
