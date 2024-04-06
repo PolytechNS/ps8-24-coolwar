@@ -281,18 +281,22 @@ export class GamePresenter {
     updateInformations(){
         console.log("-----UPDATE INFORMATIONS-----");
         let playable_case_HTML = document.querySelectorAll('.playable_square');
+        //update des couleurs des cases
         playable_case_HTML.forEach(playable_case => {
             let position = playable_case.id.split('X');
             for(let i=0;i<this.model.playable_squares.length;i++){
                 let backSquare = this.model.playable_squares[i];
                 if(parseInt(backSquare.position.row)===parseInt(position[0]) && parseInt(backSquare.position.col)===parseInt(position[1])) {
-                    //playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
-                    //playable_case.style.color = "white";
-                    if(backSquare.visibility <=0 && this.model.currentPlayer === 1) {
+                    playable_case.innerHTML = "<p>"+backSquare.visibility+"</p>";
+                    playable_case.style.color = "white";
+                    if(backSquare.visibility <0) {
                         playable_case.style.backgroundColor = "#22341A";
                     }
-                    if(backSquare.visibility >= 0 && this.model.currentPlayer === 2){
+                    if(backSquare.visibility > 0){
                         playable_case.style.backgroundColor = "#497637";
+                    }
+                    if(backSquare.visibility === 0) {
+                        playable_case.style.backgroundColor = "#5E8C61";
                     }
                 }
             }
