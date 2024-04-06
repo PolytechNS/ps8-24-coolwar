@@ -230,7 +230,8 @@ export class GamePresenter {
         this.model = JSON.parse(newModel);
         console.log("MODEL AFTER UPDATE",this.model);
         this.view.updateViewCharacter(this.model.player_array[0].position.row,this.model.player_array[0].position.col,1);
-        this.view.updateViewCharacter(this.model.player_array[1].position.row,this.model.player_array[1].position.col,2);
+        if(this.model.player_array[1]!=null){this.view.updateViewCharacter(this.model.player_array[1].position.row,this.model.player_array[1].position.col,2);}
+
         //UPDATE LES MURS
         let horizontalWalls_in_gameModel = this.model.horizontal_Walls;
         let verticalWalls_in_gameModel = this.model.vertical_Walls;
@@ -301,7 +302,6 @@ export class GamePresenter {
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
         console.log(this.model.ownIndexPlayer);
-
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
         console.log("-----------------------UPDATE NB WALLS-----------------------");

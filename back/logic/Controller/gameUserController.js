@@ -140,9 +140,7 @@ async function loadGameFromDb(db, savedGame) {
 }
 
 async function updatePositionCharacter(dataParse,db,gameModelGlobal){
-    console.log("UPDATE POSITION CHARACTER -> DATAPARSE : ",dataParse)
     const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(dataParse.gameId) });
-    console.log("gameIdDb",gameIdDb);
     const gameBoard = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
     const currentPlayer = gameBoard.currentPlayer;
     let playerCharacter = await db.collection('character').findOne({ gameBoardId: gameBoard._id, currentPlayerIndex: currentPlayer });

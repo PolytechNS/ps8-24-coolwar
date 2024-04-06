@@ -84,7 +84,6 @@ export const BotGameService = {
         // Écouter la réponse du serveur sur la même socket
         socketManager.socket.once('updateGameModelResponse', (response) => {
             console.log("UPDATE GAME MODEL WITH BOT RESPONSE CALLBACK");
-
             callback(response);
         });
     },

@@ -221,6 +221,7 @@ class GameModel {
 
 
     checkWinner(){
+        console.log("PLAYER ARRAY ->",this.player_array.players);
         let valueToReturn = -1;
         if(this.roundCounter>=200){console.log("STOP GAME !");valueToReturn = 0;}
         else{
