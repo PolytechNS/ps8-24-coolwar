@@ -77,6 +77,12 @@ function handleClockLaunch(seconds) {
 // Gestion de la réponse à la jointure de la salle d'attente
 function handleJoinWaitingRoomResponse(response) {
     console.log('Join waiting room response:', response);
+    const gameNameElement = document.getElementById('gameName');
+    if (gameNameElement) {
+        gameNameElement.textContent = `Game "${response.gameName}"`; // Mise à jour avec le nom de la partie reçu
+    } else {
+        console.error('Game name element not found');
+    }
     updatePlayersList(response.players);
 }
 
@@ -84,6 +90,7 @@ function handleJoinWaitingRoomResponse(response) {
 function updatePlayersList(players) {
     const listPlayersDiv = document.querySelector('.listPlayers');
     listPlayersDiv.innerHTML = ''; // Réinitialiser la liste
+
 
     Object.keys(players).forEach(playerId => {
         const player = players[playerId];

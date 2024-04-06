@@ -16,20 +16,13 @@ const {verifyMessage} = require("../../Controller/Chat/chatController");
 const {addExpToPlayerWithBot,manageEndGameUser,checkAchievements} = require("../../Controller/userController");
 
 
-
-/*
-const games = new Map();
-const waitingPlayers = new Map(); // Clé : token de l'utilisateur, Valeur : ID de la room
-const socketIds = new Map(); // Nouvelle map pour stocker les ID des sockets des joueurs
-
-
- */
-
 // Variables globales pour la gestion des rooms et des joueurs
 const games = new Map();
 const waitingPlayersForInstantGame = new Map();
 const waitingRoomsForFriends = new Map();
 const socketIds = new Map();
+let countdownTimers = new Map(); // Pour stocker les timers par gameId
+
 
 
 module.exports = (io, socket) => {
@@ -140,6 +133,7 @@ module.exports = (io, socket) => {
     });
 
     //ready
+
     socket.on('ready', async (data) => {
         const { token } = JSON.parse(data);
         let userId;
@@ -153,50 +147,31 @@ module.exports = (io, socket) => {
             }
             userId = user._id.toString();
 
-            let updated = false;
             for (let [gameId, room] of waitingRoomsForFriends.entries()) {
-                if (room.players[userId]) {
+                if (room.players.hasOwnProperty(userId)) { // Assurez-vous que le joueur est dans la salle
+                    // Met à jour l'état 'ready' du joueur
                     room.players[userId].ready = !room.players[userId].ready;
-                    updated = true;
-                    io.to(room.roomId).emit('join waiting room response', room);
-                    console.log(`Player ${userId} is ready in game ${gameId}`);
 
-                    const allReady = Object.values(room.players).every(player => player.ready);
+                    const playerCount = Object.keys(room.players).length;
+                    const allReady = playerCount === 2 && Object.values(room.players).every(player => player.ready);
+
                     if (allReady) {
-                        let countdown = 5; // Durée du compte à rebours en secondes
-                        const intervalId = setInterval(() => {
-                            // Envoyer la mise à jour du compte à rebours à la salle
-                            io.to(room.roomId).emit('launch clock', countdown);
-                            countdown--;
-
-                            // Vérifier si le compte à rebours est terminé
-                            if (countdown < 0) {
-                                clearInterval(intervalId); // Arrêter l'intervalle
-                                // Vérifier une dernière fois si tous les joueurs sont toujours prêts
-                                const stillAllReady = Object.values(room.players).every(player => player.ready);
-                                if (stillAllReady) {
-                                    io.to(room.roomId).emit('startGameWithFriend', { gameId });
-                                    console.log(`Game ${gameId} is starting after countdown.`);
-                                }
-                            }
-                        }, 1000); // 1000 millisecondes équivalent à 1 seconde
-
-                        // Annuler le compte à rebours si un joueur se déclare non prêt
-                        Object.keys(room.players).forEach(playerId => {
-                            socket.on(`not ready ${playerId}`, () => {
-                                clearInterval(intervalId);
-                                io.to(room.roomId).emit('launch clock cancelled');
-                                console.log(`Countdown cancelled for game ${gameId}.`);
-                            });
-                        });
+                        // Si tous les deux joueurs sont prêts
+                        startCountdown(io, room, gameId);
+                    } else {
+                        // Si un des joueurs n'est plus prêt ou s'il n'y a pas deux joueurs prêts
+                        const countdownTimerExists = countdownTimers.has(gameId);
+                        if (countdownTimerExists) {
+                            clearInterval(countdownTimers.get(gameId));
+                            countdownTimers.delete(gameId);
+                            io.to(room.roomId).emit('launch clock cancelled', "Countdown stopped. Waiting for all players to be ready.");
+                        }
                     }
 
-                    break;
+                    io.to(room.roomId).emit('join waiting room response', room); // Mettre à jour tous les joueurs avec l'état actuel
+                    console.log(`Player ${userId}'s ready state updated in game ${gameId}`);
+                    break; // Sortir de la boucle une fois l'état mis à jour
                 }
-            }
-
-            if (!updated) {
-                console.log('Player not found in any waiting room');
             }
         } catch (error) {
             console.error('Error setting player to ready', error);
@@ -204,6 +179,22 @@ module.exports = (io, socket) => {
             await client.close();
         }
     });
+
+    function startCountdown(io, room, gameId) {
+        let countdown = 5;
+        const intervalId = setInterval(() => {
+            io.to(room.roomId).emit('launch clock', countdown);
+            countdown--;
+            if (countdown < 0) {
+                clearInterval(intervalId);
+                countdownTimers.delete(gameId); // Nettoyer la référence du timer
+                io.to(room.roomId).emit('startGameWithFriend', { gameId });
+                console.log(`Game ${gameId} is starting after countdown.`);
+            }
+        }, 1000);
+        countdownTimers.set(gameId, intervalId); // Stocker la référence du timer
+    }
+
 
 
 
@@ -556,6 +547,7 @@ async function joinGameWithFriend(io, socket, data) {
         const newRoom = {
             gameId: latestGameCreatedByUser._id, // Utiliser le premier jeu invité comme référence
             roomId: newRoomId,
+            gameName: latestGameCreatedByUser.game_name, // Nom de la partie
             players: { [user._id.toString()]: { ready: false, ...userInfo } }
         };
 
