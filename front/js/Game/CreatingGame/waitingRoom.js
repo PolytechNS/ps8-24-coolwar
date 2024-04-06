@@ -55,6 +55,8 @@ function attemptToJoinWaitingRoom(token) {
 // Gestion du démarrage de la partie
 function handleGameStart() {
     console.log('Game is starting...');
+    window.location.href = '../../../../GamePage/GamePageWithFriendsRequest.html';
+
 
 }
 
