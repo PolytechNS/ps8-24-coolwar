@@ -306,11 +306,20 @@ export class GamePresenter {
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
         console.log(this.model.ownIndexPlayer);
+        console.log(this.model.currentPlayer);
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
+
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
         console.log("-----------------------UPDATE NB WALLS-----------------------");
-        console.log(this.model.player_array[this.model.ownIndexPlayer-1].nbWalls);
-        nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.ownIndexPlayer-1].nbWalls + " walls left";
+        console.log("OWN INDEX PLAYER -> ",this.model.ownIndexPlayer);
+
+        if(this.model.player_array.length<=1){
+            nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[0].nbWalls + " walls left";
+        }
+        else{
+            nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.ownIndexPlayer-1].nbWalls + " walls left";
+        }
+
         console.log("-------------------------------------------------------------")
         whoIAm.item(0).innerHTML = "You are player "+this.model.ownIndexPlayer;
     }
