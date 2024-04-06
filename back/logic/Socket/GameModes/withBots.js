@@ -33,7 +33,7 @@ module.exports = (io, socket) => {
                 creator_id: user.username , // ID de l'utilisateur qui a créé la partie
                 typeGame: 'withBot', // Type de partie
                 game_name: 'New Game', // Nom de la partie, peut-être fourni par l'utilisateur
-                createdAt: new Date()
+                createdAt: new Date()   // Date de création de la partie
             });
             const gameId = newGame.insertedId;
 
