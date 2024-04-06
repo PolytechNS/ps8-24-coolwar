@@ -18,19 +18,18 @@ let globalPresenter; // Définissez ceci dans une portée accessible là où vou
 window.onload = function () {
     console.log('Waiting room');
     const token = localStorage.getItem('token');
-    const gameId = localStorage.getItem('gameId');
     //join
     if(token) {
         if(!socketManager.isSocketInitialized(token)) {
             socketManager.initializeSocket(token);
         }
 
-        console.log("DANS INDEX WITH FRIENDS QUAND JAI GAMEID",gameId);
+        console.log("DANS INDEX WITH FRIENDS QUAND JAI GAMEID");
 
         initializeListener();
 
-            /*
-            const token = localStorage.getItem('token');
+        withFriendsGameService.joinGameRequest(token,(gameInfo) => {
+
             if (token) {
                 const gameData = JSON.parse(gameInfo);
 
@@ -47,7 +46,9 @@ window.onload = function () {
                 // Redirigez l'utilisateur vers la page de connexion si nécessaire
             }
 
-             */
+        });
+
+
     }
 }
 

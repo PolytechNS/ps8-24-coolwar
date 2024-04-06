@@ -5,15 +5,17 @@ import {BotGameService} from "../WithBot/botGameService.js";
 export const withFriendsGameService = {
     joinGame: function(token) {
         // Envoyer une requête pour rejoindre une partie avec le token d'identification de l'utilisateur
-        const dataToSend = { token: token };
         socketManager.socket.emit('joinGameWithFriends', JSON.stringify({token: token, gameMode:"playNow"}));
     },
 
-    joinGameRequest: function(token,gameId) {
+    joinGameRequest: function(token,callback) {
         // Envoyer une requête pour rejoindre une partie avec le token d'identification de l'utilisateur
-        const dataToSend = { token: token, gameId: gameId };
-        socketManager.socket.emit('joinGameWithFriends', JSON.stringify({token: token, gameMode:"playNow", gameId:gameId}));
-    },
+        socketManager.socket.emit('joinGameWithFriends', JSON.stringify({token: token, gameMode:"launchGameWithFriends"}));
+
+        socketManager.socket.on('joinGameWithFriendsResponse', (gameInfo) => {
+            callback(gameInfo);
+        });
+        },
 
     waitForOpponent: function(callback) {
         socketManager.socket.on('opponentFound', (gameInfo) => {

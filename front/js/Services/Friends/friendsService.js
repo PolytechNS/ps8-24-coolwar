@@ -65,26 +65,31 @@ const friendsService = {
         }).then(response => response.json());
     },
 
-    sendGameRequest(gameId, username, token) {
+    sendGameRequest(invitedUserName, token) {
         return fetch(`${config.API_ENDPOINT}/api/friends/invite`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ gameId, username, token }) // Envoie les données nécessaires
+            body: JSON.stringify({ invitedUserName, token }) // Envoie les données nécessaires
         })
-            .then(response => response.json());
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            });
     },
 
-    acceptGameRequest(gameId, token) {
+    acceptGameRequest(invitingUserName, token) {
         return fetch(`${config.API_ENDPOINT}/api/friends/accept`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ gameId, token }) // Envoie les données nécessaires
+            body: JSON.stringify({ invitingUserName, token }) // Envoie les données nécessaires
         })
             .then(response => response.json());
     },

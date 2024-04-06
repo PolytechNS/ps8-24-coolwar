@@ -16,20 +16,13 @@ const {verifyMessage} = require("../../Controller/Chat/chatController.js");
 const {addExpToPlayerWithBot,manageEndGameUser,checkAchievements} = require("../../Controller/userController.js");
 
 
-
-/*
-const games = new Map();
-const waitingPlayers = new Map(); // Clé : token de l'utilisateur, Valeur : ID de la room
-const socketIds = new Map(); // Nouvelle map pour stocker les ID des sockets des joueurs
-
-
- */
-
 // Variables globales pour la gestion des rooms et des joueurs
 const games = new Map();
 const waitingPlayersForInstantGame = new Map();
 const waitingRoomsForFriends = new Map();
 const socketIds = new Map();
+let countdownTimers = new Map(); // Pour stocker les timers par gameId
+
 
 
 module.exports = (io, socket) => {
@@ -45,8 +38,22 @@ module.exports = (io, socket) => {
         else if (gameMode === 'waitingForFriends') {
             joinGameWithFriend(io, socket, dataParse);
         }
+        else if (gameMode === 'launchGameWithFriends') {
+            launchGameWithFriends(io, socket, dataParse);
+        }
 
     });
+
+    socket.on("ready", async (data) => {
+      const tokenParsed = JSON.parse(data).token;
+
+      //
+
+
+      io.to(socket.id).emit("player ready response", JSON.stringify({}));
+
+
+    },
 
     socket.on('disconnect', async () => {
         // Identifier le joueur par son socket.id et le supprimer des listes d'attente
@@ -92,10 +99,8 @@ module.exports = (io, socket) => {
             console.log(`Socket ID reference removed for player with token ${foundToken}.`);
         }
 
-        // Traitement supplémentaire pour les joueurs déjà en partie
-        // Vous devrez ajuster cette partie en fonction de la logique spécifique de votre jeu
-        // Par exemple, notifier l'autre joueur, terminer la partie, etc.
-    });
+
+    }));
 
 
 
@@ -131,48 +136,69 @@ module.exports = (io, socket) => {
     });
 
     //ready
+
     socket.on('ready', async (data) => {
-        const { token, gameId } = JSON.parse(data);
-        console.log("les data ",data);
-        console.log(`Player with token ${token} is ready for game ${gameId}`);
-        // Vérifier si la room existe
-        if (waitingRoomsForFriends.has(gameId)) {
-            const room = waitingRoomsForFriends.get(gameId);
+        const { token } = JSON.parse(data);
+        let userId;
 
-            // Marquer le joueur comme prêt
-            room.players[token].ready = true;
-
-            // Vérifier si tous les joueurs sont prêts
-            const allPlayersReady = Object.values(room.players).every(player => player.ready);
-
-            if (allPlayersReady) {
-                // Tous les joueurs sont prêts
-                console.log(`All players are ready for game ${gameId}. Starting game...`);
-
-                // Émettre un événement pour démarrer le jeu
-                io.to(`game_${gameId}`).emit('startGameWithFriend', { gameId });
-
-                // Ici, vous pourriez aussi initialiser la partie dans votre logique de serveur,
-                // comme en créant un état de jeu initial ou en chargeant la configuration de la partie.
-
-                // Optionnel: Nettoyer la room après le démarrage de la partie
-                // Cela dépend de votre logique de jeu et de comment vous gérez les états de partie.
-                waitingRoomsForFriends.delete(gameId);
-
-            } else {
-                // Pas tous les joueurs sont prêts
-
-                console.log(`Player with token ${token} is ready for game ${gameId}. Waiting for others...`);
-
-                // Émettre un événement pour indiquer qu'un joueur est prêt, si nécessaire
-                // Cela pourrait être utile pour mettre à jour l'UI côté client
-                //io.to(`game_${gameId}`).emit('playerReady', { token, ready: true });
+        try {
+            await client.connect();
+            const user = await client.db().collection('users').findOne({ token: token });
+            if (!user) {
+                console.error('User not found');
+                return;
             }
+            userId = user._id.toString();
 
-            // Ne pas oublier de mettre à jour la room dans la map après modification
-            waitingRoomsForFriends.set(gameId, room);
+            for (let [gameId, room] of waitingRoomsForFriends.entries()) {
+                if (room.players.hasOwnProperty(userId)) { // Assurez-vous que le joueur est dans la salle
+                    // Met à jour l'état 'ready' du joueur
+                    room.players[userId].ready = !room.players[userId].ready;
+
+                    const playerCount = Object.keys(room.players).length;
+                    const allReady = playerCount === 2 && Object.values(room.players).every(player => player.ready);
+
+                    if (allReady) {
+                        // Si tous les deux joueurs sont prêts
+                        startCountdown(io, room, gameId);
+                    } else {
+                        // Si un des joueurs n'est plus prêt ou s'il n'y a pas deux joueurs prêts
+                        const countdownTimerExists = countdownTimers.has(gameId);
+                        if (countdownTimerExists) {
+                            clearInterval(countdownTimers.get(gameId));
+                            countdownTimers.delete(gameId);
+                            io.to(room.roomId).emit('launch clock cancelled', "Countdown stopped. Waiting for all players to be ready.");
+                        }
+                    }
+
+                    io.to(room.roomId).emit('join waiting room response', room); // Mettre à jour tous les joueurs avec l'état actuel
+                    console.log(`Player ${userId}'s ready state updated in game ${gameId}`);
+                    break; // Sortir de la boucle une fois l'état mis à jour
+                }
+            }
+        } catch (error) {
+            console.error('Error setting player to ready', error);
+        } finally {
+            await client.close();
         }
     });
+
+    function startCountdown(io, room, gameId) {
+        let countdown = 5;
+        const intervalId = setInterval(() => {
+            io.to(room.roomId).emit('launch clock', countdown);
+            countdown--;
+            if (countdown < 0) {
+                clearInterval(intervalId);
+                countdownTimers.delete(gameId); // Nettoyer la référence du timer
+                io.to(room.roomId).emit('startGameWithFriend', { gameId });
+                console.log(`Game ${gameId} is starting after countdown.`);
+            }
+        }, 1000);
+        countdownTimers.set(gameId, intervalId); // Stocker la référence du timer
+    }
+
+
 
 
     socket.on('moveCharacterWithFriends', async(data)=>{
@@ -422,6 +448,89 @@ module.exports = (io, socket) => {
 
 };
 
+const waitingPlayersForLaunchingGame = new Map();
+
+async function launchGameWithFriends(io, socket, data) {
+    const token = data.token;
+    let userId, userRoomId, gameId;
+
+    try {
+        await client.connect();
+        // Trouver l'utilisateur par token pour obtenir son ID et des informations supplémentaires
+        const user = await client.db().collection('users').findOne({token});
+        if (!user) {
+            console.error('User not found');
+            return;
+        }
+        userId = user._id.toString();
+        // Identifier la salle d'attente où les deux joueurs sont prêts
+        let roomForGame;
+        for (let [gameIdRoom, room] of waitingRoomsForFriends.entries()) {
+            if (room.players[userId] && Object.values(room.players).every(player => player.ready)) {
+                roomForGame = room;
+                gameId = room.gameId;
+                break;
+            }
+        }
+        if(roomForGame){
+            const playerIds = Object.keys(roomForGame.players);
+            const opponentId = playerIds.find(id => id !== userId); // Trouver l'ID de l'opposant
+
+            // Récupérer les informations de l'opposant, y compris son token
+            const opponent = await client.db().collection('users').findOne({ _id: new ObjectId(opponentId) });
+            if (!opponent) {
+                console.error('Opponent not found');
+                return;
+            }
+            let opponentToken = opponent.token;
+
+
+            if (waitingPlayersForLaunchingGame.has(opponentToken)) {
+                // Un adversaire est trouvé, préparation de la partie
+                const opponentSocketId = waitingPlayersForLaunchingGame.get(opponentToken);
+                const roomId = `instant_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+                // Faire rejoindre le socket actuel à la room
+                socket.join(roomId);
+                socketIds.set(token, socket.id);
+                // Trouver le socket de l'adversaire et le faire rejoindre la room
+                const opponentSocket = io.sockets.sockets.get(opponentSocketId);
+                opponentSocket.join(roomId);
+
+                // Continuer avec la logique de mise en place de la partie...
+                const playerTokens = [token, opponentToken];
+                const playersSocketIds = [socket.id, opponentSocketId];
+
+                let gamesToSend = await createGame(roomId, playerTokens, playersSocketIds, gameId);
+                if (!gamesToSend) {
+                    console.log("error creating game");
+                    return;
+                }
+
+                io.to(socket.id).emit('joinGameWithFriendsResponse', JSON.stringify(gamesToSend.gamePlayerOne));
+                io.to(opponentSocketId).emit('joinGameWithFriendsResponse', JSON.stringify(gamesToSend.gamePlayerTwo));
+
+                // Nettoyer
+                waitingPlayersForLaunchingGame.delete(token);
+                waitingPlayersForLaunchingGame.delete(opponentToken);
+
+
+
+            } else {
+                //si la room n'est pas trouvée dans la salle d'attente
+                waitingPlayersForLaunchingGame.set(token, socket.id);
+                socketIds.set(token, socket.id);
+
+            }
+        }else{
+            console.log("Room not found");
+        }
+    } catch (error) {
+        console.error('Error launching game with friends', error);
+    }
+
+}
+
 
 async function joinInstantGame(io, socket, tokenParsed) {
     // Recherche d'un joueur en attente
@@ -463,21 +572,88 @@ async function joinInstantGame(io, socket, tokenParsed) {
     }
 }
 
-async function joinGameWithFriend(io, socket, token) {
-    // Implementation for "waitingForFriends" mode
-    const roomId = `friend_${token}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    waitingRoomsForFriends.set(token, roomId);
-    socketIds.set(token, socket.id);
 
-    socket.join(roomId);
+async function joinGameWithFriend(io, socket, data) {
+    await client.connect();
+    const db = client.db();
+    const {token, gameMode} = data;
+    console.log("JOIN GAME WITH FRIENDS",data);
 
-    socket.emit('friendGameCreated', { roomId });
-    // Now, you need to handle the process by which the friend joins the room
-    // using the room ID. This could be done via another socket event.
+    let user = await db.collection('users').findOne({ token });
+    // Vérifier si l'utilisateur existe
+    if (!user) {
+        console.log('User not found.');
+        socket.emit('error', 'User not found.');
+        await client.close();
+        return;
+    }
+    const userInfo = {
+        ready: false, // Prêt à jouer ou non
+        username: user.username, // Nom d'utilisateur pour affichage
+        level: user.lvl, // Niveau de l'utilisateur, supposons que cela existe dans votre modèle d'utilisateur
+    };
+
+    console.log("user",user);
+    console.log("userInfo",userInfo);
+
+    const invitations = await db.collection('gameInvites').find({
+        'invitedUser.id': user._id,
+        status: 'accepted'
+    }).toArray();
+
+    let foundRoom = false;
+
+    for (let invitation of invitations) {
+        if (waitingRoomsForFriends.has(invitation.invitingUser.id.toString())) {
+            const room = waitingRoomsForFriends.get(invitation.invitingUser.id.toString());
+            // Vérifier si la salle est celle attendue pour le jeu invité
+            if (room.gameId.toString() === invitation.gameId.toString()) {
+                // Faire rejoindre la socket à la room
+                socket.join(room.roomId);
+
+                // Mettre à jour le statut du joueur dans la room
+                room.players[user._id.toString()] = { ready: false, ...userInfo};
+                waitingRoomsForFriends.set(invitation.invitingUser.id.toString(), room);
+
+                // Émettre tout l'objet room à la roomId
+                io.to(room.roomId).emit('join waiting room response', room);
+
+                foundRoom = true;
+                console.log(`User ${user.username} joined the waiting room for game ${room.gameId}`);
+                break;
+            }
+        }
+    }
+
+    if (!foundRoom) {
+        const latestGameCreatedByUser = await db.collection('games').find({
+            creator_id: user._id
+        }).sort({ createdAt: -1 }).limit(1).next();
+        // Si aucune salle d'attente correspondante n'est trouvée, créer une nouvelle salle
+        const newRoomId = `friend_${user._id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const newRoom = {
+            gameId: latestGameCreatedByUser._id, // Utiliser le premier jeu invité comme référence
+            roomId: newRoomId,
+            gameName: latestGameCreatedByUser.game_name, // Nom de la partie
+            players: { [user._id.toString()]: { ready: false, ...userInfo } }
+        };
+
+        // Faire rejoindre la socket à la nouvelle room
+        socket.join(newRoomId);
+
+        waitingRoomsForFriends.set(user._id.toString(), newRoom);
+
+        // Émettre l'objet room au client
+        socket.emit('join waiting room response', newRoom);
+        console.log("all waiting rooms",waitingRoomsForFriends);
+    }
+
+    await client.close();
 }
 
 
-async function createGame(roomId,playerTokens, playersSocketIds){
+
+async function createGame(roomId,playerTokens, playersSocketIds, gameId){
 
     try {
         await client.connect();
@@ -497,17 +673,23 @@ async function createGame(roomId,playerTokens, playersSocketIds){
 
         if (playersInfo.length === 2) {
             const user = await db.collection('users').findOne({token: player1Token});
-            const newGame = await db.collection('games').insertOne({
-                fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
-                creator_id: user.username, // ID de l'utilisateur qui a créé la partie
-                typeGame: 'withFriends', // Type de partie
-                game_name: 'New Game' // Nom de la partie, peut-être fourni par l'utilisateur
-            });
-            const gameId = newGame.insertedId;
+            const user2 = await db.collection('users').findOne({token: player2Token});
 
+            if(gameId===undefined){
+                const newGame = await db.collection('games').insertOne({
+                    fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
+                    creator_id: user.username, // ID de l'utilisateur qui a créé la partie
+                    typeGame: 'withFriends', // Type de partie
+                    game_name: 'New Game', // Nom de la partie, peut-être fourni par l'utilisateur
+                    createdAt: new Date()
+                });
+                gameId = newGame.insertedId;
+            }
             let config = {
                 typeGame: 'withFriends',
             }
+
+            console.log("gameId WHEN CREATING GAAAAAMMMMEEEEE HALO: ", gameId);
             // Créer un nouveau GameModel
             let gameModel = new GameModel(config);
 
@@ -515,7 +697,7 @@ async function createGame(roomId,playerTokens, playersSocketIds){
 
 
             // Stocker l'instance de GameModel dans la map
-            games.set(gameId.toString(), {gameModel, actionController,roomId,player1Token,player2Token });
+            games.set(gameId.toString(), {gameModel, actionController,roomId,playerTokens,player2Token, user1_id : user._id,user2_id : user2._id, player1Token});
 
             // Persister le plateau de jeu
             let gameBoardId = await createGameDb(gameId, playersInfo, gameModel, db); // puis on fournit les token des 2 users pour pouvoir persister leur index dans la db

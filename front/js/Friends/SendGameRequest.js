@@ -35,21 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Ajout de l'écouteur d'événement sur toute la div 'friend'
                 friendDiv.addEventListener('click', () => {
-                    friendsService.sendGameRequest(gameId, friend.username, token)
+                    console.log('Sending game invitation to', friend.username);
+                    friendsService.sendGameRequest(friend.username, token)
                         .then(response => {
                             console.log('Game invitation response:', response);
-                            if (response.success) {
-                                const notif = document.querySelector('.notif');
-                                const notifSpan = document.createElement('span');
-                                notifSpan.className='notifcation';
-                                notif.appendChild(notifSpan);
                                 alert(`Invitation sent to ${friend.username}`);
-                            } else {
-                                alert(`Failed to send invitation to ${friend.username}`);
-                            }
                         })
                         .catch(error => {
                             console.error('Error sending game invitation:', error);
+                            alert(`Failed to send invitation to ${friend.username} because: ${error.message}`);
+
                         });
                 });
             });
