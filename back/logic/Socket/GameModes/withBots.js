@@ -14,6 +14,7 @@ const {MONGO_URL, withBot} = require("../../Utils/constants");
 const {Wall} = require("../../Model/Objects/Wall");
 const {WallDictionary} = require("../../Model/Objects/WallDictionary");
 const {PlayerManager} = require("../../Model/Objects/PlayerManager");
+const {GamePlayer} = require("../../Model/Objects/GamePlayer");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
@@ -58,12 +59,18 @@ module.exports = (io, socket) => {
                 let gameBoardId = await createGameDb(gameId,playersInfo,gameModel);
                 let characters =await retrieveCharacterFromDb(db,gameBoardId);
                 // Envoyer l'état initial du jeu au client
+
+                let playerArrayToSend = new PlayerManager();
+                playerArrayToSend.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name,gameModel.player_array.getPlayer(1).position,gameModel.player_array.getPlayer(1).nbWalls));
+                let playableSquareWhereEnemyIs = gameModel.playable_squares.getPlayableSquare(gameModel.player_array.getPlayer(2).position.row,gameModel.player_array.getPlayer(2).position.col);
+                if(playableSquareWhereEnemyIs.visibility <= 0) {playerArrayToSend.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(2).name,gameModel.player_array.getPlayer(2).position,gameModel.player_array.getPlayer(2).nbWalls));}
+
                 socket.emit('getGameWithBotResponse', JSON.stringify({
                     gameId: gameId, // ID de la partie
                     gameBoardId: gameBoardId, // ID du plateau de jeu
                     nbLignes: gameModel.nbLignes, // Nombre de lignes
                     nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                    player_array: gameModel.player_array.getAllPlayers(),
+                    player_array: playerArrayToSend.getAllPlayers(),
                     horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                     vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
