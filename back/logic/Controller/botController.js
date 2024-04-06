@@ -30,9 +30,9 @@ exports.setupBotController = function (currentPlayerIndex) {
 
 exports.nextMoveBotController = function (gameModel) {
     let gameState = convertGameModelToGameState(gameModel.playable_squares, gameModel.horizontal_Walls.wallList, gameModel.vertical_Walls.wallList, 2, gameModel.player_array);
-    let board = computeVisibilityPlayableSquare(gameModel, gameModel.currentPlayer);
-    let opponentWalls = getWallOpponent(gameModel);
-    let ownWalls = getOwnWalls(gameModel);
+    //gameState.board = computeVisibilityPlayableSquare(gameModel, gameModel.currentPlayer);
+    gameState.opponentWalls = getWallOpponent(gameModel);
+    gameState.ownWalls = getOwnWalls(gameModel);
     return new Promise((resolve, reject) => {
         nextMove(gameState).then((move) => {
             resolve(move);
@@ -53,6 +53,7 @@ function convertGameModelToGameState(playableSquares, horizontalWalls, verticalW
         opponentWalls: []
     };
 
+    console.log(playableSquares.getPlayableSquare(players.players[0].position.row,players.players[0].position.col).visibility);
     if(playableSquares.getPlayableSquare(players.players[0].position.row,players.players[0].position.col).visibility >= 0 ){
         gameState.board[players.players[0].position.row][players.players[0].position.col] = 2;
         console.log("on voit le mec youpi");

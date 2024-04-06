@@ -192,7 +192,7 @@ module.exports = (io, socket) => {
             //afficher les carrés jouables
 
             //on met à jour la position du joueur dans la bd
-            let gameBoard = await updatePositionCharacter(dataParse,db,gameModel,squareGameModel);
+            let gameBoard = await updatePositionCharacter(dataParse,db,gameModel);
 
             //on met à jour le joueur actuel dans la bd
             await updateCurrentPlayerFromDb(gameBoard,db,gameModel);

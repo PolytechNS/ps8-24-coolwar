@@ -135,7 +135,8 @@ async function loadGameFromDb(db, savedGame) {
     return config;
 }
 
-async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameModel){
+async function updatePositionCharacter(dataParse,db,gameModelGlobal){
+    console.log("UPDATE POSITION CHARACTER -> DATAPARSE : ",dataParse)
     const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(dataParse.gameId) });
     const gameBoard = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
     const currentPlayer = gameBoard.currentPlayer;
@@ -144,7 +145,7 @@ async function updatePositionCharacter(dataParse,db,gameModelGlobal,squareGameMo
     //find square where is the player
 
     //on met à jour la position du joueur dans la bd
-    for (let square of squareGameModel) {
+    for (let square of gameModelGlobal.playable_squares.getAllPlayableSquares()) {
         if(parseInt(square.position.row) === parseInt(playerCharacter.position.row) && parseInt(square.position.col) === parseInt(playerCharacter.position.col)){
             //update db
             await db.collection('character').updateOne({ _id: playerCharacter._id , gameBoardId: gameBoard._id}, { $set: { position: { row: dataParse.row, col: dataParse.col } } });
