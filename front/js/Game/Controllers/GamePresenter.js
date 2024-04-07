@@ -18,6 +18,7 @@ export class GamePresenter {
         this.attachSaveHandler();
         this.detachHandlerFromWalls();
         this.roomId=this.model.roomId?this.model.roomId:null;
+        this.wallPower = false;
     }
 
     detachHandlerFromWalls() {
@@ -64,6 +65,21 @@ export class GamePresenter {
        this.init_walls(horizontal_walls_HTML, model);
        this.init_walls(vertical_walls_HTML,model);
        this.init_playable_case(playable_case_HTML);
+       this.init_bonus();
+    }
+
+    init_bonus() {
+        let bonus_HTML = document.querySelectorAll('#BTN_superpower');
+        bonus_HTML.item(0).addEventListener('click', () => {
+            if(this.wallPower){
+                this.wallPower = false;
+                bonus_HTML.item(0).classList.remove('active_bonus');
+            }
+            else{
+                this.wallPower = true;
+                bonus_HTML.item(0).classList.add('active_bonus');
+            }
+        });
     }
 
     cancel_behaviour(){
@@ -180,32 +196,40 @@ export class GamePresenter {
 
     clickPlaceWallHandler = (wall) => {
         return () => {
-            let neighborhood = getWallNeighborhood(wall);
-            if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
-                neighborhood = getWallNeighborhood_Invert(wall);
+            if(this.wallPower){
+                console.log("WALLPOWER -> ORIGINAL WALL :",wall.children.item(0).id);
+                const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, originalWall : wall.children.item(0).id,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer,wallPower:this.wallPower };
+                actionGameService.explodeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
+                    if(isAuthorized){this.sendUpdateToBack();}
+                });
             }
-            let wallListReq = [wall.children.item(0).id];
-            let wallListObj = [wall];
-            if (!this.gameBehaviour.isPresentWall(neighborhood)) {
-                wallListReq.push(neighborhood.children.item(0).id);
-                wallListObj.push(neighborhood);
-            }
-
-            const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer };
-            console.log(" -> ",dataToSend);
-            actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
-                if(isAuthorized){
-                    wallListObj.forEach((wallToEdit) => {
-                        let wallInside = wallToEdit.children.item(0);
-                        this.view.displayWallHtml(wallInside, 1);
-                        let replaceOBJ = wallToEdit.cloneNode(true);
-                        wallToEdit.replaceWith(replaceOBJ);
-                    });
-                    this.sendUpdateToBack();
+            else{
+                let neighborhood = getWallNeighborhood(wall);
+                if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
+                    neighborhood = getWallNeighborhood_Invert(wall);
                 }
-            });
+                let wallListReq = [wall.children.item(0).id];
+                let wallListObj = [wall];
+                if (!this.gameBehaviour.isPresentWall(neighborhood)) {
+                    wallListReq.push(neighborhood.children.item(0).id);
+                    wallListObj.push(neighborhood);
+                }
+                const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer };
+                console.log(" -> ",dataToSend);
+                actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
+                    if(isAuthorized) {
+                        //GESTION DES SUPERS-POUVOIRS SUR LES MUR
+                        wallListObj.forEach((wallToEdit) => {
+                            let wallInside = wallToEdit.children.item(0);
+                            this.view.displayWallHtml(wallInside, 1);
+                            let replaceOBJ = wallToEdit.cloneNode(true);
+                            wallToEdit.replaceWith(replaceOBJ);
+                        });
+                        this.sendUpdateToBack();
+                    }
+                });
+            }
         }
-
     };
 
     checkEndGame(){
@@ -228,6 +252,11 @@ export class GamePresenter {
 
     updateModel(newModel){
         this.model = JSON.parse(newModel);
+        document.querySelectorAll('#plate').item(0).innerHTML='';
+        this.view.initializeBoardGrid(this.model);
+        this.view.initializeGrid(this.model);
+        this.init_behaviour(this.model);
+
         console.log("MODEL AFTER UPDATE",this.model);
         this.view.updateViewCharacter(this.model.player_array[0].position.row,this.model.player_array[0].position.col,1);
         if(this.model.player_array[1]!=null){this.view.updateViewCharacter(this.model.player_array[1].position.row,this.model.player_array[1].position.col,2);}

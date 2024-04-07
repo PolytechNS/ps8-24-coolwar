@@ -10,6 +10,7 @@ const {setUpPositionRealBot, createGameDb,
     updateWinnerAndLooserBot,
     retrieveCharacterFromDb,
     updateCurrentPlayerFromDb,
+    updateWallsAndVisibilityFromDBForExplode,
     updateWallsAndVisibilityFromBd
 } = require("../../Controller/gameUserController.js");
 const {verifyMessage} = require("../../Controller/Chat/chatController.js");
@@ -421,6 +422,40 @@ module.exports = (io, socket) => {
             console.error('Error loading saved game', error);
             socket.emit('error', 'Error loading the game.');
         }
+    });
+
+    socket.on('explodeWallWithFriends', async (data) => {
+        let actionDeserialized = JSON.parse(data);
+        let actionController = games.get(actionDeserialized.gameId).actionController;
+        let gameModel = games.get(actionDeserialized.gameId).gameModel;
+        let playerID = actionDeserialized.ownIndexPlayer;
+        await client.connect();
+        const db = client.db();
+        console.log("actionDeserialized : ", actionDeserialized);
+        console.log("playerID : ", playerID);
+        // Récupérer le joueur actuel à partir de la base de données
+        const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(actionDeserialized.gameBoardId), currentPlayerIndex: playerID });
+        console.log("playerBd : ", playerBd);
+        const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(actionDeserialized.gameId) });
+        const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+
+        //on essaye de placer le mur
+        let wallsToUpdate = actionController.explodeWall(actionDeserialized,playerID);
+        console.log("INSIDE WITH FRIEND");
+        console.log("RESPONSE FROM EXPLODEWALL",wallsToUpdate!=null);
+
+        //si les murs sont placés
+        if(wallsToUpdate!=null){
+            console.log("EXPLODE REPONSE IS POSITIVE !");
+            //on met à jour le nombre de murs restants dans la bd pour le joueur
+            await updateWallsAndVisibilityFromDBForExplode(wallsToUpdate,playerBd,gameBoardIdDb,gameModel,db);
+            //await updateWallsAndVisibilityFromBd(actionDeserialized,playerBd,gameBoardIdDb,gameModel,db);
+            //on met à jour le joueur actuel dans la bd
+            await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);
+        }
+        // Envoyer la réponse au client
+
+        socket.emit('explodeWallWithFriendsResponse', (wallsToUpdate!=null));
     });
 
     socket.on('sendChatMessage', async (data) => {

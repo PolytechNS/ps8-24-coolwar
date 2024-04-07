@@ -16,6 +16,7 @@ class Wall{
     }
 
     setPresent(){this.isPresent = true;}
+    setNotPresent(){this.isPresent = false;}
 
     setOwner(playerId){
         this.idPlayer = playerId;

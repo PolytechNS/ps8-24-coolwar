@@ -211,6 +211,7 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
             "gameBoardId": gameBoardIdDb._id,
             type: type
         });
+        console.log("WALL FOUNDED IN DB -> ",wall);
 
         //met à jour la visibilité des cases
         if (wall) {
@@ -236,8 +237,6 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
             console.log("wall to put ->", wallToCopy);
             // Met à jour la visibilité du mur dans la base de données
             await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
-            const wallUpdated = await db.collection('walls').findOne({_id: new ObjectId(wall._id)});
-
             for (let square of gameModelGlobal.playable_squares.getAllPlayableSquares()) {
                 //update db
                 await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
@@ -249,4 +248,58 @@ async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,game
     }
 }
 
-module.exports = { updateWinnerAndLooserBot,updateWinnerAndLooser,retrieveCharacterFromDb,updatePlayerPositionFromDb,setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd };
+async function updateWallsAndVisibilityFromDBForExplode(wallToCompute,playerBd,gameBoardIdDb,gameModelGlobal,db){
+    console.log("-------------UPDATE WALLS FOR EXPLODE-------------------");
+    //console.log("GAMEMODEL GLOBAL WALLS",gameModelGlobal.horizontal_Walls.wallList);
+    console.log("gameBoardId -> ",gameBoardIdDb);
+
+    for(let i=0;i<wallToCompute.length;i++){
+        let wallFirst = wallToCompute[i];
+        let row = parseInt(wallFirst.position.row);
+        let col = parseInt(wallFirst.position.col);
+        let type = wallFirst.type;
+
+
+        const wall = await db.collection('walls').findOne({
+            "position.row": row,
+            "position.col": col,
+            "gameBoardId": gameBoardIdDb._id,
+            type: type
+        });
+        console.log("WALL FROM DB : ",wall);
+
+        //met à jour la visibilité des cases
+        if (wall) {
+            let wallToCopy = null;
+            //CHERCHER LES VALEURS A UPDATE
+            if(type === 'H'){
+                for(let j=0;j<gameModelGlobal.horizontal_Walls.wallList.length;j++){
+                    let wall = gameModelGlobal.horizontal_Walls.wallList[j];
+                    if(wall.position.row === row && wall.position.col === col){
+                        console.log("WALL FIND !",wall);
+                        wallToCopy = wall;break;
+                    }
+                }
+            }
+            else if(type === 'V'){
+                for(let j=0;j<gameModelGlobal.vertical_Walls.wallList.length;j++){
+                    let wall = gameModelGlobal.vertical_Walls.wallList[j];
+                    if(wall.position.row === row && wall.position.col === col){
+                        console.log("WALL FIND !",wall);
+                        wallToCopy = wall;break;
+                    }
+                }
+            }
+            // Met à jour la visibilité du mur dans la base de données
+            await db.collection('walls').updateOne({_id: new ObjectId(wall._id)}, {$set: {isPresent: wallToCopy.isPresent, visibility: wallToCopy.visibility, idPlayer: wallToCopy.idPlayer, wallGroup: wallToCopy.wallGroup}});
+            for (let square of gameModelGlobal.playable_squares.getAllPlayableSquares()) {
+                await db.collection('squares').updateOne({ gameBoardId: gameBoardIdDb._id, "position.row": square.position.row, "position.col": square.position.col }, { $set: { isVisible: false , visibility: wall.visibility} });
+            }
+        }
+        else {
+            //console.log("Wall not found or already present");
+        }
+    }
+}
+
+module.exports = { updateWinnerAndLooserBot,updateWinnerAndLooser,retrieveCharacterFromDb,updatePlayerPositionFromDb,setUpPositionRealBot,createGameDb, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd, updateWallsAndVisibilityFromDBForExplode };
