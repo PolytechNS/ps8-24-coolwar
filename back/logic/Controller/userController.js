@@ -190,14 +190,27 @@ async function getMessages(userSender, userReceiver) {
     // Rechercher la conversation par son ID
     const conversation = await db.collection('conversations').findOne({ conversationId: conversationId });
 
-    // Si la conversation est trouvée, renvoyer les messages triés par date
-    if (conversation) {
-        const messages = conversation.messages.sort((a, b) => a.createdAt - b.createdAt);
-        return { success: true, messages: messages };
+    // Si la conversation est trouvée
+    if (conversation && conversation.messages) {
+        // Itérer sur chaque message pour remplacer les ObjectId par les usernames
+        const messagesWithUsernames = await Promise.all(conversation.messages.map(async (message) => {
+            const senderUser = await db.collection('users').findOne({ _id: message.sender });
+            const receiverUser = await db.collection('users').findOne({ _id: message.receiver });
+
+            // Remplacer les ObjectId par les usernames dans le message
+            return {
+                ...message,
+                sender: senderUser ? senderUser.username : "Unknown sender",
+                receiver: receiverUser ? receiverUser.username : "Unknown receiver",
+            };
+        }));
+
+        return { success: true, messages: messagesWithUsernames };
     } else {
         return { success: false, message: 'No conversation found' };
     }
 }
+
 
 
 
