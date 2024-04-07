@@ -200,7 +200,23 @@ export class GamePresenter {
                 console.log("WALLPOWER -> ORIGINAL WALL :",wall.children.item(0).id);
                 const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, originalWall : wall.children.item(0).id,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer,wallPower:this.wallPower };
                 actionGameService.explodeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
-                    if(isAuthorized){this.sendUpdateToBack();}
+                    if(isAuthorized){
+                        this.sendUpdateToBack();
+                        // Ici, l'animation d'explosion est déclenchée
+                        /*const explodeElement = document.createElement('div');
+                        explodeElement.classList.add('explode');
+                        document.body.appendChild(explodeElement);
+
+                        // Positionner l'explosion correctement
+                        explodeElement.style.left = `${event.clientX - 50}px`; // Centre l'explosion par rapport au clic
+                        explodeElement.style.top = `${event.clientY - 50}px`;
+
+                        // Supprimer l'élément après l'animation
+                        setTimeout(() => {
+                            explodeElement.remove();
+                        }, 500); // Correspond à la durée de l'animation
+                        */
+                    }
                 });
             }
             else{

@@ -453,3 +453,23 @@ h1{
     75% { background-color: yellow; }
     100% { background-color: red; }
 }
+
+@keyframes explode-animation {
+    from {
+        opacity: 1;
+        transform: scale(0.1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+.explode {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: red; /* Ou une image d'explosion */
+    border-radius: 50%;
+    animation: explode-animation 0.5s ease-out forwards;
+}
