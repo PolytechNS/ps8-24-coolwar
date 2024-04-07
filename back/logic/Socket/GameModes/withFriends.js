@@ -238,7 +238,6 @@ module.exports = (io, socket) => {
             console.log("playerID : ", playerID);
             // Récupérer le joueur actuel à partir de la base de données
             const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
-            console.log("playerBd : ", playerBd);
             const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
             const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
             let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();

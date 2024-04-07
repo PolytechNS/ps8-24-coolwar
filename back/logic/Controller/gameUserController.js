@@ -193,7 +193,6 @@ function setUpPositionRealBot(positionBot,gameModelGlobal,botIndex){
     gameModelGlobal.computeSquaresVisibility();
 }
 async function updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModelGlobal,db){
-    console.log("playerBD INSIDE UPDATEWALLS BD ->",playerBd);
     let nbWalls = playerBd.nbWalls - 1;
     await db.collection('character').updateOne({ _id: new ObjectId(playerBd._id) }, { $set: { nbWalls : nbWalls } });
     for (let wallString of wallDataDeserialized.wallList) {

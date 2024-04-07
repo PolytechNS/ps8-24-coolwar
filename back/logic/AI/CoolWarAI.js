@@ -71,7 +71,7 @@ function nextMove(gameState) {
 }
 
 function Real_nextMove(gameState) {
-    return moveCharacterWithDjikstra();
+    console.log("GAME STATE -------->", gameState);
     console.log("-----REAL NEXT MOVE-----");
     //ON PRENDS EN COMPTE TOUS LES DOUBLES MURS
     let [realOwnWalls, realOpponentWalls] = computeRealWallList(gameState.ownWalls,gameState.opponentWalls);
@@ -128,7 +128,7 @@ function Real_nextMove(gameState) {
         if(numberOfRound === 1){
             //ON POSE UN MUR EN 7,8
             console.log("PLACED FIRST WALL");
-            let valToReturn = placeWall([7,3],1,gameState);
+            let valToReturn = placeWall([1,6],1,gameState);
             wallCount = 0;
             return valToReturn;
         }
@@ -136,7 +136,7 @@ function Real_nextMove(gameState) {
         else if(numberOfRound === 2){
             //SI ON NE LE VOIT PAS, ON POSE UN MUR EN 3,7
             if(initOpponentPos === null){
-                let valToReturn = placeWall([3,4],1,gameState);
+                let valToReturn = placeWall([2,3],1,gameState);
                 wallCount = 0;
                 return valToReturn;
             }
@@ -146,7 +146,7 @@ function Real_nextMove(gameState) {
         else if (numberOfRound === 3){
             //SI ON NE LE VOIT PAS, ON POSE UN MUR HORIZONTAL 1,6
             if(initOpponentPos === null){
-                let valToReturn = placeWall([1,5], 0,gameState);
+                let valToReturn = placeWall([3,0], 0,gameState);
                 wallCount = 0;
                 return valToReturn;
             }
@@ -157,9 +157,9 @@ function Real_nextMove(gameState) {
     //SI ON CONNAIT LA POSITION DU JOUEUR ADVERSE -> ON MET UN MUR DEVANT LUI
     if(initOpponentPos!==null){
         console.log("JE SAIS OU EST L'ENNEMI !!");
-        let falseOpponentPos = convertOurCoordinatesToVellaCooordinates(initOpponentPos[0],initOpponentPos[1]);
-        let opponentPos = [falseOpponentPos[1], falseOpponentPos[0]];
-        console.log("OPPONENT POSITION -> ",opponentPos);
+        let falseOpponentPos = convertOurCoordinatesToVellaCooordinates(initOpponentPos[0],initOpponentPos[1])
+        let opponentPos = [initOpponentPos[0], initOpponentPos[1]];
+        console.log("OPPONENT POSITION ------->",opponentPos);
         //si ma finishLine = 1 --> ma direction = haut // ennemi = bas ||
         if(finishLine !== 1){
             //je verifie qu'il existe un mur en dessous de lui
@@ -260,12 +260,12 @@ function Real_nextMove(gameState) {
                             //RAS
                             else{ rightHorizontalWallPosition = [opponentPos[0]+1, opponentPos[1]];}
                             //VERTICAL -> SI ON REGARDE CE MUR, MOUVEMENT ILLEGAL SI UN MUR HORIZONTAL EXISTE
-                            rightVerticalWallPosition = [opponentPos[0] + 1, opponentPos[1] +1];
+                            rightVerticalWallPosition = [opponentPos[0] + 1, opponentPos[1]];
                         }
                         //en plein milieu de la grid
                         else {
                             rightHorizontalWallPosition = [opponentPos[0] + 2, opponentPos[1]];
-                            rightVerticalWallPosition = [opponentPos[0] + 1, opponentPos[1] + 1];
+                            rightVerticalWallPosition = [opponentPos[0], opponentPos[1] + 1];
                         }
 
                         let isRightHorizontalWallExist = isWallAtPosition(realOwnWalls,realOpponentWalls, rightHorizontalWallPosition);
@@ -307,6 +307,7 @@ function Real_nextMove(gameState) {
             console.log("JE SAIS OU EST L'ENNEMI INVERT !!");
             //je verifie qu'il existe un mur en dessous de lui
             let wall = isWallAtPosition(realOwnWalls,realOpponentWalls, opponentPos);
+            console.log("WALL",wall);
             //SI LE MUR EXISTE, JE REGARDE LES MURS VOISINS
             if(wall!==null){
                 console.log("MUR TROUVE INVERT ! ");
@@ -367,10 +368,22 @@ function Real_nextMove(gameState) {
                         else{
                             //On compare les deux valeurs et on prend la plus grande valeur des deux
                             if (djikstraLeftHorizontalResult > djikstraLeftVerticalResult) {
-                                return placeWall(leftHorizontalWallPosition, 0,gameState);
+                                console.log("KEEPING LEFT HORIZONTAL WALL | INVERT");
+                                if(leftHorizontalWallPosition[0] !== null && leftHorizontalWallPosition[1] !== null){
+                                    return placeWall(leftHorizontalWallPosition, 0,gameState);
+                                }
+                                else{
+                                    return moveCharacterWithDjikstra();
+                                }
                             }
                             else {
-                                return placeWall(leftVerticalWallPosition,1,gameState);
+                                console.log("KEEPING LEFT VERTICAL WALL | INVERT");
+                                if(leftVerticalWallPosition[0] !== null && leftVerticalWallPosition[1] !== null){
+                                    return placeWall(leftVerticalWallPosition,1,gameState);
+                                }
+                                else{
+                                    return moveCharacterWithDjikstra();
+                                }
                             }
                         }
                     }
@@ -400,8 +413,22 @@ function Real_nextMove(gameState) {
                             let djikstraRightHorizontalResult = computeDjikstraForSpecificWall(gameState, wall, 'H', 'R',2);
                             let djikstraRightVerticalResult = computeDjikstraForSpecificWall(gameState, wall, 'V', 'R',1);
                             //On compare les deux valeurs et on prend la plus grande valeur des deux
-                            if (djikstraRightHorizontalResult > djikstraRightVerticalResult) {return placeWall(rightHorizontalWallPosition, 0,gameState);}
-                            else {return placeWall(rightVerticalWallPosition, 1,gameState);}
+                            if (djikstraRightHorizontalResult > djikstraRightVerticalResult) {
+                                if(rightHorizontalWallPosition[0] !== null && rightHorizontalWallPosition[1] !== null) {
+                                    return placeWall(rightHorizontalWallPosition, 0,gameState);
+                                }
+                                else{
+                                    return moveCharacterWithDjikstra();
+                                }
+                            }
+                            else {
+                                if(rightVerticalWallPosition[0] !== null && rightVerticalWallPosition[1] !== null) {
+                                    return placeWall(rightVerticalWallPosition, 1, gameState);
+                                }
+                                else{
+                                    return moveCharacterWithDjikstra();
+                                }
+                            }
                         }
                         else {return moveCharacterWithDjikstra();}
                     }
@@ -454,7 +481,7 @@ function Real_nextMove(gameState) {
         //for(let i=0;i<bestRes.path.length;i++){
         // console.log(bestRes.path[i].position);
         //}
-        console.log(bestRes.path);
+        console.log("BEST PATH",bestRes.path);
         let nextMove = bestRes.path[1].position;
         let finalPosition = [nextMove.row, nextMove.col];
         console.log("FINAL POSITION ", finalPosition);
@@ -464,8 +491,15 @@ function Real_nextMove(gameState) {
         let isExists = null;
         wallList.forEach(function (wall) {
             let wallPosition = wall[0].split("");
+            let realWallPosition = convertVellaCooordinatesToOurs(wallPosition[0], wallPosition[1]);
+            console.log("WALL POSITION HERE -->",realWallPosition);
+            console.log("OPPONENT POSITION HERE -->",opponentPos);
             //si il y a deja un mur devant la personne
-            if(parseInt(wallPosition[1]) === parseInt(opponentPos[1]) && parseInt(wallPosition[0]) === parseInt(opponentPos[0]) ){isExists=wall;}
+            if(parseInt(realWallPosition[1]) === parseInt(opponentPos[1]) && parseInt(realWallPosition[0]) === parseInt(opponentPos[0])
+            || (parseInt(realWallPosition[1])+1) === parseInt(opponentPos[1]) && parseInt(realWallPosition[0]) === parseInt(opponentPos[0]) ){
+                isExists=wall;
+                console.log("WALL EXISTS ! ");
+            }
         });
         return isExists;
     }
@@ -484,7 +518,7 @@ function Real_nextMove(gameState) {
             let graph = new Graph(playableSquares, horizontalWalls, verticalWalls);
             const ownPosition = [myPosition(gameState.board)[0],myPosition(gameState.board)[1]];
             const ownNode = graph.getNodeFromCoordinates(ownPosition[0], ownPosition[1]);
-            console.log(ownNode);
+            console.log("OWN NODE",ownNode);
             let bestRes = null;
             //COMPUTE POUR TOUTE LA LIGNE
             for (let i = 0; i < 8; i++) {
@@ -517,13 +551,10 @@ function Real_nextMove(gameState) {
     //TYPE --> H/V
     function computeDjikstraForSpecificWall(gameState,rootWall,typeWallToAnalysis,directionToAnalysis,diff){
         console.log("ROOT WALL : ",rootWall);
-        console.log(rootWall[0]);
-        console.log(rootWall[1]);
         console.log("TYPE WALL TO ANALYSIS : ",typeWallToAnalysis);
         console.log("DIRECTION TO ANALYSIS : ",directionToAnalysis);
         console.log("DIFF : ",diff);
-        console.log((parseInt(rootWall[0])-diff));
-        console.log((parseInt(rootWall[0])+diff));
+
         if(finishLine === 9){
             //SI LE MUR EST HORIZONTAL
             if(rootWall[1]===0){
@@ -742,7 +773,7 @@ function Real_nextMove(gameState) {
 
                     if(leftDjikstra.distance < righDjikstra.distance){
                         console.log("ON POSE UN MUR A GAUCHE");
-                        console.log(positionToCheck);
+                        console.log("POSITION TO CHECK",positionToCheck);
                         if(isCuttingWall(gameState,[positionToCheck],type) === null){
                             console.log("PAS DE MUR A GAUCHE, ON PLACE !");
                             lastMove = "wall";
@@ -761,7 +792,7 @@ function Real_nextMove(gameState) {
                     }
                     else{
                         console.log("ON POSE UN MUR A DROITE");
-                        console.log(position);
+                        console.log("POSITION",position);
                         if(isCuttingWall(gameState,[positionToCheck],type) === null){
                             console.log("PAS DE MUR A DROITE, ON PLACE !");
                             lastMove = "wall";
@@ -817,13 +848,9 @@ function Real_nextMove(gameState) {
         //SI ON EST A LA MOITIE DE NOS MURS -> ON AVANCE
         let ownPosition = myPosition(gameState.board);
         let level = parseInt(ownPosition[1]) - 5;
-        console.log("LEVEL : ",level);
-        console.log(finishLine === 1 && (totalWallCount >= 5 && level >= 0));
-        console.log(finishLine === 9 && (totalWallCount >= 5 && level <= 0));
 
         let ownDjikstra = computeDjikstaFor(gameState, "me");
         let opponentDjikstra = computeDjikstaFor(gameState, "opponent");
-        console.log(ownDjikstra.distance >= opponentDjikstra.distance + 2);
         let opponentIsFurtherAway = ownDjikstra.distance >= opponentDjikstra.distance + 2;
         console.log("OPPONENT IS FURTHER AWAY ? ",opponentIsFurtherAway);
         if(opponentIsFurtherAway){return true;}
@@ -850,16 +877,15 @@ function Real_nextMove(gameState) {
             //SI LE MUR EST HORIZONTAL ON VA AJOUTER LE MUR A SA DOITE
             if(wall[1]===0){
                 let rootWallPosition = wall[0].split("");
-                console.log(rootWallPosition);
                 if(rootWallPosition[0]===9){
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),0];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])-1).toString()+(parseInt(rootWallPosition[1])).toString(),0];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])-1).toString(),0];
                     realOwnWalls.push(wallToAdd);
                     realOwnWalls.push(rootWallCopy);
                 }
                 else{
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),0];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])+1).toString(),0];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])+1).toString()+(parseInt(rootWallPosition[1])).toString(),0];
                     realOwnWalls.push(wallToAdd);
                     realOwnWalls.push(rootWallCopy);
                 }
@@ -867,16 +893,15 @@ function Real_nextMove(gameState) {
             // SI LE MUR EST VERTICAL
             else if(wall[1]===1){
                 let rootWallPosition = wall[0].split("");
-                console.log(rootWallPosition);
                 if(rootWallPosition[1] === 1){
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),1];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])+1).toString(),1];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])+1).toString()+(parseInt(rootWallPosition[1])).toString(),1];
                     realOwnWalls.push(wallToAdd);
                     realOwnWalls.push(rootWallCopy);
                 }
                 else{
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),1];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])-1).toString()+(parseInt(rootWallPosition[1])).toString(),1];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])-1).toString(),1];
                     realOwnWalls.push(wallToAdd);
                     realOwnWalls.push(rootWallCopy);
                 }
@@ -886,16 +911,15 @@ function Real_nextMove(gameState) {
             //SI LE MUR EST HORIZONTAL ON VA AJOUTER LE MUR A SA DOITE
             if(wall[1]===0){
                 let rootWallPosition = wall[0].split("");
-                console.log(rootWallPosition);
                 if(rootWallPosition[0] === 9){
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),0];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])-1).toString()+(parseInt(rootWallPosition[1])).toString(),0];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])-1).toString(),0];
                     realOpponentWalls.push(wallToAdd);
                     realOpponentWalls.push(rootWallCopy);
                 }
                 else{
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),0];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])+1).toString(),0];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])+1).toString()+(parseInt(rootWallPosition[1])).toString(),0];
                     realOpponentWalls.push(wallToAdd);
                     realOpponentWalls.push(rootWallCopy);
                 }
@@ -904,16 +928,15 @@ function Real_nextMove(gameState) {
             // SI LE MUR EST VERTICAL
             else if(wall[1]===1){
                 let rootWallPosition = wall[0].split("");
-                console.log(rootWallPosition);
                 if(rootWallPosition[1] === 1){
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),1];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])+1).toString(),1];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])+1).toString()+(parseInt(rootWallPosition[1])).toString(),1];
                     realOpponentWalls.push(wallToAdd);
                     realOpponentWalls.push(rootWallCopy);
                 }
                 else{
                     let rootWallCopy = [rootWallPosition[0].toString() + rootWallPosition[1].toString(),1];
-                    let wallToAdd = [(parseInt(rootWallPosition[0])-1).toString()+(parseInt(rootWallPosition[1])).toString(),1];
+                    let wallToAdd = [(parseInt(rootWallPosition[0])).toString()+(parseInt(rootWallPosition[1])-1).toString(),1];
                     realOpponentWalls.push(wallToAdd);
                     realOpponentWalls.push(rootWallCopy);
                 }
@@ -1056,9 +1079,8 @@ function convertVellaCooordinatesToOurs(col,row){
     return [parseInt(row)-1,parseInt(col)-1];
 }
 function convertOurCoordinatesToVellaCooordinates(row,col){
-    return [parseInt(col)+1,parseInt(row)+1];
+    return [parseInt(col)+1,9-parseInt(row)];
 }
-
 function convertVellaToClassicCoordinates(col,row){
     return [9-parseInt(row),parseInt(col)-1];
 }
