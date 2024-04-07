@@ -11,6 +11,7 @@ const {updatePlayerPositionFromDb,createGameDb,setUpPositionRealBot, saveGame, l
 const handleWithFriendsMode = require('./GameModes/withFriends.js');
 const handleWithBotsMode = require('./GameModes/withBots');
 const handleOfflineMode = require('./GameModes/offline');
+const handleChat = require('./Chat.js');
 
 
 
@@ -28,6 +29,7 @@ module.exports = (server) => {
         handleWithFriendsMode(io, socket);
         handleWithBotsMode(io, socket);
         handleOfflineMode(io, socket);
+        handleChat(io, socket);
 
         socket.on('disconnect', () => {
             console.log('Client disconnected');

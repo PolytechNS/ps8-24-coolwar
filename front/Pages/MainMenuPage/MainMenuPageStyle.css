@@ -10,3 +10,45 @@ h2{
 
 
 
+/* CHAT */
+
+
+#chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000; /* Assurez-vous que le chat est au-dessus des autres éléments */
+}
+
+#chat-button {
+    /* Stylisez votre bouton de chat ici */
+}
+
+#friends-list {
+    display: none; /* Cache la liste des amis initialement */
+    position: absolute;
+    bottom: 40px; /* Décalage du bas pour ne pas chevaucher le bouton */
+    right: 0;
+    /* Ajoutez d'autres styles comme la bordure, le fond, etc. */
+}
+
+.hidden {
+    display: none;
+}
+
+#message-popup {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1010;
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+}
+
+#message-popup.hidden {
+    display: none;
+}
+
