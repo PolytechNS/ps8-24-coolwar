@@ -414,3 +414,62 @@ h1{
     100%{-o-transform:translateX(-20px);
     }
 }
+
+#BTN_superpower {
+    width: 65px; /* Largeur du bouton */
+    height: 65px; /* Hauteur du bouton */
+    border: none; /* Pas de bordure */
+    color: white; /* Couleur du texte */
+    cursor: pointer; /* Curseur en forme de main au survol */
+    animation: changeColor 4s infinite; /* Appliquer l'animation */
+}
+
+#BTN_superpower > img {
+    width: 100%; /* Largeur de l'image */
+    height: 100%; /* Hauteur de l'image */
+}
+#BTN_superpower > p {
+    align-content: center;
+    margin: 0; /* Supprimer les marges */
+    font-size: 14px;
+}
+
+.active_bonus {
+    /* Agrandissement du bouton */
+    transform: scale(1.1); /* Agrandit le bouton de 10% */
+
+    /* Effet de profondeur */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Ajoute une ombre pour un effet de profondeur */
+
+    /* Transition pour un effet fluide lors de l'application de la classe */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Définition de l'animation */
+@keyframes changeColor {
+    0% { background-color: red; }
+    25% { background-color: blue; }
+    50% { background-color: green; }
+    75% { background-color: yellow; }
+    100% { background-color: red; }
+}
+
+@keyframes explode-animation {
+    from {
+        opacity: 1;
+        transform: scale(0.1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+.explode {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: red; /* Ou une image d'explosion */
+    border-radius: 50%;
+    animation: explode-animation 0.5s ease-out forwards;
+}

@@ -10,10 +10,13 @@ const {setUpPositionRealBot, createGameDb,
     updateWinnerAndLooserBot,
     retrieveCharacterFromDb,
     updateCurrentPlayerFromDb,
+    updateWallsAndVisibilityFromDBForExplode,
     updateWallsAndVisibilityFromBd
 } = require("../../Controller/gameUserController.js");
 const {verifyMessage} = require("../../Controller/Chat/chatController.js");
 const {addExpToPlayerWithBot,manageEndGameUser,checkAchievements} = require("../../Controller/userController.js");
+const {PlayerManager} = require("../../Model/Objects/PlayerManager");
+const {GamePlayer} = require("../../Model/Objects/GamePlayer");
 
 
 // Variables globales pour la gestion des rooms et des joueurs
@@ -23,14 +26,11 @@ const waitingRoomsForFriends = new Map();
 const socketIds = new Map();
 let countdownTimers = new Map(); // Pour stocker les timers par gameId
 
-
-
 module.exports = (io, socket) => {
     socket.on('joinGameWithFriends', async (data) => {
         let dataParse = JSON.parse(data);
         let token = dataParse.token;
         let gameMode = dataParse.gameMode;
-        console.log("JOIN GAME WITH FRIENDS",dataParse);
         if (gameMode === 'playNow') {
             joinInstantGame(io, socket, token);
         }
@@ -46,9 +46,6 @@ module.exports = (io, socket) => {
 
     socket.on("ready", async (data) => {
       const tokenParsed = JSON.parse(data).token;
-
-      //
-
 
       io.to(socket.id).emit("player ready response", JSON.stringify({}));
 
@@ -102,8 +99,6 @@ module.exports = (io, socket) => {
 
     }));
 
-
-
     socket.on('joinWaitingRoom', async (data) => {
         const { token, gameId } = JSON.parse(data);
 
@@ -134,8 +129,6 @@ module.exports = (io, socket) => {
             }
         }
     });
-
-    //ready
 
     socket.on('ready', async (data) => {
         const { token } = JSON.parse(data);
@@ -199,8 +192,6 @@ module.exports = (io, socket) => {
     }
 
 
-
-
     socket.on('moveCharacterWithFriends', async(data)=>{
         const dataParse = JSON.parse(data);
         try {
@@ -247,7 +238,6 @@ module.exports = (io, socket) => {
             console.log("playerID : ", playerID);
             // Récupérer le joueur actuel à partir de la base de données
             const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(wallDataDeserialized.gameBoardId), currentPlayerIndex: playerID });
-            console.log("playerBd : ", playerBd);
             const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(wallDataDeserialized.gameId) });
             const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
             let squareGameModel = gameModel.playable_squares.getAllPlayableSquares();
@@ -373,12 +363,24 @@ module.exports = (io, socket) => {
 
                 let characters =await retrieveCharacterFromDb(db,gameBoardSaved._id);
 
+                let playerArrayToSend1 = new PlayerManager();
+                let playerArrayToSend2 = new PlayerManager();
+                playerArrayToSend1.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
+                playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(2).name, gameModel.player_array.getPlayer(2).position, gameModel.player_array.getPlayer(2).nbWalls));
+                let playableSquareWhereEnemyIsFor1 = gameModel.playable_squares.getPlayableSquare(gameModel.player_array.getPlayer(2).position.row, gameModel.player_array.getPlayer(2).position.col);
+                let playableSquareWhereEnemyIsFor2 = gameModel.playable_squares.getPlayableSquare(gameModel.player_array.getPlayer(1).position.row, gameModel.player_array.getPlayer(1).position.col);
+                if (playableSquareWhereEnemyIsFor1.visibility <= 0) {
+                    playerArrayToSend1.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(2).name, gameModel.player_array.getPlayer(2).position, gameModel.player_array.getPlayer(2).nbWalls));
+                }
+                if (playableSquareWhereEnemyIsFor2.visibility >= 0) {
+                    playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
+                }
                 io.to(player1SocketId).emit('updateGameModelWithFriendsResponse', JSON.stringify({
                     gameId: gameBoardSaved.gameId, // ID de la partie
                     gameBoardId: gameBoardSaved._id, // ID du plateau de jeu
                     nbLignes: gameModel.nbLignes, // Nombre de lignes
                     nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                    player_array: gameModel.player_array.getAllPlayers(),
+                    player_array: playerArrayToSend1.getAllPlayers(),
                     horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                     vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
@@ -388,8 +390,8 @@ module.exports = (io, socket) => {
                     typeGame: gameModel.typeGame,
                     roomId: datas.roomId,
                     test:"pla1",
-                    ownIndexPlayer: characters[0].currentPlayerIndex
-
+                    ownIndexPlayer: characters[0].currentPlayerIndex,
+                    ennemyName: characters[1].name
                 }));
 
                 io.to(player2SocketId).emit('updateGameModelWithFriendsResponse', JSON.stringify({
@@ -397,7 +399,7 @@ module.exports = (io, socket) => {
                     gameBoardId: gameBoardSaved._id, // ID du plateau de jeu
                     nbLignes: gameModel.nbLignes, // Nombre de lignes
                     nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                    player_array: gameModel.player_array.getAllPlayers(),
+                    player_array: playerArrayToSend2.getAllPlayers(),
                     horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                     vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
                     playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
@@ -407,7 +409,8 @@ module.exports = (io, socket) => {
                     typeGame: gameModel.typeGame,
                     roomId: datas.roomId,
                     test:"pla2",
-                    ownIndexPlayer: characters[1].currentPlayerIndex
+                    ownIndexPlayer: characters[1].currentPlayerIndex,
+                    ennemyName: characters[0].name
                 }));
                 console.log("GAME MODEL SENDING !");
             } else {
@@ -418,6 +421,40 @@ module.exports = (io, socket) => {
             console.error('Error loading saved game', error);
             socket.emit('error', 'Error loading the game.');
         }
+    });
+
+    socket.on('explodeWallWithFriends', async (data) => {
+        let actionDeserialized = JSON.parse(data);
+        let actionController = games.get(actionDeserialized.gameId).actionController;
+        let gameModel = games.get(actionDeserialized.gameId).gameModel;
+        let playerID = actionDeserialized.ownIndexPlayer;
+        await client.connect();
+        const db = client.db();
+        console.log("actionDeserialized : ", actionDeserialized);
+        console.log("playerID : ", playerID);
+        // Récupérer le joueur actuel à partir de la base de données
+        const playerBd = await db.collection('character').findOne({ gameBoardId: new ObjectId(actionDeserialized.gameBoardId), currentPlayerIndex: playerID });
+        console.log("playerBd : ", playerBd);
+        const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(actionDeserialized.gameId) });
+        const gameBoardIdDb = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+
+        //on essaye de placer le mur
+        let wallsToUpdate = actionController.explodeWall(actionDeserialized,playerID);
+        console.log("INSIDE WITH FRIEND");
+        console.log("RESPONSE FROM EXPLODEWALL",wallsToUpdate!=null);
+
+        //si les murs sont placés
+        if(wallsToUpdate!=null){
+            console.log("EXPLODE REPONSE IS POSITIVE !");
+            //on met à jour le nombre de murs restants dans la bd pour le joueur
+            await updateWallsAndVisibilityFromDBForExplode(wallsToUpdate,playerBd,gameBoardIdDb,gameModel,db);
+            //await updateWallsAndVisibilityFromBd(actionDeserialized,playerBd,gameBoardIdDb,gameModel,db);
+            //on met à jour le joueur actuel dans la bd
+            await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);
+        }
+        // Envoyer la réponse au client
+
+        socket.emit('explodeWallWithFriendsResponse', (wallsToUpdate!=null));
     });
 
     socket.on('sendChatMessage', async (data) => {
@@ -451,6 +488,7 @@ module.exports = (io, socket) => {
 const waitingPlayersForLaunchingGame = new Map();
 
 async function launchGameWithFriends(io, socket, data) {
+    console.log("LAUNCHING GAME WITH FRIENDS");
     const token = data.token;
     let userId, userRoomId, gameId;
 
@@ -533,6 +571,7 @@ async function launchGameWithFriends(io, socket, data) {
 
 
 async function joinInstantGame(io, socket, tokenParsed) {
+    console.log("JOIN INSTANT GAME");
     // Recherche d'un joueur en attente
     const opponentToken = [...waitingPlayersForInstantGame.keys()].find(t => t !== tokenParsed);
 
@@ -568,7 +607,6 @@ async function joinInstantGame(io, socket, tokenParsed) {
         // Aucun adversaire trouvé, mise en attente du joueur
         waitingPlayersForInstantGame.set(tokenParsed, socket.id);
         socketIds.set(tokenParsed, socket.id);
-
     }
 }
 
@@ -651,8 +689,6 @@ async function joinGameWithFriend(io, socket, data) {
     await client.close();
 }
 
-
-
 async function createGame(roomId,playerTokens, playersSocketIds, gameId){
 
     try {
@@ -665,7 +701,7 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
 
         let playersInfo = [];
         for (const token of playerTokens) {
-            const userInfo = await db.collection('users').findOne({ token: token });
+            const userInfo = await db.collection('users').findOne({token: token});
             if (userInfo) {
                 playersInfo.push(userInfo);
             }
@@ -675,7 +711,7 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
             const user = await db.collection('users').findOne({token: player1Token});
             const user2 = await db.collection('users').findOne({token: player2Token});
 
-            if(gameId===undefined){
+            if (gameId === undefined) {
                 const newGame = await db.collection('games').insertOne({
                     fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
                     creator_id: user.username, // ID de l'utilisateur qui a créé la partie
@@ -692,26 +728,49 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
             console.log("gameId WHEN CREATING GAAAAAMMMMEEEEE HALO: ", gameId);
             // Créer un nouveau GameModel
             let gameModel = new GameModel(config);
-
             let actionController = new ActionController(gameModel);
 
-
             // Stocker l'instance de GameModel dans la map
-            games.set(gameId.toString(), {gameModel, actionController,roomId,playerTokens,player2Token, user1_id : user._id,user2_id : user2._id, player1Token});
+            games.set(gameId.toString(), {
+                gameModel,
+                actionController,
+                roomId,
+                playerTokens,
+                player2Token,
+                user1_id: user._id,
+                user2_id: user2._id,
+                player1Token
+            });
 
             // Persister le plateau de jeu
             let gameBoardId = await createGameDb(gameId, playersInfo, gameModel, db); // puis on fournit les token des 2 users pour pouvoir persister leur index dans la db
-            let characters =await retrieveCharacterFromDb(db,gameBoardId);
+            let characters = await retrieveCharacterFromDb(db, gameBoardId);
 
             //envoyer les informations de la partie aux joueurs via une fonction où y'a la socket id en paramètre, gameId et gameModel
             console.log("envoie à player1SocketId : ", player1SocketId);
+
+            let playerArrayToSend1 = new PlayerManager();
+            let playerArrayToSend2 = new PlayerManager();
+            playerArrayToSend1.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
+            playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(2).name, gameModel.player_array.getPlayer(2).position, gameModel.player_array.getPlayer(2).nbWalls));
+            let playableSquareWhereEnemyIsFor1 = gameModel.playable_squares.getPlayableSquare(gameModel.player_array.getPlayer(2).position.row, gameModel.player_array.getPlayer(2).position.col);
+            let playableSquareWhereEnemyIsFor2 = gameModel.playable_squares.getPlayableSquare(gameModel.player_array.getPlayer(1).position.row, gameModel.player_array.getPlayer(1).position.col);
+            if (playableSquareWhereEnemyIsFor1.visibility <= 0) {
+                playerArrayToSend1.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(2).name, gameModel.player_array.getPlayer(2).position, gameModel.player_array.getPlayer(2).nbWalls));
+            }
+            if (playableSquareWhereEnemyIsFor2.visibility >= 0) {
+                playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
+            }
+
+
+            console.log("PLAYER 2 -> ", playerArrayToSend2);
 
             let gamePlayerOne = {
                 gameId: gameId, // ID de la partie
                 gameBoardId: gameBoardId, // ID du plateau de jeu
                 nbLignes: gameModel.nbLignes, // Nombre de lignes
                 nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                player_array: gameModel.player_array.getAllPlayers(),
+                player_array: playerArrayToSend1.getAllPlayers(),
                 horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                 vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
                 playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
@@ -720,7 +779,7 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
                 winner: gameModel.winner,
                 typeGame: gameModel.typeGame,
                 roomId: roomId,
-                test:"pla1",
+                test: "pla1",
                 socketId: player1SocketId,
                 ownIndexPlayer: characters[0].currentPlayerIndex
             };
@@ -729,7 +788,7 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
                 gameBoardId: gameBoardId, // ID du plateau de jeu
                 nbLignes: gameModel.nbLignes, // Nombre de lignes
                 nbColonnes: gameModel.nbColonnes, // Nombre de colonnes
-                player_array: gameModel.player_array.getAllPlayers(),
+                player_array: playerArrayToSend2.getAllPlayers(),
                 horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                 vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
                 playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
@@ -738,15 +797,14 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
                 winner: gameModel.winner,
                 typeGame: gameModel.typeGame,
                 roomId: roomId,
-                test:"pla2",
+                test: "pla2",
                 socketId: player2SocketId,
                 ownIndexPlayer: characters[1].currentPlayerIndex
             };
-            return {gamePlayerOne,gamePlayerTwo};
+            return {gamePlayerOne, gamePlayerTwo};
         }
-
-
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Error setting up game for friends', error);
         // Gérer l'erreur
     }
