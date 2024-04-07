@@ -6,6 +6,9 @@ function handleUserRoutes(req, res,db) {
     if (url.pathname === '/api/users/leaderboard' && req.method === 'GET') {
         userController.getLeaderBoard(req, res, db);
     }
+    else if(url.pathname === '/api/users/skins' && req.method === 'GET'){
+        userController.getSkinsUser(req, res, db);
+    }
 
 }
 

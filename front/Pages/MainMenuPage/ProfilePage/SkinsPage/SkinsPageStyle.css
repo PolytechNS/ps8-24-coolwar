@@ -45,3 +45,12 @@ button{
 .selectedSkin{
     max-height: 200px;
 }
+
+
+.skin .imgSkin {
+    transition: opacity 0.3s ease;
+}
+
+.skin .imgSkin:hover {
+    opacity: 1; /* Pour éventuellement mettre en évidence au survol */
+}

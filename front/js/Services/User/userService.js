@@ -53,5 +53,20 @@ export const userService = {
         });
     },
 
+    getUserSkin(token) {
+        return fetch(`${config.API_ENDPOINT}/api/users/skins`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        });
+    }
+
 
 }
