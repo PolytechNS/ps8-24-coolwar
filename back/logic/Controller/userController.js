@@ -238,6 +238,29 @@ async function getLeaderBoard(req, res, db) {
 }
 
 
+let skinsServer = ["perso1", "perso2", "perso3", "perso4", "perso5", "perso6", "perso7", "perso8", "perso9"];
+async function getSkinsUser(req,res,db) {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    // Supposons que l'en-tête est de la forme "Bearer TOKEN"
+    const token = authHeader.split(' ')[1]; // Cela sépare "Bearer" du token et prend le token
+
+    console.log("token dans getSkinsUser", token);
+    const user = await db.collection('users').findOne({ token });
+    if (!user) {
+        return { success: false, message: 'User not found' };
+    }
+
+    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, userSkins: user.skins, allSkins: skinsServer }));
+
+}
+
+
 
 
 
@@ -247,5 +270,6 @@ module.exports = {
     checkAchievements,
     storeMessages,
     getMessages,
-    getLeaderBoard
+    getLeaderBoard,
+    getSkinsUser
 };

@@ -32,7 +32,7 @@ function signup(req, res, db) {
                 wins: 0,
                 losses: 0,
                 trophies: 0,
-                skins: { current: 'defaultSkin', owned: ['defaultSkin'] },
+                skins: { current: 'perso1', owned: ['perso1',"perso2,perso7,perso4"] },
                 emotes: ['defaultEmote'],
                 titles: [],
                 achievements: [],
