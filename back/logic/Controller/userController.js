@@ -1,6 +1,7 @@
 const { parseJSON } = require('../Utils/utils'); // Assurez-vous d'importer correctement
 const { MongoClient, ObjectId} = require("mongodb");
-const { MONGO_URL, exp_earned_bot, exp_earned_online,
+const { MONGO_URL, exp_earned_bot, exp_earned_online, trophies_earned_online
+    , trophies_lost_online,
     withBot,
     withFriends, ex_earned_bot_looser, ex_earned_online_looser } = require("../Utils/constants");
 
@@ -51,19 +52,30 @@ async function addExpToPlayerWithBot(token, typeGame) {
     if(winner === 1){
         let newExp = play1Db.exp + exp_earned_online;
         let newWins = play1Db.wins + 1;
+        let newTro = play1Db.trophies + trophies_earned_online;
         let newLosses = play2Db.losses + 1;
-        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId)}, { $set: { exp: newExp, wins:newWins } });
+
+        let newTro2 = play2Db.trophies + trophies_lost_online;
+        if(newTro2<0){
+            newTro2 = 0;
+        }
+        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId)}, { $set: { exp: newExp, wins:newWins, trophies:newTro } });
         let newExp2 = play2Db.exp + ex_earned_online_looser;
-        await db.collection('users').updateOne({ _id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses: newLosses } });
+        await db.collection('users').updateOne({ _id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses: newLosses,trophies:newTro2 } });
 
     }
     else{
         let newExp = play1Db.exp + ex_earned_online_looser;
+        let newTro = play1Db.trophies + trophies_lost_online;
+        if(newTro<0){
+            newTro = 0;
+        }
         let newWins = play2Db.wins + 1;
         let newLosses = play1Db.losses + 1;
-        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId) }, { $set: { exp: newExp, wins :newWins } });
+        let newTro2 = play2Db.trophies + trophies_earned_online;
+        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId) }, { $set: { exp: newExp, wins :newWins, trophies:newTro } });
         let newExp2 = play2Db.exp + exp_earned_online;
-        await db.collection('users').updateOne({_id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses:newLosses } });
+        await db.collection('users').updateOne({_id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses:newLosses, trophies:newTro2 } });
     }
     manageLvl(play1Db.token);
     manageLvl(play2Db.token);
@@ -211,6 +223,21 @@ async function getMessages(userSender, userReceiver) {
     }
 }
 
+async function getLeaderBoard(req, res, db) {
+    console.log("getLeaderBoard");
+    // Utilisez `.project()` pour spécifier les champs à exclure
+    const users = await db.collection('users')
+        .find({})
+        .project({ _id: 0, password: 0 }) // 0 pour exclure, 1 pour inclure
+        .sort({ trophies: -1 })
+        .limit(10)
+        .toArray();
+    console.log("users", users);
+    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ users }));
+}
+
+
 
 
 
@@ -219,5 +246,6 @@ module.exports = {
     manageEndGameUser,
     checkAchievements,
     storeMessages,
-    getMessages
+    getMessages,
+    getLeaderBoard
 };

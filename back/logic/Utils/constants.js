@@ -6,6 +6,8 @@ module.exports = {
     exp_earned_bot: 10,
     exp_earned_online: 400,
     ex_earned_online_looser: 10,
+    trophies_earned_online: +33,
+    trophies_lost_online: -10,
     ex_earned_bot_looser: 2,
     withBot : 'withBot',
     withFriends : 'withFriends',
