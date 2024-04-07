@@ -139,9 +139,72 @@ async function checkAchievements(token) {
     }
 }
 
+async function storeMessages(userSender, userReceiver, messageText) {
+    await client.connect();
+    const db = client.db();
+
+
+    if (!userReceiver || !userSender) {
+        return { success: false, message: 'One or both users not found' };
+    }
+
+    // Créer un ID de conversation basé sur les IDs des deux utilisateurs
+    const conversationId = [userSender._id, userReceiver._id].sort().join('_');
+
+    // Préparer le document message à insérer
+    const message = {
+        sender: userSender._id,
+        receiver: userReceiver._id,
+        message: messageText,
+        createdAt: new Date() // Stocke la date actuelle
+    };
+
+    // Insérer ou mettre à jour la conversation existante avec le nouveau message
+    const updateResult = await db.collection('conversations').updateOne(
+        { conversationId: conversationId }, // Utilise un champ différent pour l'ID de conversation
+        {
+            $push: { messages: message },
+            $setOnInsert: { users: [userSender._id, userReceiver._id] }
+        },
+        { upsert: true } // Créer une nouvelle conversation si elle n'existe pas
+    );
+
+    if (updateResult.modifiedCount === 1 || updateResult.upsertedCount === 1) {
+        return { success: true, message: 'Message stored successfully' };
+    } else {
+        return { success: false, message: 'Failed to store the message' };
+    }
+}
+
+async function getMessages(userSender, userReceiver) {
+    await client.connect();
+    const db = client.db();
+
+    if (!userSender || !userReceiver) {
+        return { success: false, message: 'One or both users not found' };
+    }
+
+    // Utiliser le même format de conversationId que dans storeMessages pour correspondre à la conversation
+    const conversationId = [userSender._id, userReceiver._id].sort().join('_');
+
+    // Rechercher la conversation par son ID
+    const conversation = await db.collection('conversations').findOne({ conversationId: conversationId });
+
+    // Si la conversation est trouvée, renvoyer les messages triés par date
+    if (conversation) {
+        const messages = conversation.messages.sort((a, b) => a.createdAt - b.createdAt);
+        return { success: true, messages: messages };
+    } else {
+        return { success: false, message: 'No conversation found' };
+    }
+}
+
+
 
 module.exports = {
     addExpToPlayerWithBot,
     manageEndGameUser,
-    checkAchievements
+    checkAchievements,
+    storeMessages,
+    getMessages
 };
