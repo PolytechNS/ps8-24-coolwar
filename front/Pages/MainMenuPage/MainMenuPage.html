@@ -53,19 +53,27 @@
     </div>
     <a href="../WelcomePage/WelcomePage.html" id="backButton"><button>&lt; Back</button></a>
 </main>
-<div id="chat-container">
-    <button id="chat-button">Friends</button>
-    <div id="friends-list" class="hidden"></div>
-</div>
-
-<div id="message-popup" class="hidden">
-    <div id="popup-content">
-        <p>Send a message to <span id="friend-name"></span>:</p>
-        <textarea id="message-text"></textarea>
-        <button id="send-message-button">Send</button>
-        <button id="cancel-button">Cancel</button>
+    <div id="chat-container">
+        <button id="chat-button">Chat</button>
+        <div id="friends-list" class="hidden"></div>
     </div>
-</div>
+
+    <div id="message-popup" class="hidden">
+        <div id="popup-content">
+            <p>Send a message to <span id="friend-name"></span>:</p>
+            <textarea id="message-text"></textarea>
+            <button id="send-message-button">Send</button>
+            <button id="cancel-button">Cancel</button>
+        </div>
+    </div>
+
+    <div id="chat-interface" class="hidden">
+        <button id="back-to-friends-list">← Back to Friends</button>
+        <h3 id="chatting-with">Chatting with <span id="chat-with-friend-name"></span></h3>
+        <div id="chat-messages"></div>
+        <input type="text" id="chat-input" placeholder="Type a message..." />
+        <button id="send-chat-message">Send</button>
+    </div>
 </body>
 </html>
 <script type="module" src="../../js/User/userInfo.js"></script>
