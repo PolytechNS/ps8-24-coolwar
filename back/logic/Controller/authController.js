@@ -2,6 +2,9 @@
 const { generateToken } = require('../Authentification/authentication');
 const { parseJSON } = require('../Utils/utils');
 
+
+let profilesPictures = ["profile8", "profile1","profile2","profile3","profile4","profile5","profile6","profile7"]
+
 function signup(req, res, db) {
     parseJSON(req, async (err, { username, password }) => {
         if (err) {
@@ -18,6 +21,7 @@ function signup(req, res, db) {
                 console.log('User already exist');
                 return;
             }
+            let profilePicture = profilesPictures[Math.floor(Math.random() * profilesPictures.length)];
             const result = await db.collection('users').insertOne({
                 username,
                 token : token,
@@ -28,10 +32,11 @@ function signup(req, res, db) {
                 wins: 0,
                 losses: 0,
                 trophies: 0,
-                skins: { current: 'defaultSkin', owned: ['defaultSkin'] },
+                skins: { current: 'perso1', owned: ['perso1',"perso2,perso7,perso4"] },
                 emotes: ['defaultEmote'],
                 titles: [],
-                achievements: []
+                achievements: [],
+                profilePicture: profilePicture,
 
             });
             console.log('Utilisateur créé', result);

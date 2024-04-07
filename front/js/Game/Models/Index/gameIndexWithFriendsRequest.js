@@ -4,7 +4,7 @@ import {GameView} from '../../Views/GameView.js';
 import {socketManager} from '../../../Socket/socketManager.js';
 import {withFriendsGameService} from "../../../Services/Games/WithFriends/withFriendsGameService.js";
 
-import {ChatService} from "../../../Services/Chat/chatService.js";
+import {ChatServiceInGame} from "../../../Services/Chat/chatServiceInGame.js";
 import {userService} from "../../../Services/User/userService.js";
 
 let model = null;
@@ -83,7 +83,7 @@ function initializeListener() {
         console.log('Received chat message', data);
         const { sender, message } = JSON.parse(data);
 
-        ChatService.appendMessageToChatbox(message, sender, 'chatMessages');
+        ChatServiceInGame.appendMessageToChatbox(message, sender, 'chatMessages');
     });
 }
 
@@ -176,9 +176,9 @@ if (sendChatBtn) {
         if (chatInput) {
             const message = chatInput.value;
             console.log('Sending message', message);
-            // Ici, je suppose que `model` et `ChatService` sont définis ailleurs et accessibles.
+            // Ici, je suppose que `model` et `ChatServiceInGame` sont définis ailleurs et accessibles.
             // Si ce n'est pas le cas, vous devrez également gérer ces dépendances.
-            ChatService.sendChatMessage(model.roomId, message);
+            ChatServiceInGame.sendChatMessage(model.roomId, message);
             chatInput.value = ''; // Effacer le champ de texte après l'envoi
         }
     });

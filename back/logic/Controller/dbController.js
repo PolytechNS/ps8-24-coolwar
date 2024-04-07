@@ -1,3 +1,5 @@
+const { generateToken } = require('../Authentification/authentication');
+
 class dbController {
     static async populateDb(db) {
         // Peuplement des skins
@@ -43,6 +45,88 @@ class dbController {
         for (const emote of emotes) {
             await db.collection('emotes').updateOne({ _id: emote._id }, { $setOnInsert: emote }, { upsert: true });
         }
+
+        //random users
+        let profilesPictures = ["profile0", "profile1","profile2","profile3","profile4","profile5","profile6","profile7"]
+
+        const users = [
+            {
+                username: 'AlexDuPont',
+                token: generateToken('AlexDuPont'),
+                password: 'password123', // À hasher dans une application réelle
+                lvl: 12,
+                exp: 2400,
+                elo: 1500,
+                wins: 24,
+                losses: 18,
+                trophies: 3,
+                skins: { current: 'perso8', owned: ['defaultSkin', 'goldSkin'] },
+                emotes: ['happyEmote'],
+                titles: [],
+                achievements: ['first_win.png', 'tu_fais_le_fou.jpg'],
+                profilePicture: 'profile2',
+            },
+            {
+                username: 'BellaCiao',
+                token: generateToken('BellaCiao'),
+                password: 'secretPass', // À hasher dans une application réelle
+                lvl: 20,
+                exp: 5000,
+                elo: 1650,
+                wins: 50,
+                losses: 25,
+                trophies: 5,
+                skins: { current: 'perso7', owned: ['defaultSkin', 'silverSkin', 'goldSkin'] },
+                emotes: ['sadEmote'],
+                titles: ['speedMaster'],
+                achievements: ['first_win.png', 'speedMaster'],
+                profilePicture: 'profile4',
+            },
+            {
+                username: 'BisTass12',
+                token: generateToken('CharlieVibes'),
+                password: 'vibes1234', // À hasher dans une application réelle
+                lvl: 5,
+                exp: 800,
+                elo: 1200,
+                wins: 8,
+                losses: 12,
+                trophies: 1,
+                skins: { current: 'perso5', owned: ['defaultSkin', 'silverSkin'] },
+                emotes: ['happyEmote'],
+                titles: [],
+                achievements: ['first_win.png'],
+                profilePicture: 'profile1',
+            },
+            {
+                username: 'CharlieVibes',
+                token: generateToken('CharlieVibes'),
+                password: 'vibes1234', // À hasher dans une application réelle
+                lvl: 5,
+                exp: 800,
+                elo: 1200,
+                wins: 8,
+                losses: 12,
+                trophies: 1,
+                skins: {current: 'silverSkin', owned: ['defaultSkin', 'silverSkin']},
+                emotes: ['happyEmote'],
+                titles: [],
+                achievements: ['first_win.png'],
+                profilePicture: 'profile1',
+            }
+        ];
+
+
+
+// Code pour insérer ces utilisateurs dans la base de données
+        for (const user of users) {
+            const existingUser = await db.collection('users').findOne({ username: user.username });
+
+            if (!existingUser) {
+                await db.collection('users').insertOne(user);
+            }
+        }
+
 
         console.log('Database populated with initial data!');
     }

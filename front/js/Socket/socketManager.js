@@ -1,6 +1,6 @@
 import "../socket.io.js";
 import {GamePresenter} from "../Game/Controllers/GamePresenter.js";
-import {ChatService} from "../Services/Chat/chatService.js";
+import {ChatServiceInGame} from "../Services/Chat/chatServiceInGame.js";
 // socketManager.js
 export const socketManager = {
     socket: null,

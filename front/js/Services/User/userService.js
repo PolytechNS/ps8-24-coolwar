@@ -1,5 +1,6 @@
 // Importer socketManager pour accéder à la socket
 import { socketManager } from '../../Socket/socketManager.js';
+import {config} from "../../Utils/config.js";
 
 export const userService = {
 
@@ -34,5 +35,38 @@ export const userService = {
                 // Gérer l'erreur de désérialisation ici
             }
         });
+    },
+
+    listUsersLeaderboard(token) {
+        return fetch(`${config.API_ENDPOINT}/api/users/leaderboard`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        });
+    },
+
+    getUserSkin(token) {
+        return fetch(`${config.API_ENDPOINT}/api/users/skins`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        });
     }
+
+
 }
