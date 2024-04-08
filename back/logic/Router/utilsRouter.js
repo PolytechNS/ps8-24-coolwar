@@ -1,4 +1,4 @@
-export function addCors(
+function addCors(
     response,
     methods = ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"]
 ) {
@@ -10,4 +10,6 @@ export function addCors(
     );
     response.setHeader("Access-Control-Allow-Credentials", "true");
 }
+
+module.exports = { addCors};
 
