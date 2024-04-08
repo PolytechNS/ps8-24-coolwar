@@ -46,22 +46,25 @@
         <h2>Game Request</h2>
         <div class="listGameRequest">
             <div class="gameRequest">
-                    <div class="leftSide">
-                        <p>1.</p>
-                        <p>Name of saved game</p>
-                    </div>
-                    <div class="middleSide">
-                        <p>VS</p>
-                        <img class="profilePic" src="../../../assets/profilePicture.png">
-                        <p>Nom</p>
-                    </div>
-                    <div class="rightSide">
-                        <p>15.01.2024</p>
-                    </div>
+                <div class="leftSide">
+                    <p>1.</p>
+                    <p>Name of saved game</p>
+                </div>
+                <div class="middleSide">
+                    <p>VS</p>
+                    <img class="profilePic" src="../../../assets/profilePicture.png">
+                    <p>Nom</p>
+                </div>
+                <div class="rightSide">
+                    <p>15.01.2024</p>
+                </div>
             </div>
         </div>
         <button class="deleteGame explose">Delete</button>
-        <button class="loadGame explose">Load</button>
+        <a href="../../../GamePage/GameLoadPage.html">
+            <button class="loadGame explose">Load</button>
+
+        </a>
     </div>
     <a href="../PlayPage.html" id="backButton" class="explose">
         <button>< Back</button>
@@ -98,6 +101,8 @@
 </body>
 </html>
 <script type="module" src="../../../js/User/userInfo.js"></script>
+<script type="module" src="../../../js/Game/CreatingGame/loadGame.js"></script>
+
 <script type="module" src="../../../js/Chat/chatFriends.js"></script>
 <script type="module" src="../../../js/Animations/tank.js"></script>
 
