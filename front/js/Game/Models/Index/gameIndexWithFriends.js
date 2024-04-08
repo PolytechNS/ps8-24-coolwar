@@ -135,6 +135,19 @@ function displayUnlockedAchievements(achievements) {
         achievementDescription.textContent = achievement.description;
         achievementDescription.classList.add('achievement-description');
 
+        // Create confetti elements
+        const confettiCount = 50; // Number of confetti pieces
+        const confettiColors = ['red', 'blue', 'green', 'yellow', 'purple']; // Array of possible colors
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)]; // Random color
+            confetti.style.left = `${Math.random() * 100}%`; // Random horizontal position
+            confetti.style.animationDelay = `${Math.random() * 5}s`; // Random animation delay
+            alertContainer.appendChild(confetti); // Append confetti
+        }
+
         // Append elements to the container
         alertContainer.appendChild(closeButton);
         alertContainer.appendChild(achievementImage);
@@ -149,9 +162,11 @@ function displayUnlockedAchievements(achievements) {
             if (document.body.contains(alertContainer)) {
                 document.body.removeChild(alertContainer);
             }
-        }, 10000000); // Adjust time as necessary
+        }, 100000); // Adjust time as necessary
     });
 }
+
+
 
 function insertSoundCloudPlayer() {
     const soundCloudContainer = document.getElementById('soundcloud-container');
