@@ -19,6 +19,7 @@ export class GamePresenter {
         this.detachHandlerFromWalls();
         this.roomId=this.model.roomId?this.model.roomId:null;
         this.wallPower = false;
+        this.wallIsSelected = false;
     }
 
     detachHandlerFromWalls() {
@@ -138,34 +139,38 @@ export class GamePresenter {
 
      hoverHandler = (wall) => {
          return () => {
-             let neighborhood = getWallNeighborhood(wall);
-             if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
-                 neighborhood.children.item(0).style.opacity = "0.8";
-             }
-             else {
-                 neighborhood = getWallNeighborhood_Invert(wall);
-                 if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
+             if(!this.wallIsSelected){
+                 let neighborhood = getWallNeighborhood(wall);
+                 if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                      neighborhood.children.item(0).style.opacity = "0.8";
                  }
+                 else {
+                     neighborhood = getWallNeighborhood_Invert(wall);
+                     if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
+                         neighborhood.children.item(0).style.opacity = "0.8";
+                     }
+                 }
+                 wall.children.item(0).style.opacity = "0.8";
              }
-             wall.children.item(0).style.opacity = "0.8";
          }
 
     };
 
      leaveHoverHandler = (wall) => {
          return () => {
-             let neighborhood = getWallNeighborhood(wall);
-             if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
-                 neighborhood.children.item(0).style.opacity = "0";
-             }
-             else{
-                 neighborhood = getWallNeighborhood_Invert(wall);
+             if(!this.wallIsSelected){
+                 let neighborhood = getWallNeighborhood(wall);
                  if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                      neighborhood.children.item(0).style.opacity = "0";
                  }
+                 else{
+                     neighborhood = getWallNeighborhood_Invert(wall);
+                     if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
+                         neighborhood.children.item(0).style.opacity = "0";
+                     }
+                 }
+                 wall.children.item(0).style.opacity = "0";
              }
-             wall.children.item(0).style.opacity = "0";
          }
 
     };
@@ -345,13 +350,16 @@ export class GamePresenter {
                             }
                         });
                     }
-                    else{}
                     this.hideConfirmationButtons();
+                    this.wallIsSelected = false;
                 });
             }
             else{
                 //VALIDATION DE L'ACTION (previsualisation du placement des murs)
                 this.showConfirmationButtons();
+
+                //on previent le handler de survol que le mur est selectionné
+                this.wallIsSelected = true;
                 function waitForUserAction() {
                     return new Promise((resolve, reject) => {
                         // Les boutons sont déjà dans le DOM, on ne change que leur comportement
@@ -373,6 +381,7 @@ export class GamePresenter {
                         console.error("Une erreur s'est produite:", error);
                     }
                 }
+                //Attente de la confirmation de l'utilisateur
                 handleUserAction().then((userConfirmed) => {
                     if(userConfirmed){
                         let neighborhood = getWallNeighborhood(wall);
@@ -400,6 +409,8 @@ export class GamePresenter {
                             }
                         });
                     }
+                    this.hideConfirmationButtons();
+                    this.wallIsSelected = false;
                 });
             }
         }
