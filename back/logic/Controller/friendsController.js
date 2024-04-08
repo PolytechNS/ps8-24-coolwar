@@ -308,6 +308,23 @@ async function invitePlayer(req, res) {
                 creator_id: new ObjectId(invitingUser._id)
             }).sort({ createdAt: -1 }).limit(1).next();
             console.log("gameCreated",gameCreated);
+
+            if (!gameCreated) {
+                let userToken = data.token;
+                let gameName = invitingUser.username + "vs" + invitedUser.username;
+                let user = await client.db().collection('users').findOne({token: userToken});
+                console.log("user creating game",user);
+                //create game with the data like name and token of the user
+                const newGame = await db.collection('games').insertOne({
+                    fog_of_war_on_or_off: false, // ou true, selon la logique de votre jeu
+                    creator_id: user._id, // ID de l'utilisateur qui a créé la partie
+                    typeGame: 'withFriends', // Type de partie
+                    game_name: gameName, // Nom de la partie, peut-être fourni par l'utilisateur
+                    createdAt: new Date()
+                });
+                console.log("newGame", newGame.insertedId);
+            }
+
             const invitationExists = await db.collection('gameInvites').findOne({
                 'invitingUser.id': invitingUser._id,
                 'invitedUser.id': invitedUser._id,

@@ -44,18 +44,46 @@
             <div></div>
             <div class="cadre">
                 <h2>Play</h2>
-                <a href="PlayNowPage/PlayNowPage.html" class="theButton"><button>Play now</button></a>
-                <a href="JoinGamePage/JoinGamePage.html" class="theButton"><button>Join a game</button></a>
-                <a href="BrowseGamePage/BrowseGamePage.html" class="theButton"><button>Browse game</button></a>
-                <a href="CreateGamePage/CreateGamePage.html" class="theButton"><button>Create game</button></a>
-                <a href="LoadGamePage/LoadGamePage.html" class="theButton"><button>Load game</button></a>
+                <a href="PlayNowPage/PlayNowPage.html" class="theButton explose"><button>Play now</button></a>
+                <a href="CreateGamePage/CreateGamePage.html" class="theButton explose"><button>Create game</button></a>
+                <a href="LoadGamePage/LoadGamePage.html" class="theButton explose"><button>Load game</button></a>
             </div>
             <a href="../MainMenuPage/MainMenuPage.html" id="backButton"><button> &lt; Back</button></a>
-        </main>
 
+            <div class="tank" id="tank">
+                <div class="body"></div>
+                <div class="turret"></div>
+            </div>
+        </main>
+        <div id="chat-container">
+            <button id="chat-button" class="explose">Chat</button>
+            <div id="friends-list" class="hidden"></div>
+        </div>
+
+        <div id="message-popup" class="hidden">
+            <div id="popup-content">
+                <p>Send a message to <span id="friend-name"></span>:</p>
+                <textarea id="message-text"></textarea>
+                <button id="send-message-button">Send</button>
+                <button id="cancel-button">Cancel</button>
+            </div>
+        </div>
+
+        <div id="chat-interface" class="hidden">
+            <div class="chat-button">
+                <button id="back-to-friends-list">← Back to Friends</button>
+                <button id="invite-friend-button">Invite to Game</button>
+            </div>
+            <h3 id="chatting-with">Chatting with <span id="chat-with-friend-name"></span></h3>
+            <div id="chat-messages"></div>
+            <input type="text" id="chat-input" placeholder="Type a message..." />
+            <button id="send-chat-message">Send</button>
+        </div>
     </body>
 </html>
 <script type="module" src="../../js/User/userInfo.js"></script>
+<script type="module" src="../../js/Animations/tank.js"></script>
+<script type="module" src="../../js/Chat/chatFriends.js"></script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');

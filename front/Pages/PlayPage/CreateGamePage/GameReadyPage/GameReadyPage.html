@@ -60,18 +60,20 @@
             -->
         </div>
         <div>
-            <button class="ready">Ready</button>
-                <button class="friends">Friends</button>
-
+            <button class="ready explose">Ready</button>
+                <button class="friends explose">Friends</button>
         </div>
     </div>
-    <a href="../CreateGamePage.html" id="backButton">
+    <a href="../CreateGamePage.html" id="backButton" class="explose">
         <button> < Back</button>
-
     </a>
+    <div class="tank" id="tank">
+        <div class="body"></div>
+        <div class="turret"></div>
+    </div>
 </main>
 <div id="friendsListPopup" class="popup" style="display: none;">
-    <span class="closePopup" style="cursor: pointer; position: absolute; top: 10px; right: 20px; font-size: 24px;">✖</span>
+    <span class="closePopup" style="cursor: pointer; position: absolute; top: 10px; right: 20px; font-size: 24px; color:black;">✖</span>
     <h2>Friends</h2>
     <div class="listFriends">
         <!--
@@ -89,12 +91,38 @@
         </div>
         -->
     </div>
-    <button class="invite" >Invite</button>
+    <button class="invite explose" >Invite</button>
+</div>
+<div id="chat-container">
+    <button id="chat-button" class="explose">Chat</button>
+    <div id="friends-list" class="hidden"></div>
+</div>
+
+<div id="message-popup" class="hidden">
+    <div id="popup-content">
+        <p>Send a message to <span id="friend-name"></span>:</p>
+        <textarea id="message-text"></textarea>
+        <button id="send-message-button">Send</button>
+        <button id="cancel-button">Cancel</button>
+    </div>
+</div>
+
+<div id="chat-interface" class="hidden">
+    <div class="chat-button">
+        <button id="back-to-friends-list">← Back to Friends</button>
+        <button id="invite-friend-button">Invite to Game</button>
+    </div>
+    <h3 id="chatting-with">Chatting with <span id="chat-with-friend-name"></span></h3>
+    <div id="chat-messages"></div>
+    <input type="text" id="chat-input" placeholder="Type a message..." />
+    <button id="send-chat-message">Send</button>
 </div>
 </body>
 </html>
 <script type="module" src="../../../../js/User/userInfo.js"></script>
 <script type="module" src="../../../../js/Game/CreatingGame/waitingRoom.js"></script>
+<script type="module" src="../../../../js/Chat/chatFriends.js"></script>
+<script type="module" src="../../../../js/Animations/tank.js"></script>
 
 
 <style>
