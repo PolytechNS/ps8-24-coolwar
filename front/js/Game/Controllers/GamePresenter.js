@@ -467,7 +467,6 @@ export class GamePresenter {
                 //SI LE MUR EXISTE ET QU'IL EST PRESENT
                if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
                    //ON L'AFFICHE ET ON LUI RETIRE SES COMPORTEMENTS
-                   console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
                    this.view.displayWallHtml(wallHTML,1);
                    let replaceOBJ = hitboxHTML.cloneNode(true);
                    hitboxHTML.replaceWith(replaceOBJ);
@@ -483,7 +482,6 @@ export class GamePresenter {
                 const clickHandler = this.clickPlaceWallHandler(hitboxHTML);
                 let position = wallHTML.id.split('X');
                 if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
-                    console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
                     this.view.displayWallHtml(wallHTML,1);
                     let replaceOBJ = hitboxHTML.cloneNode(true);
                     hitboxHTML.replaceWith(replaceOBJ);

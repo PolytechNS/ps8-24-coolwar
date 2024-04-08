@@ -50,7 +50,6 @@ export const withFriendsGameService = {
             return
         }
         const dataToParse = {gameId};
-        console.log("dataToParse", dataToParse);
         socketManager.socket.emit('checkWinnerWithFriends', JSON.stringify(dataToParse));
 
         // Écouter la réponse du serveur sur la même socket

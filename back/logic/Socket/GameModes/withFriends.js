@@ -46,10 +46,7 @@ module.exports = (io, socket) => {
 
     socket.on("ready", async (data) => {
       const tokenParsed = JSON.parse(data).token;
-
       io.to(socket.id).emit("player ready response", JSON.stringify({}));
-
-
     },
 
     socket.on('disconnect', async () => {
@@ -250,7 +247,6 @@ module.exports = (io, socket) => {
             if(responseBoolean){
                 //on met à jour le nombre de murs restants dans la bd pour le joueur
                 await updateWallsAndVisibilityFromBd(wallDataDeserialized,playerBd,gameBoardIdDb,gameModel,db);
-
                 //on met à jour le joueur actuel dans la bd
                 await updateCurrentPlayerFromDb(gameBoardIdDb,db,gameModel);
             }

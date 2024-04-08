@@ -179,7 +179,7 @@ async function updatePlayerPositionFromDb(squareGameModel,db,gameBoard,gameModel
 
 async function updateCurrentPlayerFromDb(gameBoard,db,gameModelGlobal){
     //on met à jour le joueur actuel dans la bd
-    await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer, lastChance: gameModelGlobal.lastChance, winner: gameModelGlobal.winner } });
+    await db.collection('gameboards').updateOne({ _id: gameBoard._id }, { $set: { currentPlayer: gameModelGlobal.currentPlayer, lastChance: gameModelGlobal.lastChance, winner: gameModelGlobal.winner, roundCounter: gameModelGlobal.roundCounter } });
     const gameBoardUpdated = await db.collection('gameboards').findOne({ _id: gameBoard._id });
     console.log('Current player db  updated', gameBoardUpdated.currentPlayer);
 }

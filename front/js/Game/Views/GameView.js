@@ -19,8 +19,7 @@ export class GameView {
     }
 
     updateViewCharacter(row, col,id){
-        console.log("updateDisplayBot JOUEUR ADVERSE")
-        this.boardGrid.updateCharacterPosition(row,col,id)
+        this.boardGrid.updateCharacterPosition(row,col,id);
     }
 
     displayWallHtml(wall, opacity) {
@@ -28,7 +27,7 @@ export class GameView {
     }
 
     displayWinner(winner) {
-        console.log("displayWinner")
+        console.log("displayWinner");
     }
 
 }
