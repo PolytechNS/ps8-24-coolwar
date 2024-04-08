@@ -38,18 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Sending game invitation to', friend.username);
                     friendsService.sendGameRequest(friend.username, token)
                         .then(response => {
-                            console.log('Game invitation response:', response);
-                                alert(`Invitation sent to ${friend.username}`);
+                            alert(`Invitation sent to ${friend.username}`);
+
                         })
                         .catch(error => {
                             console.error('Error sending game invitation:', error);
                             alert(`Failed to send invitation to ${friend.username} because: ${error.message}`);
 
                         });
+
                 });
             });
         })
         .catch(error => {
             console.error('Error fetching friends:', error);
         });
+
+
 });

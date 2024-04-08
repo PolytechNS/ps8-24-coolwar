@@ -1,6 +1,7 @@
 // SeeGameRequest.js
 import { gameService } from '../Services/Games/gameService.js';
-import {friendsService} from "../Services/Friends/friendsService.js"; // Assurez-vous que le chemin est correct
+import {friendsService} from "../Services/Friends/friendsService.js";
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('No token found');
         return;
     }
+
 
     friendsService.getGameRequests(token)
         .then(gameRequests => {

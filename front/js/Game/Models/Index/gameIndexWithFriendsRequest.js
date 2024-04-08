@@ -27,14 +27,20 @@ window.onload = function () {
         initializeListener();
 
         withFriendsGameService.joinGameRequest(token,(gameInfo) => {
+            console.log('Opponent found:', gameInfo);
+
+
+            const token = localStorage.getItem('token');
             if (token) {
-                model = JSON.parse(gameInfo);
+                const gameData = JSON.parse(gameInfo);
+
+                model = gameData // Assurez-vous que ce modèle est correctement formaté
                 console.log("Game initialized with game model");
-                console.log(model);
                 const view = new GameView(model);
                 const presenter = new GamePresenter(model, view);
                 globalPresenter = presenter;
                 console.log("Game initialized with game model");
+
             } else {
                 console.error("No token found. Please log in.");
                 // Redirigez l'utilisateur vers la page de connexion si nécessaire

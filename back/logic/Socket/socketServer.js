@@ -16,6 +16,9 @@ const handleChat = require('./Chat.js');
 
 
 
+
+const connectedUsers = {};
+
 module.exports = (server) => {
     const io = socketIo(server, {
         cors: {
@@ -31,9 +34,67 @@ module.exports = (server) => {
         handleOfflineMode(io, socket);
         handleChat(io, socket);
 
-        socket.on('disconnect', () => {
-            console.log('Client disconnected');
+
+
+
+
+        // Exemple de récupération de l'ID utilisateur lors de la connexion
+        // Cela suppose que l'ID de l'utilisateur est envoyé juste après la connexion via un événement 'authenticate' ou similaire
+        socket.on('authenticate', async(token) => {
+            // Associer l'ID de l'utilisateur avec la socket
+            await client.connect();
+            const db = client.db();
+            let user = await db.collection('users').findOne({ token: token});
+            connectedUsers[socket.id] = { userId: user._id};
+            console.log(`Client authenticated: ${user._id}`);
+            console.log('Connected users:', connectedUsers);
+
+            // Vous pouvez également stocker d'autres informations ici
         });
+
+        socket.on('disconnect', () => {
+            console.log(`Client disconnected: ${connectedUsers[socket.id]?.userId}`);
+            // Suppression de l'utilisateur de l'objet connectedUsers
+            delete connectedUsers[socket.id];
+            console.log("user disconnected : ", socket.id);
+            console.log('Connected users:', connectedUsers);
+        });
+
+
+        socket.on('send notification', async(data) => {
+            console.log("send notification", data);
+            let userWhoReceivedNotification = JSON.parse(data).invitedUserName;
+            let userWhoSentNotification = JSON.parse(data).token;
+            let typeNotification = JSON.parse(data).typeNotification;
+            await client.connect();
+            const db = client.db();
+            let userReceivesDb = await db.collection('users').findOne({ username: userWhoReceivedNotification });
+
+            const notification = {
+                to: userReceivesDb._id, // ID de l'utilisateur qui reçoit la notification
+                type: typeNotification, // Le type de notification
+                date: new Date(), // Date de la notification
+            };
+
+            await db.collection('notifications').insertOne(notification);
+
+            for (let socketId in connectedUsers) {
+                console.log("socketId", socketId);
+                console.log("connectedUsers[socketId].userId", connectedUsers[socketId].userId);
+                console.log("userReceivesDb", userReceivesDb._id);
+                // Comparez l'ID de l'utilisateur stocké dans connectedUsers avec l'ID de userReceivesDb
+                if(connectedUsers[socketId].userId.toString() === userReceivesDb._id.toString()){
+                    console.log("SEND NOTIFICATION TO USER");
+                    // Utilisez socketId pour envoyer la notification via io.to()
+                    io.to(socketId).emit("receive notification", { typeNotification });
+                }
+            }
+            //socket.broadcast.emit("receive notification", data);
+        });
+
+
+
+
 
 
 

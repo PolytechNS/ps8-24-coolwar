@@ -80,7 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inviteFriend.addEventListener('click', () => {
         friendsService.sendGameRequest(friendNameSpan.textContent, localStorage.getItem('token'))
-            .then(r => window.location.href = '../PlayPage/CreateGamePage/GameReadyPage/GameReadyPage.html');
+            .then(() => {
+                window.location.href = '../PlayPage/CreateGamePage/GameReadyPage/GameReadyPage.html';
+                friendsService.sendNotificationToUser(friendNameSpan.textContent, localStorage.getItem('token'), "gameRequest");
+            });
     });
 
     backToFriendsListButton.addEventListener('click', () => {

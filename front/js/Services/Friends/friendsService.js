@@ -1,4 +1,5 @@
 import {config} from "../../Utils/config.js";
+import {socketManager} from "../../Socket/socketManager.js";
 const friendsService = {
     addFriend(token, username) {
         return fetch(`${config.API_ENDPOINT}/api/friends/sendRequest`, {
@@ -80,6 +81,15 @@ const friendsService = {
                 }
                 return response.json();
             });
+    },
+
+    sendNotificationToUser(invitedUserName, token,typeNotification) {
+        console.log('Sending notification to FRIENDS SERVICE', invitedUserName);
+        socketManager.socket.emit('send notification', JSON.stringify({ invitedUserName, token,typeNotification }));
+        console.log("emit send notification");
+
+
+
     },
 
     acceptGameRequest(invitingUserName, token) {

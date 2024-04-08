@@ -165,6 +165,8 @@ button{
 }
 
 
+
+
 .level-container {
     display: flex;
     flex-direction: column;
@@ -407,3 +409,22 @@ button{
     }
 }
 
+
+
+@keyframes bell-shake {
+    0%, 100% { transform: translateX(0) scale(1); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px) scale(1.1); }
+    20%, 40%, 60%, 80% { transform: translateX(10px) scale(1.1); }
+}
+
+.notification-bell.shake {
+    animation: bell-shake 2s infinite;
+}
+
+/* Styles supplémentaires pour l'icône de notification */
+.notification-bell {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    /* Ajoutez ici d'autres styles si nécessaire */
+}

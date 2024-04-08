@@ -189,14 +189,16 @@ class GameModel {
         console.log("WALLS TO DELETE -> ",wallToDelete);
 
         wallToDelete.forEach(wall =>{
-            wall.setNotPresent();
-            wall.idPlayer = null;
-            this.wallGroup.forEach((group)=>{
-               if(parseInt(group) === parseInt(wall.wallGroup)) {
-                   this.wallGroup.splice(this.wallGroup.indexOf(group),1);
-               }
-            });
-            wall.wallGroup = null;
+            if(wall!=null){
+                wall.setNotPresent();
+                wall.idPlayer = null;
+                this.wallGroup.forEach((group)=>{
+                    if(parseInt(group) === parseInt(wall.wallGroup)) {
+                        this.wallGroup.splice(this.wallGroup.indexOf(group),1);
+                    }
+                });
+                wall.wallGroup = null;
+            }
         });
         return wallToDelete;
     }

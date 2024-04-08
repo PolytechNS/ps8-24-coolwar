@@ -50,6 +50,7 @@ module.exports = (io, socket) => {
     },
 
     socket.on('disconnect', async () => {
+        console.log("DISCONNECT FROM WITH FRIENDS");
         // Identifier le joueur par son socket.id et le supprimer des listes d'attente
         let foundToken;
         for (let [token, sid] of waitingPlayersForInstantGame.entries()) {
