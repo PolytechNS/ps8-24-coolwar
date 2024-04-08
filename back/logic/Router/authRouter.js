@@ -1,6 +1,8 @@
 const authController = require('../Controller/authController');
+const utilsRouter = require('./utilsRouter');
 
 function handleAuthRoutes(req, res,db) {
+    utilsRouter.addCors(res);
     // You might want to parse the URL and method more carefully in a production app
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname === '/api/auth/signup' && req.method === 'POST') {
