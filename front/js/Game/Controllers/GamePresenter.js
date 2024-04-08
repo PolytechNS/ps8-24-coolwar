@@ -521,7 +521,13 @@ export class GamePresenter {
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
 
-        curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
+        if(this.model.ownIndexPlayer !== this.model.currentPlayer){
+            curplayer_HTML.item(0).innerHTML = "Ennemy";
+        }
+        else{
+            curplayer_HTML.item(0).innerHTML = "You";
+        }
+
         console.log("-----------------------UPDATE NB WALLS-----------------------");
         console.log("OWN INDEX PLAYER -> ",this.model.ownIndexPlayer);
 

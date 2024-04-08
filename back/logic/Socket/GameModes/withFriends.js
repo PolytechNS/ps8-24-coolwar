@@ -747,6 +747,10 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
 
             let playerArrayToSend1 = new PlayerManager();
             let playerArrayToSend2 = new PlayerManager();
+
+            console.log(gameModel.player_array.getPlayer(1).name);
+            console.log(gameModel.player_array.getPlayer(2).name);
+
             playerArrayToSend1.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
             playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(2).name, gameModel.player_array.getPlayer(2).position, gameModel.player_array.getPlayer(2).nbWalls));
             let playableSquareWhereEnemyIsFor1 = gameModel.playable_squares.getPlayableSquare(gameModel.player_array.getPlayer(2).position.row, gameModel.player_array.getPlayer(2).position.col);
@@ -757,9 +761,6 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
             if (playableSquareWhereEnemyIsFor2.visibility >= 0) {
                 playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
             }
-
-
-            console.log("PLAYER 2 -> ", playerArrayToSend2);
 
             let gamePlayerOne = {
                 gameId: gameId, // ID de la partie
