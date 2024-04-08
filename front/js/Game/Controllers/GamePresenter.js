@@ -59,6 +59,7 @@ export class GamePresenter {
     }
 
     init_behaviour(model) {
+        console.log("INIT BEHAVIOUR");
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
@@ -66,7 +67,7 @@ export class GamePresenter {
        this.init_walls(horizontal_walls_HTML, model);
        this.init_walls(vertical_walls_HTML,model);
        this.init_playable_case(playable_case_HTML);
-       this.init_bonus();
+       if(this.model.typeGame === "withFriends"){this.init_bonus();}
     }
 
     init_bonus() {
@@ -101,6 +102,7 @@ export class GamePresenter {
     }
 
     init_walls(list, model){
+        console.log("INIT WALLS");
 
         list.forEach((wall)=> {
             let wallModel = null;
@@ -133,7 +135,6 @@ export class GamePresenter {
                 // Stocke les références pour pouvoir les supprimer plus tard
                 this.eventHandlers[wall.id] = { hoverHandler, leaveHoverHandler, clickHandler };
             }
-
         });
     }
 
@@ -437,6 +438,7 @@ export class GamePresenter {
     }
 
     updateModel(newModel){
+        console.log("NEW GAME MODEL RECIEVED !",newModel);
         this.model = JSON.parse(newModel);
         document.querySelectorAll('#plate').item(0).innerHTML='';
         this.view.initializeBoardGrid(this.model);
@@ -492,6 +494,7 @@ export class GamePresenter {
         this.updateInformations();
     }
     updateInformations(){
+
         this.hideConfirmationButtons();
         console.log("-----UPDATE INFORMATIONS-----");
         let playable_case_HTML = document.querySelectorAll('.playable_square');

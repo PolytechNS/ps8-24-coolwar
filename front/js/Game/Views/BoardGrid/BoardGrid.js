@@ -29,7 +29,7 @@ export class BoardGrid{
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
         model.player_array.forEach((player, iteration) => {
-            this.displayPlayer(player.position.row, player.position.col, iteration + 1);
+            if(player!=null){this.displayPlayer(player.position.row, player.position.col, iteration + 1);}
         });
     }
 
