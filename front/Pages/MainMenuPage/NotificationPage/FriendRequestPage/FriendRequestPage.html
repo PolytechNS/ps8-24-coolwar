@@ -63,18 +63,46 @@
 <!--                </div>-->
 <!--            </div>-->
         </div>
-        <button class="sentFriendRequest">Sent</button>
+        <button class="sentFriendRequest explose">Sent</button>
     </div>
-    <a href="../NotificationPage.html" id="backButton">
+    <a href="../NotificationPage.html" id="backButton" class="explose">
         <button> < Back</button>
-
     </a>
+    <div class="tank" id="tank">
+        <div class="body"></div>
+        <div class="turret"></div>
+    </div>
 </main>
 <script src="../../../../js/Friends/ShowFriendsRequest.js" type="module"></script>
+<div id="chat-container">
+    <button id="chat-button" class="explose">Chat</button>
+    <div id="friends-list" class="hidden"></div>
+</div>
 
+<div id="message-popup" class="hidden">
+    <div id="popup-content">
+        <p>Send a message to <span id="friend-name"></span>:</p>
+        <textarea id="message-text"></textarea>
+        <button id="send-message-button">Send</button>
+        <button id="cancel-button">Cancel</button>
+    </div>
+</div>
+
+<div id="chat-interface" class="hidden">
+    <div class="chat-button">
+        <button id="back-to-friends-list">← Back to Friends</button>
+        <button id="invite-friend-button">Invite to Game</button>
+    </div>
+    <h3 id="chatting-with">Chatting with <span id="chat-with-friend-name"></span></h3>
+    <div id="chat-messages"></div>
+    <input type="text" id="chat-input" placeholder="Type a message..." />
+    <button id="send-chat-message">Send</button>
+</div>
 </body>
 </html>
 <script type="module" src="../../../../js/User/userInfo.js"></script>
+<script type="module" src="../../../../js/Chat/chatFriends.js"></script>
+<script type="module" src="../../../../js/Animations/tank.js"></script>
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');

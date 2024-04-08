@@ -35,14 +35,14 @@ document.addEventListener("DOMContentLoaded", function() {
         const bulletMove = setInterval(function() {
             const bulletX = parseFloat(bullet.style.left);
             const bulletY = parseFloat(bullet.style.top);
-            const bulletSpeed = 5;
+            const bulletSpeed = 15;
             const deltaX = Math.cos(angle) * bulletSpeed;
             const deltaY = Math.sin(angle) * bulletSpeed;
 
             bullet.style.left = (bulletX + deltaX) + 'px';
             bullet.style.top = (bulletY + deltaY) + 'px';
 
-            const buttons = document.querySelectorAll('.theButton'); // Sélectionner tous les boutons avec la classe "theButton"
+            const buttons = document.querySelectorAll('.explose'); // Sélectionner tous les boutons avec la classe "theButton"
 
             buttons.forEach(button => {
                 const buttonRect = button.getBoundingClientRect();
