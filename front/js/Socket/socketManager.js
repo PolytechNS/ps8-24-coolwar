@@ -12,7 +12,9 @@ export const socketManager = {
         this.socket.on('connect', () => {
             console.log('Connected to the server');
             console.log('Socket id:', this.socket.id);
+
             // Peut-être déclencher un événement personnalisé ou exécuter un callback ici pour indiquer que la socket est prête
+            this.socket.emit('authenticate', token);
         });
 
         this.socket.on('connect_error', (err) => {

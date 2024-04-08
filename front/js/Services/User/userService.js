@@ -66,6 +66,41 @@ export const userService = {
             }
             return response.json();
         });
+    },
+
+    getNotifications(token) {
+        console.log("get notifications");
+        return fetch(`${config.API_ENDPOINT}/api/users/notifications`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log("response",response);
+            return response.json();
+        });
+    },
+
+    removeNotification(token,typeNotification){
+        return fetch(`${config.API_ENDPOINT}/api/users/removeNotifications`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({typeNotification}),
+        })
+            .then(response => {
+                console.log("response",response);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            });
     }
 
 

@@ -176,6 +176,7 @@ function loadFriends() {
                     friendsService.sendGameRequest(friend.username, token)
                         .then(response => {
                             console.log('Game invitation response:', response);
+                            friendsService.sendNotificationToUser(friend.username, token, "gameRequest");
                             alert(`Invitation sent to ${friend.username}`);
                         })
                         .catch(error => {

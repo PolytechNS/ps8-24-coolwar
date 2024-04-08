@@ -260,6 +260,68 @@ async function getSkinsUser(req,res,db) {
 
 }
 
+async function getNotifications(req, res, db) {
+    const authHeader = req.headers.authorization;
+    console.log("GET NOIFICATIONS", authHeader);
+    if (!authHeader) {
+        return res.status(401).json({ message: "No token provided" });
+    }
+
+    // Supposons que l'en-tête est de la forme "Bearer TOKEN"
+    const token = authHeader.split(' ')[1]; // Cela sépare "Bearer" du token et prend le token
+
+    console.log("token dans get notifications", token);
+    const user = await db.collection('users').findOne({ token:token });
+    const notifications = await db.collection('notifications').find({ to: user._id }).toArray();
+
+    if (!user) {
+        return { success: false, message: 'User not found' };
+    }
+    console.log("les notifications", notifications);
+    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, notifications }));
+}
+
+async function removeNotification(req, res, db) {
+    parseJSON(req, async (err, data) => {
+        if (err) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Invalid JSON');
+            return;
+        }
+        console.log("data", data);
+        const { typeNotification } = data;
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            res.writeHead(401, { 'Content-Type': 'text/plain' });
+            res.end("No token provided");
+            return;
+        }
+
+        console.log("REMOVING NOTIFICATIONS");
+        const token = authHeader.split(' ')[1];
+
+        try {
+            const user = await db.collection('users').findOne({ token: token });
+
+            const deleteResult = await db.collection('notifications').deleteMany({
+                to: user._id,
+                type: typeNotification
+            });
+
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: "Notifications removed" }));
+        } catch (error) {
+            console.error('Error removing notifications', error);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end("Error removing notifications");
+        }
+    });
+}
+
+
+
 
 
 
@@ -271,5 +333,7 @@ module.exports = {
     storeMessages,
     getMessages,
     getLeaderBoard,
-    getSkinsUser
+    getSkinsUser,
+    getNotifications,
+    removeNotification
 };

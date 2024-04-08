@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!socketManager.isSocketInitialized(token)) {
         socketManager.initializeSocket(token);
     }
+    updateNotificationRequest();
+    listenToNotifications();
     if (token) {
         userService.getUserInfo((userInfo) => {
             // Mettre à jour le nom d'utilisateur
@@ -61,3 +63,77 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("No token found. Please log in.");
     }
 });
+function updateNotificationRequest() {
+    const token = localStorage.getItem('token');
+    if (token) {
+        userService.getNotifications(token)
+            .then((notifications) => {
+                console.log('Notifications DANS LE GET:', notifications);
+
+        if(notifications.notifications.length > 0){
+            let notificationBell = document.querySelector('.notification-bell');
+            if (!notificationBell) {
+                notificationBell = document.createElement('img');
+                notificationBell.src = '../../../../assets/bell-icon.png';
+                notificationBell.className = 'notification-bell';
+                notificationBell.style.width = '24px';
+                notificationBell.style.height = '24px';
+                notificationBell.style.verticalAlign = 'middle';
+
+                const nameAndLogoutDiv = document.querySelector('.nameAndLogout');
+                if (nameAndLogoutDiv) {
+                    nameAndLogoutDiv.appendChild(notificationBell);
+                }
+            }
+
+            // Ajouter la classe 'shake' pour activer l'animation
+            notificationBell.classList.add('shake');
+        }
+        // Vous pouvez ajouter ici d'autres conditions pour différents types de notifications
+    });
+    }
+}
+function injectNotificationStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes bell-shake {
+            0%, 100% { transform: translateX(0) scale(1); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px) scale(1.1); }
+            20%, 40%, 60%, 80% { transform: translateX(10px) scale(1.1); }
+        }
+
+        .notification-bell.shake {
+            animation: bell-shake 2s infinite;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function listenToNotifications() {
+    socketManager.socket.on('receive notification', (notification) => {
+        console.log('New notification received:', notification);
+
+        let notificationBell = document.querySelector('.notification-bell');
+        if (!notificationBell) {
+            notificationBell = document.createElement('img');
+            notificationBell.src = '../../../../assets/bell-icon.png';
+            notificationBell.className = 'notification-bell';
+            notificationBell.style.width = '24px';
+            notificationBell.style.height = '24px';
+            notificationBell.style.verticalAlign = 'middle';
+
+            const nameAndLogoutDiv = document.querySelector('.nameAndLogout');
+            if (nameAndLogoutDiv) {
+                nameAndLogoutDiv.appendChild(notificationBell);
+            }
+        }
+
+        // Ajouter la classe 'shake' pour activer l'animation
+        notificationBell.classList.add('shake');
+    });
+}
+
+// Appeler cette fonction pour injecter les styles lorsque le script est exécuté
+injectNotificationStyles();
+
+
