@@ -21,7 +21,6 @@ export class BoardGrid{
                     this.buildLineWithPlayableSquare(Y_plate_count, this.nbColonnes);
                 }
             }
-
         }
         this.updateOpacityWall(model);
 

@@ -67,8 +67,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function explodeBullet(bullet) {
         const numFragments = 10; // Nombre de fragments de balle
-        const bulletSize = 5; // Taille de la balle principale
         const fragmentSize = 2; // Taille des fragments
+        const maxMoves = 100; // Nombre maximal de déplacements pour chaque fragment
 
         for (let i = 0; i < numFragments; i++) {
             const fragment = document.createElement('div');
@@ -88,21 +88,32 @@ document.addEventListener("DOMContentLoaded", function() {
 
             document.body.appendChild(fragment);
 
+            let moveCount = 0; // Compteur pour le nombre de déplacements
             const fragmentMove = setInterval(function() {
-                const fragmentX = parseFloat(fragment.style.left);
-                const fragmentY = parseFloat(fragment.style.top);
-
-                fragment.style.left = (fragmentX + deltaX) + 'px';
-                fragment.style.top = (fragmentY + deltaY) + 'px';
-
-                if (fragmentX < 0 || fragmentX > window.innerWidth || fragmentY < 0 || fragmentY > window.innerHeight) {
+                if (++moveCount > maxMoves) {
                     clearInterval(fragmentMove);
                     document.body.removeChild(fragment);
+                    return;
+                }
+
+                const fragmentX = parseFloat(fragment.style.left);
+                const fragmentY = parseFloat(fragment.style.top);
+                const nextX = fragmentX + deltaX;
+                const nextY = fragmentY + deltaY;
+
+                // Vérification pour s'assurer que le fragment reste dans les limites du navigateur
+                if (nextX < 0 || nextX > window.innerWidth || nextY < 0 || nextY > window.innerHeight) {
+                    clearInterval(fragmentMove);
+                    document.body.removeChild(fragment);
+                } else {
+                    fragment.style.left = nextX + 'px';
+                    fragment.style.top = nextY + 'px';
                 }
             }, 10);
         }
 
         document.body.removeChild(bullet);
     }
+
 });
 
