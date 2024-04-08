@@ -29,7 +29,7 @@ export class BoardGrid{
         //AFFICHER LES JOUEURS EN FONCTION DE LEUR POSITION
         let iteration=1;
         model.player_array.forEach((player, iteration) => {
-            this.displayPlayer(player.position.row, player.position.col, iteration + 1);
+            if(player!=null){this.displayPlayer(player.position.row, player.position.col, iteration + 1);}
         });
     }
 
@@ -70,9 +70,7 @@ export class BoardGrid{
     }
 
     updateCharacterPosition(row, col, id){
-
         //il faudrait find la case qui a le background image /perso2.png et lui enlever le background image
-
         let items = document.getElementsByClassName('playable_square');
         for(let i=0;i<items.length;i++){
             if(items.item(i).style.backgroundImage.includes('perso'+id+'.png')){
@@ -80,10 +78,7 @@ export class BoardGrid{
                 items.item(i).style.backgroundImage = ``;
             }
         }
-
-
         this.displayPlayer(row,col,id);
-
     }
 
     deletePlayer(row,col,id){

@@ -94,7 +94,6 @@ class ActionController {
                 let playerToMove = this.model.player_array.getPlayer(id);
                 playerToMove.position = new Position(row,col);
                 this.model.setNextPlayer();
-                console.log("retourne true")
                 return true;
             }
             else{console.log("JOUEUR NON DEPLACABLE !");}

@@ -19,6 +19,7 @@ export class GamePresenter {
         this.detachHandlerFromWalls();
         this.roomId=this.model.roomId?this.model.roomId:null;
         this.wallPower = false;
+        this.wallIsSelected = false;
     }
 
     detachHandlerFromWalls() {
@@ -58,6 +59,7 @@ export class GamePresenter {
     }
 
     init_behaviour(model) {
+        console.log("INIT BEHAVIOUR");
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
@@ -65,7 +67,7 @@ export class GamePresenter {
        this.init_walls(horizontal_walls_HTML, model);
        this.init_walls(vertical_walls_HTML,model);
        this.init_playable_case(playable_case_HTML);
-       this.init_bonus();
+       if(this.model.typeGame === "withFriends"){this.init_bonus();}
     }
 
     init_bonus() {
@@ -100,6 +102,7 @@ export class GamePresenter {
     }
 
     init_walls(list, model){
+        console.log("INIT WALLS");
 
         list.forEach((wall)=> {
             let wallModel = null;
@@ -132,40 +135,43 @@ export class GamePresenter {
                 // Stocke les références pour pouvoir les supprimer plus tard
                 this.eventHandlers[wall.id] = { hoverHandler, leaveHoverHandler, clickHandler };
             }
-
         });
     }
 
      hoverHandler = (wall) => {
          return () => {
-             let neighborhood = getWallNeighborhood(wall);
-             if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
-                 neighborhood.children.item(0).style.opacity = "0.8";
-             }
-             else {
-                 neighborhood = getWallNeighborhood_Invert(wall);
-                 if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
+             if(!this.wallIsSelected){
+                 let neighborhood = getWallNeighborhood(wall);
+                 if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                      neighborhood.children.item(0).style.opacity = "0.8";
                  }
+                 else {
+                     neighborhood = getWallNeighborhood_Invert(wall);
+                     if (!this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
+                         neighborhood.children.item(0).style.opacity = "0.8";
+                     }
+                 }
+                 wall.children.item(0).style.opacity = "0.8";
              }
-             wall.children.item(0).style.opacity = "0.8";
          }
 
     };
 
      leaveHoverHandler = (wall) => {
          return () => {
-             let neighborhood = getWallNeighborhood(wall);
-             if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
-                 neighborhood.children.item(0).style.opacity = "0";
-             }
-             else{
-                 neighborhood = getWallNeighborhood_Invert(wall);
+             if(!this.wallIsSelected){
+                 let neighborhood = getWallNeighborhood(wall);
                  if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                      neighborhood.children.item(0).style.opacity = "0";
                  }
+                 else{
+                     neighborhood = getWallNeighborhood_Invert(wall);
+                     if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
+                         neighborhood.children.item(0).style.opacity = "0";
+                     }
+                 }
+                 wall.children.item(0).style.opacity = "0";
              }
-             wall.children.item(0).style.opacity = "0";
          }
 
     };
@@ -176,20 +182,123 @@ export class GamePresenter {
                 //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
                 let oldPosition = null;
-                actionGameService.getPlayerPosition(this.model.typeGame,this.model.ownIndexPlayer,this.model.gameId,(res)=>{
-                    oldPosition = res;
-                });
-                //token
-                actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
-                    if(res){
-                        this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
-                        //ON RETIRE L'ANCIEN STYLE
-                        this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
-                        this.sendUpdateToBack();
-                    }
-                });
-            };
+                let originalBackGroundColor = playable_case.style.backgroundColor;
+                //Affichage de la position selectionnée
+                playable_case.style.backgroundColor = "red";
 
+                //Affichage des boutons de Confirmations/Annulation
+                this.showConfirmationButtons();
+
+                function waitForUserAction() {
+                    return new Promise((resolve, reject) => {
+                        // Les boutons sont déjà dans le DOM, on ne change que leur comportement
+                        const confirmButton = document.getElementById("confirmMove");
+                        const cancelButton = document.getElementById("cancelMove");
+
+                        // Gestionnaires d'événements pour résoudre la promesse
+                        confirmButton.onclick = () => resolve(true);
+                        cancelButton.onclick = () => resolve(false);
+                    });
+                }
+                async function handleUserAction() {
+                    try {
+                        const userConfirmed = await waitForUserAction();
+                        console.log("Choix de l'utilisateur :", userConfirmed ? "Confirmé" : "Annulé");
+                        // Logique de traitement basée sur la confirmation ou l'annulation par l'utilisateur
+                        return userConfirmed; // Retourne le choix de l'utilisateur
+                    } catch (error) {
+                        console.error("Une erreur s'est produite:", error);
+                    }
+                }
+
+                // Exemple d'utilisation
+                handleUserAction().then((userConfirmed) => {
+                    if (userConfirmed) {
+                        actionGameService.getPlayerPosition(this.model.typeGame,this.model.ownIndexPlayer,this.model.gameId,(res)=>{
+                            oldPosition = res;
+                        });
+                        //token
+                        actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
+                            if(res){
+                                this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
+                                //ON RETIRE L'ANCIEN STYLE
+                                this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
+                                this.sendUpdateToBack();
+                            }
+                        });
+                    } else {}
+                    playable_case.style.backgroundColor = originalBackGroundColor;
+                    this.hideConfirmationButtons();
+                });
+
+
+                /* POPUP DE CONFIRMATION
+                const popup = document.getElementById("validationPopup");
+                const span = document.getElementsByClassName("validationPOPUP-close")[0];
+                const confirmButton = document.getElementById("confirmMove");
+                const cancelButton = document.getElementById("cancelMove");
+
+                const openPopup = () => {popup.style.display = "block";};
+                const closePopup = () => {popup.style.display = "none";};
+
+                span.onclick = function() {popup.style.display = "none";}
+
+                window.onclick = function(event) {if (event.target === popup) {popup.style.display = "none";}}
+
+                openPopup();
+
+                function waitForUserAction() {
+                    return new Promise((resolve, reject) => {
+                        // Obtenez les boutons de confirmation et d'annulation
+                        const confirmButton = document.getElementById("confirmMove");
+                        const cancelButton = document.getElementById("cancelMove");
+
+                        // Définir les gestionnaires d'événements pour résoudre la promesse
+                        confirmButton.onclick = () => resolve(true);
+                        cancelButton.onclick = () => resolve(false);
+                    });
+                }
+                async function handleUserAction() {
+                    // Ouvrir la popup avant d'attendre la réponse
+                    document.getElementById("validationPopup").style.display = "block";
+
+                    try {
+                        const userConfirmed = await waitForUserAction();
+                        if (userConfirmed) {
+                            console.log("L'utilisateur a confirmé");
+                            // Insérer ici la logique à exécuter en cas de confirmation
+                        } else {
+                            console.log("L'utilisateur a annulé");
+                            // Insérer ici la logique à exécuter en cas d'annulation
+                        }
+                        return userConfirmed;
+                    } catch (error) {
+                        console.error("Une erreur s'est produite:", error);
+                    }
+                }
+
+                handleUserAction().then((value)=>{
+                    console.log("INDSIDE POPUP CHOICE !",value);
+                    //si le choix est true (confirmer effectuer) -> on fait l'action
+                    if(value){
+                        actionGameService.getPlayerPosition(this.model.typeGame,this.model.ownIndexPlayer,this.model.gameId,(res)=>{
+                            oldPosition = res;
+                        });
+                        //token
+                        actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
+                            if(res){
+                                this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
+                                //ON RETIRE L'ANCIEN STYLE
+                                this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
+                                this.sendUpdateToBack();
+                            }
+                        });
+                    }
+                    else{}
+                    closePopup();
+                });
+                */
+            };
             playable_case.addEventListener('click', clickMoveHandler);
         });
     }
@@ -197,52 +306,114 @@ export class GamePresenter {
     clickPlaceWallHandler = (wall) => {
         return () => {
             if(this.wallPower){
-                console.log("WALLPOWER -> ORIGINAL WALL :",wall.children.item(0).id);
-                const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, originalWall : wall.children.item(0).id,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer,wallPower:this.wallPower };
-                actionGameService.explodeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
-                    if(isAuthorized){
-                        this.sendUpdateToBack();
-                        // Ici, l'animation d'explosion est déclenchée
-                        /*const explodeElement = document.createElement('div');
-                        explodeElement.classList.add('explode');
-                        document.body.appendChild(explodeElement);
+                //VALIDATION DE L'ACTION (previsualisation de l'explosion)
+                this.showConfirmationButtons();
+                function waitForUserAction() {
+                    return new Promise((resolve, reject) => {
+                        // Les boutons sont déjà dans le DOM, on ne change que leur comportement
+                        const confirmButton = document.getElementById("confirmMove");
+                        const cancelButton = document.getElementById("cancelMove");
 
-                        // Positionner l'explosion correctement
-                        explodeElement.style.left = `${event.clientX - 50}px`; // Centre l'explosion par rapport au clic
-                        explodeElement.style.top = `${event.clientY - 50}px`;
-
-                        // Supprimer l'élément après l'animation
-                        setTimeout(() => {
-                            explodeElement.remove();
-                        }, 500); // Correspond à la durée de l'animation
-                        */
+                        // Gestionnaires d'événements pour résoudre la promesse
+                        confirmButton.onclick = () => resolve(true);
+                        cancelButton.onclick = () => resolve(false);
+                    });
+                }
+                async function handleUserAction() {
+                    try {
+                        const userConfirmed = await waitForUserAction();
+                        console.log("Choix de l'utilisateur :", userConfirmed ? "Confirmé" : "Annulé");
+                        // Logique de traitement basée sur la confirmation ou l'annulation par l'utilisateur
+                        return userConfirmed; // Retourne le choix de l'utilisateur
+                    } catch (error) {
+                        console.error("Une erreur s'est produite:", error);
                     }
+                }
+                handleUserAction().then((userConfirmed) => {
+                    if(userConfirmed){
+                        console.log("WALLPOWER -> ORIGINAL WALL :",wall.children.item(0).id);
+                        const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, originalWall : wall.children.item(0).id,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer,wallPower:this.wallPower };
+                        actionGameService.explodeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
+                            if(isAuthorized){
+                                this.sendUpdateToBack();
+                                // Ici, l'animation d'explosion est déclenchée
+                                /*const explodeElement = document.createElement('div');
+                                explodeElement.classList.add('explode');
+                                document.body.appendChild(explodeElement);
+
+                                // Positionner l'explosion correctement
+                                explodeElement.style.left = `${event.clientX - 50}px`; // Centre l'explosion par rapport au clic
+                                explodeElement.style.top = `${event.clientY - 50}px`;
+
+                                // Supprimer l'élément après l'animation
+                                setTimeout(() => {
+                                    explodeElement.remove();
+                                }, 500); // Correspond à la durée de l'animation
+                                */
+                            }
+                        });
+                    }
+                    this.hideConfirmationButtons();
+                    this.wallIsSelected = false;
                 });
             }
             else{
-                let neighborhood = getWallNeighborhood(wall);
-                if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
-                    neighborhood = getWallNeighborhood_Invert(wall);
+                //VALIDATION DE L'ACTION (previsualisation du placement des murs)
+                this.showConfirmationButtons();
+
+                //on previent le handler de survol que le mur est selectionné
+                this.wallIsSelected = true;
+                function waitForUserAction() {
+                    return new Promise((resolve, reject) => {
+                        // Les boutons sont déjà dans le DOM, on ne change que leur comportement
+                        const confirmButton = document.getElementById("confirmMove");
+                        const cancelButton = document.getElementById("cancelMove");
+
+                        // Gestionnaires d'événements pour résoudre la promesse
+                        confirmButton.onclick = () => resolve(true);
+                        cancelButton.onclick = () => resolve(false);
+                    });
                 }
-                let wallListReq = [wall.children.item(0).id];
-                let wallListObj = [wall];
-                if (!this.gameBehaviour.isPresentWall(neighborhood)) {
-                    wallListReq.push(neighborhood.children.item(0).id);
-                    wallListObj.push(neighborhood);
-                }
-                const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer };
-                console.log(" -> ",dataToSend);
-                actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
-                    if(isAuthorized) {
-                        //GESTION DES SUPERS-POUVOIRS SUR LES MUR
-                        wallListObj.forEach((wallToEdit) => {
-                            let wallInside = wallToEdit.children.item(0);
-                            this.view.displayWallHtml(wallInside, 1);
-                            let replaceOBJ = wallToEdit.cloneNode(true);
-                            wallToEdit.replaceWith(replaceOBJ);
-                        });
-                        this.sendUpdateToBack();
+                async function handleUserAction() {
+                    try {
+                        const userConfirmed = await waitForUserAction();
+                        console.log("Choix de l'utilisateur :", userConfirmed ? "Confirmé" : "Annulé");
+                        // Logique de traitement basée sur la confirmation ou l'annulation par l'utilisateur
+                        return userConfirmed; // Retourne le choix de l'utilisateur
+                    } catch (error) {
+                        console.error("Une erreur s'est produite:", error);
                     }
+                }
+                //Attente de la confirmation de l'utilisateur
+                handleUserAction().then((userConfirmed) => {
+                    if(userConfirmed){
+                        let neighborhood = getWallNeighborhood(wall);
+                        if (this.gameBehaviour.isPresentWall(neighborhood,this.model)) {
+                            neighborhood = getWallNeighborhood_Invert(wall);
+                        }
+                        let wallListReq = [wall.children.item(0).id];
+                        let wallListObj = [wall];
+                        if (!this.gameBehaviour.isPresentWall(neighborhood)) {
+                            wallListReq.push(neighborhood.children.item(0).id);
+                            wallListObj.push(neighborhood);
+                        }
+                        const dataToSend = {gameBoardId : this.model.gameBoardId, gameId : this.model.gameId, wallList : wallListReq,roomId:this.roomId,ownIndexPlayer:this.model.ownIndexPlayer };
+                        console.log(" -> ",dataToSend);
+                        actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
+                            if(isAuthorized) {
+                                //GESTION DES SUPERS-POUVOIRS SUR LES MUR
+                                wallListObj.forEach((wallToEdit) => {
+                                    let wallInside = wallToEdit.children.item(0);
+                                    this.view.displayWallHtml(wallInside, 1);
+                                    let replaceOBJ = wallToEdit.cloneNode(true);
+                                    wallToEdit.replaceWith(replaceOBJ);
+                                });
+                                this.sendUpdateToBack();
+                            }
+                        });
+                    }
+                    this.hideConfirmationButtons();
+                    this.wallIsSelected = false;
                 });
             }
         }
@@ -267,6 +438,7 @@ export class GamePresenter {
     }
 
     updateModel(newModel){
+        console.log("NEW GAME MODEL RECIEVED !",newModel);
         this.model = JSON.parse(newModel);
         document.querySelectorAll('#plate').item(0).innerHTML='';
         this.view.initializeBoardGrid(this.model);
@@ -297,7 +469,6 @@ export class GamePresenter {
                 //SI LE MUR EXISTE ET QU'IL EST PRESENT
                if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
                    //ON L'AFFICHE ET ON LUI RETIRE SES COMPORTEMENTS
-                   console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
                    this.view.displayWallHtml(wallHTML,1);
                    let replaceOBJ = hitboxHTML.cloneNode(true);
                    hitboxHTML.replaceWith(replaceOBJ);
@@ -313,7 +484,6 @@ export class GamePresenter {
                 const clickHandler = this.clickPlaceWallHandler(hitboxHTML);
                 let position = wallHTML.id.split('X');
                 if(parseInt(position[0])===parseInt(wall.position.row) && parseInt(position[1])===parseInt(wall.position.col) && position[2]===wall.type && wall.isPresent===true){
-                    console.log("PRESENT WALL", wall.position.row, wall.position.col, wall.type, wall.isPresent);
                     this.view.displayWallHtml(wallHTML,1);
                     let replaceOBJ = hitboxHTML.cloneNode(true);
                     hitboxHTML.replaceWith(replaceOBJ);
@@ -324,6 +494,8 @@ export class GamePresenter {
         this.updateInformations();
     }
     updateInformations(){
+
+        this.hideConfirmationButtons();
         console.log("-----UPDATE INFORMATIONS-----");
         let playable_case_HTML = document.querySelectorAll('.playable_square');
         //update des couleurs des cases
@@ -350,11 +522,15 @@ export class GamePresenter {
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
-        console.log(this.model.ownIndexPlayer);
-        console.log(this.model.currentPlayer);
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
 
-        curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
+        if(this.model.ownIndexPlayer !== this.model.currentPlayer){
+            curplayer_HTML.item(0).innerHTML = "Ennemy";
+        }
+        else{
+            curplayer_HTML.item(0).innerHTML = "You";
+        }
+
         console.log("-----------------------UPDATE NB WALLS-----------------------");
         console.log("OWN INDEX PLAYER -> ",this.model.ownIndexPlayer);
 
@@ -369,6 +545,15 @@ export class GamePresenter {
         whoIAm.item(0).innerHTML = "You are player "+this.model.ownIndexPlayer;
     }
 
-
-
+    showConfirmationButtons() {
+        console.log("SHOW CONFIRMATION BUTTONS");
+        const confirmButtons = document.querySelectorAll('.action-buttons').item(0);
+        confirmButtons.style.opacity = "1";
+    }
+    hideConfirmationButtons() {
+        const confirmButtons = document.querySelectorAll('.action-buttons').item(0);
+        confirmButtons.style.opacity = "0.5";
+    }
 }
+
+

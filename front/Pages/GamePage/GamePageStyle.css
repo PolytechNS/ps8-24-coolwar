@@ -6,6 +6,13 @@ main{
     min-width: 85%;
 }
 
+.middle{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .plate{
     display: grid;
     margin: 70px 30px 30px;
@@ -473,3 +480,57 @@ h1{
     border-radius: 50%;
     animation: explode-animation 0.5s ease-out forwards;
 }
+
+/* PARTIE POP-UP DE VALIDATION */
+.validationPOPUP p {
+    color: black;
+}
+.validationPOPUP {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.validationPOPUP-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.validationPOPUP-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.validationPOPUP-close:hover,
+.validationPOPUP-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* BOUTTONS VALIDATION */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Espacement entre les boutons */
+    padding: 20px; /* Espacement autour des boutons */
+}
+
+.action-buttons button {
+    padding: 10px 20px; /* Ajustez à votre goût */
+    font-size: 16px; /* Ajustez la taille du texte */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+}
+

@@ -102,7 +102,7 @@ function attachAchievementsListener() {
         console.log('Achievements unlocked:', achievementsUnlocked);
         displayUnlockedAchievements(achievementsUnlocked);
     });
-    displayUnlockedAchievements([{ name: 'First win', description: 'You won your first game!', imagePath: 'first_win.png' }]);
+    //displayUnlockedAchievements([{ name: 'First win', description: 'You won your first game!', imagePath: 'first_win.png' }]);
 }
 
 function displayUnlockedAchievements(achievements) {

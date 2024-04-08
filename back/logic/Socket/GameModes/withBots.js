@@ -65,6 +65,8 @@ module.exports = (io, socket) => {
                 let playableSquareWhereEnemyIs = gameModel.playable_squares.getPlayableSquare(gameModel.player_array.getPlayer(2).position.row,gameModel.player_array.getPlayer(2).position.col);
                 if(playableSquareWhereEnemyIs.visibility <= 0) {playerArrayToSend.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(2).name,gameModel.player_array.getPlayer(2).position,gameModel.player_array.getPlayer(2).nbWalls));}
 
+                console.log("GAMEMODEL SEND TO CLIENT : ", gameModel);
+
                 socket.emit('getGameWithBotResponse', JSON.stringify({
                     gameId: gameId, // ID de la partie
                     gameBoardId: gameBoardId, // ID du plateau de jeu
