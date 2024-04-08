@@ -16,14 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('chat-input');
     const chatMessages = document.getElementById('chat-messages');
     const friendNameSpan = document.getElementById('chat-with-friend-name');
+    const chatContainer = document.getElementById('chat-container');
+    const inviteFriend = document.getElementById('invite-friend-button');
 
     chatButton.addEventListener('click', () => {
         const isHidden = friendsListDiv.classList.contains('hidden');
         if (isHidden) {
+            friendsListDiv.style.display = 'block';
             loadFriendsList();
             friendsListDiv.classList.remove('hidden');
         } else {
             friendsListDiv.classList.add('hidden');
+            friendsListDiv.style.display = 'none';
         }
     });
 
@@ -63,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         friendNameSpan.textContent = friend.username; // Set the friend's name
         chatInterface.style.display = 'block'; // Show the chat interface
         friendsListDiv.style.display = 'none'; // Hide the friends list
+        chatContainer.style.display = 'none';
 
         //connecte à la room récupération des messages anciens et affichage
         ChatServiceFriends.connectToFriendRoom(friend.username, (data) => {
@@ -70,11 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         //on pour écouter
 
+
     }
+
+    inviteFriend.addEventListener('click', () => {
+        friendsService.sendGameRequest(friendNameSpan.textContent, localStorage.getItem('token'))
+            .then(() => {
+                window.location.href = '../PlayPage/CreateGamePage/GameReadyPage/GameReadyPage.html';
+                friendsService.sendNotificationToUser(friendNameSpan.textContent, localStorage.getItem('token'), "gameRequest");
+            });
+    });
 
     backToFriendsListButton.addEventListener('click', () => {
         chatInterface.style.display = 'none'; // Hide the chat interface
         friendsListDiv.style.display = 'block'; // Show the friends list
+        chatContainer.style.display = 'block';
     });
 
     sendMessageButton.addEventListener('click', () => {

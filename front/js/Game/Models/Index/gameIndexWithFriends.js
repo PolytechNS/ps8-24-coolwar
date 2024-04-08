@@ -38,7 +38,7 @@ window.onload = function () {
 
                  model = gameData // Assurez-vous que ce modèle est correctement formaté
                 console.log("Game initialized with game model");
-                    const view = new GameView(model);
+                 const view = new GameView(model);
                 const presenter = new GamePresenter(model, view);
                 globalPresenter = presenter;
                 console.log("Game initialized with game model");
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             attachAchievementsListener();
         }
-
+        
         userService.getUserInfo((userInfo) => {
             console.log("PROFILE USER info", userInfo);
             if (userInfo.achievements && userInfo.achievements.includes("tu_fais_le_fou.jpg")) {
@@ -102,7 +102,7 @@ function attachAchievementsListener() {
         console.log('Achievements unlocked:', achievementsUnlocked);
         displayUnlockedAchievements(achievementsUnlocked);
     });
-    displayUnlockedAchievements([{ name: 'First win', description: 'You won your first game!', imagePath: 'first_win.png' }]);
+    //displayUnlockedAchievements([{ name: 'First win', description: 'You won your first game!', imagePath: 'first_win.png' }]);
 }
 
 function displayUnlockedAchievements(achievements) {
@@ -135,6 +135,19 @@ function displayUnlockedAchievements(achievements) {
         achievementDescription.textContent = achievement.description;
         achievementDescription.classList.add('achievement-description');
 
+        // Create confetti elements
+        const confettiCount = 50; // Number of confetti pieces
+        const confettiColors = ['red', 'blue', 'green', 'yellow', 'purple']; // Array of possible colors
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)]; // Random color
+            confetti.style.left = `${Math.random() * 100}%`; // Random horizontal position
+            confetti.style.animationDelay = `${Math.random() * 5}s`; // Random animation delay
+            alertContainer.appendChild(confetti); // Append confetti
+        }
+
         // Append elements to the container
         alertContainer.appendChild(closeButton);
         alertContainer.appendChild(achievementImage);
@@ -149,18 +162,20 @@ function displayUnlockedAchievements(achievements) {
             if (document.body.contains(alertContainer)) {
                 document.body.removeChild(alertContainer);
             }
-        }, 10000000); // Adjust time as necessary
+        }, 100000); // Adjust time as necessary
     });
 }
+
+
 
 function insertSoundCloudPlayer() {
     const soundCloudContainer = document.getElementById('soundcloud-container');
     if (true) {
         const playerHtml = `
-            <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1788018703%3Fsecret_token%3Ds-uqqvuwf8xj5&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
-            <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
-                <a href="https://soundcloud.com/leomendesmusic" title="leomendesmusic" target="_blank" style="color: #cccccc; text-decoration: none;">leomendesmusic</a> · 
-                <a href="https://soundcloud.com/leomendesmusic/drip-man-tu-fais-le-fou-vella-ps8/s-uqqvuwf8xj5" title="Drip Man - Tu fais le fou (Vella PS8)" target="_blank" style="color: #cccccc; text-decoration: none;">Drip Man - Tu fais le fou (Vella PS8)</a>
+            <iframe width="90%" height="90%" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1788018703%3Fsecret_token%3Ds-uqqvuwf8xj5&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true" style="margin: 0;"></iframe>
+            <div style="font-size: 10px; color: #cccccc;padding-left: 30px; padding-right: 30px;margin:0;">
+                <a href="https://soundcloud.com/leomendesmusic" title="leomendesmusic" target="_blank" style="color: #cccccc; text-decoration: none;margin:0;">leomendesmusic</a> · 
+                <a href="https://soundcloud.com/leomendesmusic/drip-man-tu-fais-le-fou-vella-ps8/s-uqqvuwf8xj5" title="Drip Man - Tu fais le fou (Vella PS8)" target="_blank" style="color: #cccccc; text-decoration: none;margin:0;">Drip Man - Tu fais le fou (Vella PS8)</a>
             </div>
         `;
         soundCloudContainer.innerHTML = playerHtml;

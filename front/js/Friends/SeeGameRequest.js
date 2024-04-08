@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                     <div class="footer">
-                        <button class="decline" data-game-id="${request.gameId}">Decline</button>
-                        <button class="join" data-inviting-user-name="${request.invitingUsername}">Join</button>
+                        <button class="decline explose" data-game-id="${request.gameId}">Decline</button>
+                        <button class="join explose" data-inviting-user-name="${request.invitingUsername}">Join</button>
                     </div>
                 `;
                 listGameRequestDiv.appendChild(gameRequestDiv);

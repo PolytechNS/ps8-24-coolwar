@@ -1,9 +1,7 @@
 // GameIndexWithBot.js
 import {GamePresenter} from '../../Controllers/GamePresenter.js';
-import {actionGameService} from "../../../Services/Games/actionGameService.js";
 import {GameView} from '../../Views/GameView.js';
 import {socketManager} from '../../../Socket/socketManager.js';
-import {config} from "../../../Utils/config.js";
 import {withFriendsGameService} from "../../../Services/Games/WithFriends/withFriendsGameService.js";
 
 import {ChatServiceInGame} from "../../../Services/Chat/chatServiceInGame.js";
@@ -29,13 +27,15 @@ window.onload = function () {
         initializeListener();
 
         withFriendsGameService.joinGameRequest(token,(gameInfo) => {
+            console.log('Opponent found:', gameInfo);
 
+
+            const token = localStorage.getItem('token');
             if (token) {
                 const gameData = JSON.parse(gameInfo);
 
                 model = gameData // Assurez-vous que ce modèle est correctement formaté
                 console.log("Game initialized with game model");
-                console.log(model);
                 const view = new GameView(model);
                 const presenter = new GamePresenter(model, view);
                 globalPresenter = presenter;

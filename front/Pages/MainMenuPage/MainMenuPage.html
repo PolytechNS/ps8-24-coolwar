@@ -44,17 +44,22 @@
     <div></div>
     <div class="cadre">
         <h2>Main Menu</h2>
-        <a href="../PlayPage/PlayPage.html" class="theButton"><button>Play</button></a>
-        <a href="ProfilePage/ProfilePage.html" class="theButton"><button>Profile</button></a>
-        <a href="FriendsPage/FriendsPage.html" class="theButton"><button>Friends</button></a>
-        <a href="SettingsPage/SettingsPage.html" class="theButton"><button>Settings</button></a>
-        <a href="NotificationPage/NotificationPage.html" class="theButton notificationButton"><button>Notification</button></a>
-        <a href="LeaderboardPage/LeaderboardPage.html" class="theButton"><button>Leaderboard</button></a>
+        <a href="../PlayPage/PlayPage.html" class="theButton explose"><button>Play</button></a>
+        <a href="ProfilePage/ProfilePage.html" class="theButton explose"><button>Profile</button></a>
+        <a href="FriendsPage/FriendsPage.html" class="theButton explose"><button>Friends</button></a>
+        <a href="SettingsPage/SettingsPage.html" class="theButton explose"><button>Settings</button></a>
+        <a href="NotificationPage/NotificationPage.html" class="theButton notificationButton explose"><button>Notification</button></a>
+        <a href="LeaderboardPage/LeaderboardPage.html" class="theButton explose"><button>Leaderboard</button></a>
     </div>
-    <a href="../WelcomePage/WelcomePage.html" id="backButton"><button>&lt; Back</button></a>
+    <a href="../WelcomePage/WelcomePage.html" id="backButton" class="explose"><button>&lt; Back</button></a>
+
+    <div class="tank" id="tank">
+        <div class="body"></div>
+        <div class="turret"></div>
+    </div>
 </main>
     <div id="chat-container">
-        <button id="chat-button">Chat</button>
+        <button id="chat-button" class="explose">Chat</button>
         <div id="friends-list" class="hidden"></div>
     </div>
 
@@ -68,7 +73,10 @@
     </div>
 
     <div id="chat-interface" class="hidden">
-        <button id="back-to-friends-list">← Back to Friends</button>
+        <div class="chat-button">
+            <button id="back-to-friends-list">← Back to Friends</button>
+            <button id="invite-friend-button">Invite to Game</button>
+        </div>
         <h3 id="chatting-with">Chatting with <span id="chat-with-friend-name"></span></h3>
         <div id="chat-messages"></div>
         <input type="text" id="chat-input" placeholder="Type a message..." />
@@ -80,6 +88,7 @@
 <script type="module" src="../../js/User/notificationMainMenu.js"></script>
 
 <script type="module" src="../../js/Chat/chatFriends.js"></script>
+<script type="module" src="../../js/Animations/tank.js"></script>
 
 
 <style>

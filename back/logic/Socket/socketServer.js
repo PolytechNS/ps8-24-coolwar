@@ -1,23 +1,17 @@
+// socketServer.js
 const socketIo = require('socket.io');
-const { GameModel } = require('../Model/Game/GameModel.js');
-const { ActionController } = require("../Controller/actionController.js");
-const { MongoClient } = require("mongodb"); // Déplacez cette ligne avant son utilisation
-
-const { MONGO_URL } = require("../Utils/constants.js");
-const { parseJSON } = require("../Utils/utils.js");
-
-// Maintenant que MongoClient a été importé, vous pouvez l'utiliser pour créer une instance de client.
+const {GameModel} = require('../Model/Game/GameModel.js');
+const {ActionController} = require("../Controller/actionController.js");
+const { MongoClient,ObjectId } = require('mongodb');
+const {MONGO_URL} = require("../Utils/constants");
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-
-const { playBot, setupBotController, nextMoveBotController } = require('../Controller/botController.js');
-const { updatePlayerPositionFromDb, createGameDb, setUpPositionRealBot, saveGame, loadGameFromDb, updatePositionCharacter, manageBotMove, updateCurrentPlayerFromDb, updateWallsAndVisibilityFromBd } = require('../Controller/gameUserController.js');
+const {playBot, setupBotController, nextMoveBotController} = require('../Controller/botController.js');
+const {updatePlayerPositionFromDb,createGameDb,setUpPositionRealBot, saveGame, loadGameFromDb,updatePositionCharacter,manageBotMove,updateCurrentPlayerFromDb,updateWallsAndVisibilityFromBd} = require('../Controller/gameUserController.js');
 
 const handleWithFriendsMode = require('./GameModes/withFriends.js');
 const handleWithBotsMode = require('./GameModes/withBots');
 const handleOfflineMode = require('./GameModes/offline');
 const handleChat = require('./Chat.js');
-// Supprimez l'importation de 'mongodb/src/deps' si elle n'est pas utilisée ou incorrecte
-// const {aws4} = require("mongodb/src/deps");
 
 
 
@@ -33,8 +27,16 @@ module.exports = (server) => {
         }
     });
 
-    io.on('connection',  (socket) => {
+    io.on('connection', (socket) => {
         console.log('New client connected');
+        handleWithFriendsMode(io, socket);
+        handleWithBotsMode(io, socket);
+        handleOfflineMode(io, socket);
+        handleChat(io, socket);
+
+
+
+
 
         // Exemple de récupération de l'ID utilisateur lors de la connexion
         // Cela suppose que l'ID de l'utilisateur est envoyé juste après la connexion via un événement 'authenticate' ou similaire
