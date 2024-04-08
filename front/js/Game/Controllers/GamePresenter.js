@@ -178,13 +178,14 @@ export class GamePresenter {
     init_playable_case(playable_case_HTML) {
         playable_case_HTML.forEach(playable_case => {
             const clickMoveHandler = () => {
-                console.log("CLICK ON CASE !");
                 //console.log("MODLE WHEN CLICK ON CASE",this.model.currentPlayer);
                 let tab = Utils.prototype.getCoordinatesFromID(playable_case.id);
                 let oldPosition = null;
+                let originalBackGroundColor = playable_case.style.backgroundColor;
+                //Affichage de la position selectionnée
+                playable_case.style.backgroundColor = "red";
 
                 //Affichage des boutons de Confirmations/Annulation
-
                 this.showConfirmationButtons();
 
                 function waitForUserAction() {
@@ -225,6 +226,7 @@ export class GamePresenter {
                             }
                         });
                     } else {}
+                    playable_case.style.backgroundColor = originalBackGroundColor;
                     this.hideConfirmationButtons();
                 });
 
@@ -519,8 +521,6 @@ export class GamePresenter {
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
-        console.log(this.model.ownIndexPlayer);
-        console.log(this.model.currentPlayer);
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
 
         curplayer_HTML.item(0).innerHTML = this.model.player_array[this.model.currentPlayer -1].name;
