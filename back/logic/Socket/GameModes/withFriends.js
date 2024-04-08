@@ -371,6 +371,18 @@ module.exports = (io, socket) => {
                 if (playableSquareWhereEnemyIsFor2.visibility >= 0) {
                     playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
                 }
+
+                let PlayableSquareObfuscedOne = gameModel.playable_squares.getAllPlayableSquares();
+                PlayableSquareObfuscedOne.forEach((square) => {
+                    if(square.visibility < 0){square.visibility = -1;}
+                    if(square.visibility > 0){square.visibility = 1;}
+                });
+                let PlayableSquareObfuscedTwo = gameModel.playable_squares.getAllPlayableSquares();
+                PlayableSquareObfuscedTwo.forEach((square) => {
+                    if(square.visibility < 0){square.visibility = -1;}
+                    if(square.visibility > 0){square.visibility = 1;}
+                });
+
                 io.to(player1SocketId).emit('updateGameModelWithFriendsResponse', JSON.stringify({
                     gameId: gameBoardSaved.gameId, // ID de la partie
                     gameBoardId: gameBoardSaved._id, // ID du plateau de jeu
@@ -379,7 +391,7 @@ module.exports = (io, socket) => {
                     player_array: playerArrayToSend1.getAllPlayers(),
                     horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                     vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                    playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                    playable_squares: PlayableSquareObfuscedOne,
                     currentPlayer: gameModel.currentPlayer,
                     roundCounter: gameModel.roundCounter,
                     winner : gameModel.winner,
@@ -398,7 +410,7 @@ module.exports = (io, socket) => {
                     player_array: playerArrayToSend2.getAllPlayers(),
                     horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                     vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                    playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                    playable_squares: PlayableSquareObfuscedTwo,
                     currentPlayer: gameModel.currentPlayer,
                     roundCounter: gameModel.roundCounter,
                     winner : gameModel.winner,
@@ -762,6 +774,17 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
                 playerArrayToSend2.addPlayer(new GamePlayer(gameModel.player_array.getPlayer(1).name, gameModel.player_array.getPlayer(1).position, gameModel.player_array.getPlayer(1).nbWalls));
             }
 
+            let PlayableSquareObfuscedOne = gameModel.playable_squares.getAllPlayableSquares();
+            PlayableSquareObfuscedOne.forEach((square) => {
+                if(square.visibility < 0){square.visibility = -1;}
+                if(square.visibility > 0){square.visibility = 1;}
+            });
+            let PlayableSquareObfuscedTwo = gameModel.playable_squares.getAllPlayableSquares();
+            PlayableSquareObfuscedTwo.forEach((square) => {
+                if(square.visibility < 0){square.visibility = -1;}
+                if(square.visibility > 0){square.visibility = 1;}
+            });
+
             let gamePlayerOne = {
                 gameId: gameId, // ID de la partie
                 gameBoardId: gameBoardId, // ID du plateau de jeu
@@ -770,7 +793,7 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
                 player_array: playerArrayToSend1.getAllPlayers(),
                 horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                 vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                playable_squares: PlayableSquareObfuscedOne,
                 currentPlayer: gameModel.currentPlayer,
                 roundCounter: gameModel.roundCounter,
                 winner: gameModel.winner,
@@ -788,7 +811,7 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
                 player_array: playerArrayToSend2.getAllPlayers(),
                 horizontal_Walls: gameModel.horizontal_Walls.getAllWalls(),
                 vertical_Walls: gameModel.vertical_Walls.getAllWalls(),
-                playable_squares: gameModel.playable_squares.getAllPlayableSquares(),
+                playable_squares: PlayableSquareObfuscedTwo,
                 currentPlayer: gameModel.currentPlayer,
                 roundCounter: gameModel.roundCounter,
                 winner: gameModel.winner,
