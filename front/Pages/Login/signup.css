@@ -20,24 +20,15 @@
     border: 1px solid #345128;
 }
 
-@media screen and (max-width: 500px){
+@media screen and (max-width: 600px){
     .button{
-        font-family: 'Kumar One', serif;
         font-size: 15px;
-        border: 1px solid #345128;
-        min-width: 100px;
-        margin: 0;
+        margin-bottom: 0;
     }
 
     #usernameSignup, #passwordSignup{
         font-size: 15px;
         padding: 5px;
-        margin-left: 5px;
-        margin-right: 5px;
-        margin-top: 0;
-    }
-
-    #signupForm{
-        margin: 0;
+        margin-bottom: 10px;
     }
 }
