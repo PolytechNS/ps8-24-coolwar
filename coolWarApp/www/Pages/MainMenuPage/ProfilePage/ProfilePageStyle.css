@@ -110,7 +110,8 @@ h2{
     }
 
     .cadre{
-        width: 250px;
+        width: 300px;
+        min-width: fit-content;
     }
 
     h2{
