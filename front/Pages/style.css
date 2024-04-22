@@ -7,7 +7,6 @@ body{
     flex-direction: column;
     align-items: center;
     justify-items: center;
-    width: 100%;
 }
 
 .head{
@@ -17,13 +16,14 @@ body{
     background-image: url("../assets/background.jpg");
     background-size: cover;
     background-position: center;
-    padding:30px;
     width: 100%;
     box-sizing: border-box;
+    overflow: hidden; /* Pour éviter le défilement horizontal */
 }
 
 .logo{
     max-height: 18%;
+    width: auto;
     object-fit: contain;
     background-color: #345128;
     position: absolute;
@@ -45,7 +45,8 @@ h1{
     justify-content: center;
     padding: 20px 30px;
     text-align: center;
-    width: 390px;
+    width: 90%; /* Largeur ajustée pour s'adapter à l'écran */
+    max-width: 390px;
 }
 
 .theButton{
@@ -73,6 +74,7 @@ button{
     align-self: start;
     margin-top: 30px;
     border-radius: 8px;
+    width: auto;
 }
 
 .grid{
@@ -162,8 +164,6 @@ button{
     background-color: lightgreen;
     position: absolute;
 }
-
-
 
 
 .level-container {
@@ -433,6 +433,11 @@ button{
 }
 
 
+.back{
+    display: none;
+}
+
+
 @media screen and (max-width: 600px) {
     body{
         font-size: 12px;
@@ -443,11 +448,12 @@ button{
     }
 
     .head{
-        padding:5px;
+        padding:12px;
+        margin:0;
     }
 
     h1{
-        font-size:40px;
+        font-size:30px;
     }
 
     .cadre{
@@ -459,6 +465,7 @@ button{
         text-align: center;
         width: 250px;
         height: min-content;
+        padding: 10px;
     }
 
     h2{
@@ -486,7 +493,7 @@ button{
 
     .user {
         font-size: 15px;
-        right: 1.20%;
+        right: 2%;
     }
 
     .logout{
@@ -547,6 +554,20 @@ button{
         display: block;
         width: 20px;
         margin: 5px;
+    }
+
+    .back {
+        display: block;
+        margin: 0 auto 0 0;
+    }
+
+    .back-img{
+        width: 30px;
+        height: 30px;
+    }
+
+    #backButton{
+        display:none;
     }
 }
 
