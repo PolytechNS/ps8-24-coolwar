@@ -11,23 +11,19 @@ function mainRouter(req, res, db) {
 
     // Handle the authentication routing
     if (req.url.startsWith('/api/auth')) {
-        addCors(res);
         authRouter(req, res, db);
         return; // Stop further execution after handling /api/auth
     }
     if(req.url.startsWith('/api/friends')){
-        addCors(res);
         friendsRouter(req, res, db);
         return;
     }
 
     if(req.url.startsWith('/api/game')){
-        addCors(res);
         handleGameRoutes(req, res, db);
         return;
     }
     if(req.url.startsWith('/api/users')){
-        addCors(res);
         handleUserRoutes(req, res, db);
         return;
     }
