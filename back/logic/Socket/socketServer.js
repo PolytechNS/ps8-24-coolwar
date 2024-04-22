@@ -34,10 +34,6 @@ module.exports = (server) => {
         handleOfflineMode(io, socket);
         handleChat(io, socket);
 
-
-
-
-
         // Exemple de récupération de l'ID utilisateur lors de la connexion
         // Cela suppose que l'ID de l'utilisateur est envoyé juste après la connexion via un événement 'authenticate' ou similaire
         socket.on('authenticate', async(token) => {
@@ -131,6 +127,7 @@ module.exports = (server) => {
                     gameModelGlobal = new GameModel(config);
                     actionController = new ActionController(gameModelGlobal);
 
+                    let characters =await retrieveCharacterFromDb(db,savedGame.gameBoardId);
 
                     socket.emit('loaded game', JSON.stringify({
                         gameId: savedGame.gameId, // ID de la partie
@@ -145,21 +142,20 @@ module.exports = (server) => {
                         roundCounter: gameModelGlobal.roundCounter,
                         winner : gameModelGlobal.winner,
                         lastChance: gameModelGlobal.lastChance,
-                        gameMode: gameModelGlobal.typeGame
+                        gameMode: gameModelGlobal.typeGame,
+                        typeGame: 'withBot',
+                        ownIndexPlayer: characters[0].currentPlayerIndex
                     }));
                 }
                 else {
                     console.log('No saved game found for this user');
                     socket.emit('error', 'No saved game found for this user.');
-
-
-
+                }
+            } catch (error) {
+                console.error('Error loading saved game', error);
+                socket.emit('error', 'Error loading the game.');
             }
-        } catch (error) {
-            console.error('Error loading saved game', error);
-            socket.emit('error', 'Error loading the game.');
-        }
-    });
+        });
 
         socket.on('get info user', async (data) => {
             try {

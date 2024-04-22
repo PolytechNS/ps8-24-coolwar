@@ -1,13 +1,11 @@
 import "../socket.io.js";
-import "../Utils/config.js"
 import {GamePresenter} from "../Game/Controllers/GamePresenter.js";
 import {ChatServiceInGame} from "../Services/Chat/chatServiceInGame.js";
-import {config} from "../Utils/config";
 // socketManager.js
 export const socketManager = {
     socket: null,
     initializeSocket(token) {
-        this.socket = io(config.API_ENDPOINT, {
+        this.socket = io('http://coolwar.ps8.academy', {
             auth: { token },
         });
 
