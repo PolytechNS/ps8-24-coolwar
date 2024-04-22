@@ -83,3 +83,52 @@ button{
     align-items: center;
     font-size: 12px;
 }
+
+
+
+@media screen and (max-width: 1000px) {
+    .cadre{
+        width: 330px;
+        justify-content: start;
+    }
+
+    h2 {
+        margin:0;
+    }
+
+    .listFriends {
+        width: 330px;
+        height: 400px;
+    }
+
+    .friend{
+        width: 320px;
+        padding: 5px;
+        margin-left:5px;
+        margin-right: 5px;
+    }
+
+    p{
+        font-size: 10px;
+        margin: 0;
+        align-self: center;
+    }
+
+    .profilePic{
+        border-radius: 50%;
+        max-height: 50px;
+        margin: 8px;
+    }
+
+    .levelPic{
+        max-height: 50px;
+        margin-left: 10px;
+        margin-right: 5px;
+        align-self: center;
+    }
+
+    button{
+        font-size: 15px;
+    }
+
+}
