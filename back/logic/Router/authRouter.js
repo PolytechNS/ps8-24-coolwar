@@ -6,7 +6,6 @@ function handleAuthRoutes(req, res,db) {
     if (url.pathname === '/api/auth/signup' && req.method === 'POST') {
         authController.signup(req, res, db);
     } else if (url.pathname === '/api/auth/login' && req.method === 'POST') {
-
         authController.login(req, res,db);
     } else {
         // Not Found

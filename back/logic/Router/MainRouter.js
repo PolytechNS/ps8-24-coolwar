@@ -11,7 +11,6 @@ function mainRouter(req, res, db) {
 
     // Handle the authentication routing
     if (req.url.startsWith('/api/auth')) {
-        addCors(res);
         authRouter(req, res, db);
         return; // Stop further execution after handling /api/auth
     }
