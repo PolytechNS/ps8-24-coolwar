@@ -5,7 +5,7 @@ import {ChatServiceInGame} from "../Services/Chat/chatServiceInGame.js";
 export const socketManager = {
     socket: null,
     initializeSocket(token) {
-        this.socket = io('http://localhost:3000', {
+        this.socket = io('http://coolwar.ps8.academy', {
             auth: { token },
         });
 
