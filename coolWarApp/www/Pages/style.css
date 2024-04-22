@@ -7,6 +7,7 @@ body{
     flex-direction: column;
     align-items: center;
     justify-items: center;
+    width: 100%;
 }
 
 .head{
@@ -21,7 +22,6 @@ body{
     box-sizing: border-box;
 }
 
-
 .logo{
     max-height: 18%;
     object-fit: contain;
@@ -34,7 +34,6 @@ h1{
     color: #000;
     margin: 0 auto 0 auto;
 }
-
 
 .cadre{
     margin-top: 30px;
@@ -428,3 +427,126 @@ button{
     vertical-align: middle;
     /* Ajoutez ici d'autres styles si nécessaire */
 }
+
+.logout-pic{
+    display:none;
+}
+
+
+@media screen and (max-width: 600px) {
+    body{
+        font-size: 12px;
+    }
+
+    .logo{
+        max-height: 11%;
+    }
+
+    .head{
+        padding:5px;
+    }
+
+    h1{
+        font-size:40px;
+    }
+
+    .cadre{
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 250px;
+        height: min-content;
+    }
+
+    h2{
+        font-size: 30px;
+        padding: 0;
+        margin: 0;
+    }
+
+    label{
+        font-size: 20px;
+        margin-top: 10px;
+    }
+
+    .tank, .body, .turret, .cannon{
+        display: none;
+    }
+
+    .theButton{
+        background-color: #D9D9D9;
+        border-radius: 8px;
+        margin: 5px;
+        min-width: 90%;
+        padding: 0;
+    }
+
+    .user {
+        font-size: 15px;
+        right: 1.20%;
+    }
+
+    .logout{
+        display: none;
+    }
+
+    .profilePicture{
+        border-radius: 50%;
+        max-height: 50px;
+    }
+
+    .level{
+        display:none;
+    }
+
+    .level-container {
+        margin-left: 0;
+    }
+
+    .level-circle {
+        display: none;
+    }
+
+    .level-number {
+        display: none;
+    }
+
+    .level-range, .level-points {
+        font-size: 0.5rem;
+    }
+
+    .progress-bar {
+        width: 80px; /* Width of the progress bar */
+        height: 10px; /* Height of the progress bar */
+        margin-bottom: 0;
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+
+    .user {
+        display: flex;
+        flex-direction: column; /* Aligner les éléments en colonne */
+    }
+
+    .nameAndLogout, .level-container {
+        width: 100%;
+    }
+
+    .nameAndLogout {
+        display: none;
+    }
+
+    .profilePicture {
+        display: none;
+    }
+
+    .logout-pic{
+        display: block;
+        width: 20px;
+        margin: 5px;
+    }
+}
+
