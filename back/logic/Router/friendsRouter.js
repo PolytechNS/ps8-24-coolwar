@@ -1,7 +1,6 @@
 const friendsController = require("../Controller/friendsController");
 const creatingGameController = require("../Controller/creatingGameController");
 const userController = require("../Controller/userController");
-const utilsRouter = require('./utilsRouter');
 
 function handleFriendsRoutes(req, res,db) {
     // You might want to parse the URL and method more carefully in a production app

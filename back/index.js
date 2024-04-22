@@ -4,7 +4,7 @@ const setupSocketServer = require('./logic/Socket/socketServer');
 const mainRouter = require('./logic/Router/MainRouter');
 const { dbController } = require('./logic/Controller/dbController');
 const { PORT, MONGO_URL } = require('./logic/Utils/constants'); // Assurez-vous d'ajouter MONGO_URL dans vos constants
-const { addCors } = require('./logic/Utils/api.js');
+
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function startServer() {
@@ -17,7 +17,6 @@ async function startServer() {
 
         const server = http.createServer((req, res) => {
           // Vous pouvez passer 'db' à mainRouter si nécessaire
-            addCors(res);
             mainRouter.handle(req, res, db);
         });
 

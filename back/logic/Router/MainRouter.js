@@ -5,7 +5,6 @@ const fileManager = require('../Utils/front');
 const friendsRouter = require('./friendsRouter');
 const handleGameRoutes = require('./GameRouter');
 const handleUserRoutes = require('./userRoutes');
-const utilsRouter = require('./utilsRouter');
 
 function mainRouter(req, res, db) {
 

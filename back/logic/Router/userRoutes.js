@@ -1,5 +1,4 @@
 const userController = require("../Controller/userController");
-const utilsRouter = require('./utilsRouter');
 
 
 function handleUserRoutes(req, res,db) {

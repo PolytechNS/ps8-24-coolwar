@@ -5,6 +5,10 @@ import {ChatServiceInGame} from "../Services/Chat/chatServiceInGame.js";
 export const socketManager = {
     socket: null,
     initializeSocket(token) {
+        if(token == null) {
+            console.log('Token is null, cannot initialize socket');
+            return;
+        }
         this.socket = io('http://localhost:3000', {
             auth: { token },
         });

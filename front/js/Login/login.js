@@ -2,6 +2,10 @@
 import { AuthService } from '../Services/Login/authService.js'; // Mettez à jour le chemin selon votre structure de projet
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    //clean le cache localstorage
+    localStorage.clear();
+
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', function(event) {
         event.preventDefault();
