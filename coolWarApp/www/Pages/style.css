@@ -46,7 +46,7 @@ h1{
     padding: 20px 30px;
     text-align: center;
     width: 90%; /* Largeur ajustée pour s'adapter à l'écran */
-    max-width: 390px;
+    min-width: 390px;
 }
 
 .theButton{
@@ -463,7 +463,7 @@ button{
         align-items: center;
         justify-content: center;
         text-align: center;
-        width: 250px;
+        width: fit-content;
         height: min-content;
         padding: 10px;
     }
