@@ -20,4 +20,4 @@ function addCors(response) {
     response.setHeader('Access-Control-Allow-Credentials', true);
 }
 
-module.exports = {addCors};
+exports.manage = manageRequest;

@@ -1,10 +1,8 @@
 const friendsController = require("../Controller/friendsController");
 const creatingGameController = require("../Controller/creatingGameController");
 const userController = require("../Controller/userController");
-const utilsRouter = require('./utilsRouter');
 
 function handleFriendsRoutes(req, res,db) {
-    utilsRouter.addCors(res);
     // You might want to parse the URL and method more carefully in a production app
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname === '/api/friends/sendRequest' && req.method === 'POST') {

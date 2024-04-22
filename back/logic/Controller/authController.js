@@ -64,12 +64,11 @@ function login(req, res, db) {
             if (user && user.password === password) {
                 //const token = generateToken(user.username);
                 //const result = await db.collection('users').updateOne({ username, password }, { $set: { token } });
-
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ token : user.token }));
             } else {
                 res.writeHead(401, { 'Content-Type': 'text/plain' });
-                res.end('Échec de la connexion');
+                res.end('Echec de la connexion');
             }
         } catch (error) {
             res.writeHead(500, { 'Content-Type': 'text/plain' });
