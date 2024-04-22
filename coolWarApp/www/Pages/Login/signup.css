@@ -1,0 +1,21 @@
+#usernameSignup, #passwordSignup{
+    border-radius: 8px;
+    background-color: #D9D9D9;
+    font-size: 20px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin-left: 15px;
+}
+
+
+.button{
+    background-color: #345128;
+    color: #fff;
+    border-radius: 8px;
+    padding: 5px;
+    font-family: 'Kumar One', serif;
+    font-size: 20px;
+    margin: 15px;
+    border: 1px solid #345128;
+}

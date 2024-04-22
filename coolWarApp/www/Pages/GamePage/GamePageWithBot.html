@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>GAME</title>
+        <link rel="stylesheet" href="GamePageStyle.css">
+        <link rel="stylesheet" href="../style.css">
+        <link rel="stylesheet" href="./chat.css">
+
+    </head>
+    <body>
+        <main>
+            <div class="left">
+                <input type="checkbox" id="menu-toggle"/>
+                <label id="trigger" for="menu-toggle"></label>
+                <label id="burger" for="menu-toggle"></label>
+                <ul id="menu">
+                    <li><a id="save">Save</a></li>
+                    <li><a href="#">Options</a></li>
+                    <li><a href="../PlayPage/PlayPage.html">Leave</a></li>
+                </ul>
+
+                    <div class="modal" id="modal">
+                        <div class="modal-back"></div>
+                        <div class="modal-container">
+                            <div class="loader">
+                                <h1>LOADING</h1>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                <div class="infos">
+                    <div class="PlayerID">
+                        <p id="playerID"></p>
+                    </div>
+                    <div class="walls">
+                        <img src="../../datas/horizontal_wall_texture.png" class="wall"/>
+                        <p id="nbWallsLeft"></p>
+                    </div>
+
+                    <div class="validate">
+                        <img id="validateTurn"/>
+                        <img/>
+                        <img/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="middle">
+                <div id="plate" class="plate"></div>
+                <div class="action-buttons">
+                    <button id="confirmMove">Confirmer</button>
+                    <button id="cancelMove">Annuler</button>
+                </div>
+            </div>
+
+            <div class="right">
+                <div class="info">
+                    <p>Turn :</p>
+                    <div id="curplayer"></div>
+                    <br>
+                    <div id="rounds"></div>
+                    <div id="winner"></div>
+                </div>
+            </div>
+
+            <div id="chatWrapper" class="chatWrapper">
+                <div id="chatPlaceholder" class="chatPlaceholder">Chat</div>
+                <div class="chatBox closed">
+                    <div class="chatBoxToggle">✖</div>
+                    <div class="chatMessages" id="chatMessages"></div>
+                    <input type="text" id="chatInput" placeholder="Type a message..." />
+                    <button id="sendChat">Send</button>
+                </div>
+            </div>
+
+        </main>
+
+    </body>
+</html>
+
+<script src="../../js/socket.io.js"></script>
+<script type="module" src="../../js/Game/Models/Index/GameIndexWithBot.js"></script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>

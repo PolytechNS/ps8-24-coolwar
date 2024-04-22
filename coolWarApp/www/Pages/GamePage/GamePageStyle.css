@@ -1,0 +1,536 @@
+main{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 30px;
+    min-width: 85%;
+}
+
+.middle{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.plate{
+    display: grid;
+    margin: 70px 30px 30px;
+
+    grid-template-columns: repeat(8, 60px 5px) 60px;
+    grid-template-rows: repeat(8, 60px 5px) 60px;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.left{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align items to the top */
+    align-items: center; /* Center items horizontally */
+    width: 250px; /* Set a fixed width for the sidebar */
+    height: 100vh; /* Full height of the viewport */
+    overflow-y: auto; /* Enable scrolling if content is too long */
+}
+/* Add styles for the SoundCloud container */
+.soundcloud-container {
+    /* Assurez-vous que cette classe n'affecte pas la grille */
+    width: 300px; /* Ou la largeur souhaitée pour le lecteur SoundCloud */
+    margin: 70px 0; /* Alignez-le verticalement avec la grille */
+    /* Autres styles au besoin */
+}
+
+
+.playable_square{
+    height: 60px;
+    width: auto;
+    background: black;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.horizontal_wall{
+    opacity: 0;
+    height: 15px;
+    width: auto;
+}
+
+.vertical_wall{
+    opacity: 0;
+    margin: 5px 5px 0px 4px;
+    height: 80px;
+    width: 25px;
+}
+
+.intersection_wall{
+    height: 5px;
+}
+
+.vertical_hitbox{
+    margin: -20px;
+    padding: 0px 5px 0px 5px;
+    z-index: 1;
+}
+.horizontal_hitbox{
+    width: auto;
+    z-index: 1;
+    padding: 3px 0 3px 0;
+}
+
+p{
+    margin: 0;
+}
+
+
+.walls{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.wall{
+    max-width: 200px;
+    background-color: #345128;
+    border: 5px solid #000000;;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: -8px 7px 5px rgba(0, 0, 0, 0.69);
+}
+
+.info{
+    background-color: #D9D9D9;
+    border: 2px solid #000000;
+    color: black;
+    padding: 20px;
+    margin-top: 70px;
+}
+
+
+
+<!-- pop up -->
+.modal {
+    display: none;
+}
+.modal-back {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba( 0, 0, 0, .25 )
+}
+.modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    padding: 25px;
+    background: white;
+    transform: translate(-50%, -50%)
+}
+
+
+
+@keyframes checked-anim {
+    50% {
+        width: 3000px;
+        height: 3000px;
+    }
+    100% {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+}
+@keyframes not-checked-anim {
+    0% {
+        width: 3000px;
+        height: 3000px;
+    }
+}
+li, a {
+    margin: 75px 0 -55px 0;
+    color: #345128;
+    font-size: 14pt;
+    font-weight: 700;
+    line-height: 1.8;
+    text-decoration: none;
+    text-transform: none;
+    list-style: none;
+    outline: 0;
+    display: none;
+}
+li {
+    width: 230px;
+    text-indent: 56px;}
+a:focus {
+    display: block;
+    color: #333;
+    background-color: #eee;
+    transition: all .5s;
+}
+
+h3 {
+    float: right;
+    line-height: .3;
+    font-size: 2.5vw;
+    font-weight: lighter;
+}
+h4 {
+    float: left;
+    margin-left: -2%;
+    font-size: 1.5vw;
+    font-weight: lighter;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#trigger, #burger, #burger:before, #burger:after {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: #000000;
+    width: 30px;
+    height: 5px;
+    transition: .2s ease;
+    cursor: pointer;
+    z-index: 3;
+}
+#trigger {
+    height: 25px;
+    background: none;
+}
+#burger:before {
+    content: " ";
+    top: 10px;
+    left: 0;
+}
+#burger:after {
+    content: " ";
+    top: 20px;
+    left: 0;
+}
+#menu-toggle:checked + #trigger + #burger {
+    top: 35px;
+    transform: rotate(180deg);
+    transition: transform .2s ease;
+}
+
+#menu-toggle:checked + #trigger + #burger:before {
+    width: 20px;
+    top: -2px;
+    left: 18px;
+    transform: rotate(45deg) translateX(-5px);
+    transition: transform .2s ease;
+}
+#menu-toggle:checked + #trigger + #burger:after {
+    width: 20px;
+    top: 2px;
+    left: 18px;
+    transform: rotate(-45deg) translateX(-5px);
+    transition: transform .2s ease;
+}
+#menu {
+    position: absolute;
+    margin: 0; padding: 0;
+    width: 110px;
+    height: 110px;
+    left: 0px !important;
+    background-color: #fff;
+    border-bottom-right-radius: 100%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.26);
+    animation: not-checked-anim .2s both;
+    transition: .2s;
+    z-index: 2;
+}
+#menu-toggle:checked + #trigger + #burger + #menu {
+    animation: checked-anim 1s ease both;
+}
+#menu-toggle:checked + #trigger ~ #menu > li, a {
+    display: block;
+}
+[type="checkbox"]:not(:checked), [type="checkbox"]:checked {
+    display: none;
+}
+
+
+.achievement-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    color: black;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    width: auto;
+    max-width: 300px;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.achievement-image {
+    width: 100px; /* Adjust size as necessary */
+    height: auto;
+    object-fit: contain;
+}
+
+.achievement-name, .achievement-description {
+    margin: 5px 0; /* Add slight margin for better spacing */
+    text-align: center;
+}
+
+.close-button {
+    align-self: flex-end;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: black; /* Change button color to make it visible */
+}
+
+.infos{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 200px;
+    max-width: 100%;
+}
+
+.PlayerID{
+    margin-bottom: 30px;
+}
+
+
+.loader{
+    margin: 40px;
+}
+h1{
+    color:#FFF;
+    font-size:16px;
+    letter-spacing:1px;
+    font-weight:200;
+    text-align:center;
+}
+.loader span{
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    display:inline-block;
+    position:absolute;
+    left:50%;
+    margin-left:-10px;
+    -webkit-animation:3s infinite linear;
+    -moz-animation:3s infinite linear;
+    -o-animation:3s infinite linear;
+
+}
+
+.loader span:nth-child(2){
+    background:#345128;
+    -webkit-animation:kiri 1.2s infinite linear;
+    -moz-animation:kiri 1.2s infinite linear;
+    -o-animation:kiri 1.2s infinite linear;
+
+}
+.loader span:nth-child(3){
+    background:#497637;
+    z-index:100;
+}
+.loader span:nth-child(4){
+    background:green;
+    -webkit-animation:kanan 1.2s infinite linear;
+    -moz-animation:kanan 1.2s infinite linear;
+    -o-animation:kanan 1.2s infinite linear;
+}
+
+
+@-webkit-keyframes kanan {
+    0% {-webkit-transform:translateX(20px);
+    }
+
+    50%{-webkit-transform:translateX(-20px);
+    }
+
+    100%{-webkit-transform:translateX(20px);
+        z-index:200;
+    }
+}
+@-moz-keyframes kanan {
+    0% {-moz-transform:translateX(20px);
+    }
+
+    50%{-moz-transform:translateX(-20px);
+    }
+
+    100%{-moz-transform:translateX(20px);
+        z-index:200;
+    }
+}
+@-o-keyframes kanan {
+    0% {-o-transform:translateX(20px);
+    }
+
+    50%{-o-transform:translateX(-20px);
+    }
+
+    100%{-o-transform:translateX(20px);
+        z-index:200;
+    }
+}
+
+
+
+
+@-webkit-keyframes kiri {
+    0% {-webkit-transform:translateX(-20px);
+        z-index:200;
+    }
+    50%{-webkit-transform:translateX(20px);
+    }
+    100%{-webkit-transform:translateX(-20px);
+    }
+}
+
+@-moz-keyframes kiri {
+    0% {-moz-transform:translateX(-20px);
+        z-index:200;
+    }
+    50%{-moz-transform:translateX(20px);
+    }
+    100%{-moz-transform:translateX(-20px);
+    }
+}
+@-o-keyframes kiri {
+    0% {-o-transform:translateX(-20px);
+        z-index:200;
+    }
+    50%{-o-transform:translateX(20px);
+    }
+    100%{-o-transform:translateX(-20px);
+    }
+}
+
+#BTN_superpower {
+    width: 65px; /* Largeur du bouton */
+    height: 65px; /* Hauteur du bouton */
+    border: none; /* Pas de bordure */
+    color: white; /* Couleur du texte */
+    cursor: pointer; /* Curseur en forme de main au survol */
+    animation: changeColor 4s infinite; /* Appliquer l'animation */
+}
+
+#BTN_superpower > img {
+    width: 100%; /* Largeur de l'image */
+    height: 100%; /* Hauteur de l'image */
+}
+#BTN_superpower > p {
+    align-content: center;
+    margin: 0; /* Supprimer les marges */
+    font-size: 14px;
+}
+
+.active_bonus {
+    /* Agrandissement du bouton */
+    transform: scale(1.1); /* Agrandit le bouton de 10% */
+
+    /* Effet de profondeur */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Ajoute une ombre pour un effet de profondeur */
+
+    /* Transition pour un effet fluide lors de l'application de la classe */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Définition de l'animation */
+@keyframes changeColor {
+    0% { background-color: red; }
+    25% { background-color: blue; }
+    50% { background-color: green; }
+    75% { background-color: yellow; }
+    100% { background-color: red; }
+}
+
+@keyframes explode-animation {
+    from {
+        opacity: 1;
+        transform: scale(0.1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+.explode {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background-color: red; /* Ou une image d'explosion */
+    border-radius: 50%;
+    animation: explode-animation 0.5s ease-out forwards;
+}
+
+/* PARTIE POP-UP DE VALIDATION */
+.validationPOPUP p {
+    color: black;
+}
+.validationPOPUP {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.validationPOPUP-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.validationPOPUP-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.validationPOPUP-close:hover,
+.validationPOPUP-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* BOUTTONS VALIDATION */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Espacement entre les boutons */
+    padding: 20px; /* Espacement autour des boutons */
+}
+
+.action-buttons button {
+    padding: 10px 20px; /* Ajustez à votre goût */
+    font-size: 16px; /* Ajustez la taille du texte */
+    cursor: pointer; /* Change le curseur pour indiquer un élément cliquable */
+}
+

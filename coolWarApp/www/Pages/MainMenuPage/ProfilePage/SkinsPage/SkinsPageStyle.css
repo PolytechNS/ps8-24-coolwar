@@ -1,0 +1,56 @@
+.listOfSkin {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+    max-height: 600px;
+    width: 600px;
+    overflow-y: auto;
+}
+
+.skin {
+    background: rgba(85.1, 85.1, 85.1, 0.5);
+    border-radius: 10%;
+    padding: 10px;
+    min-height: 150px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.imgSkin {
+    max-height: 100px;
+    display: block;
+    margin: 0 auto;
+}
+
+.line {
+    max-width: 100%;
+    border: 1px solid #D9D9D9;
+}
+
+p {
+    font-size: 50%;
+}
+
+.cadre{
+    display: grid;
+    grid-template-columns: 3fr 5fr;
+    width: 1000px;
+}
+
+button{
+    min-width: fit-content;
+    padding: 10px 30px;
+}
+
+.selectedSkin{
+    max-height: 200px;
+}
+
+
+.skin .imgSkin {
+    transition: opacity 0.3s ease;
+}
+
+.skin .imgSkin:hover {
+    opacity: 1; /* Pour éventuellement mettre en évidence au survol */
+}
