@@ -7,6 +7,7 @@ body{
     flex-direction: column;
     align-items: center;
     justify-items: center;
+    width: 100%;
 }
 
 .head{
@@ -21,7 +22,6 @@ body{
     box-sizing: border-box;
 }
 
-
 .logo{
     max-height: 18%;
     object-fit: contain;
@@ -34,7 +34,6 @@ h1{
     color: #000;
     margin: 0 auto 0 auto;
 }
-
 
 .cadre{
     margin-top: 30px;
@@ -427,4 +426,46 @@ button{
     height: 24px;
     vertical-align: middle;
     /* Ajoutez ici d'autres styles si nécessaire */
+}
+
+
+
+@media screen and (max-width: 500px) {
+    .logo{
+        max-height: 9%;
+    }
+
+    .head{
+        padding:5px;
+    }
+
+    h1{
+        font-size:40px;
+    }
+
+    .cadre{
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 200px;
+        height: min-content;
+    }
+
+    h2{
+        font-size: 30px;
+        padding: 0;
+        margin: 0;
+    }
+
+    label{
+        font-size: 20px;
+        margin: 0;
+    }
+
+    .tank, .body, .turret, .cannon{
+        display: none;
+    }
 }
