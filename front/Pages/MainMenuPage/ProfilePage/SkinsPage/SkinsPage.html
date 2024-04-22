@@ -16,11 +16,28 @@
         <div class="nameAndLogout">
             <p class="username">Nom</p>
             <a href="../../../Login/login.html">
-                <button class="logout" >Logout</button>
-
+                <button class="logout">Logout</button>
             </a>
         </div>
-        <img class="level" src="../../../../assets/level.png">
+        <!-- Début de la section de niveau d'utilisateur modifiée -->
+        <div class="level-container">
+            <div class="level-circle">
+                <span class="level-number">42</span>
+            </div>
+            <div class="level-progress-info">
+                <div class="level-range">
+                    <span class="current-level">42</span> → <span class="next-level">43</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: 70%;"></div>
+                </div>
+                <div class="level-points">
+                    <span class="current-exp">700</span> / <span class="next-level-exp">1000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fin de la section de niveau d'utilisateur modifiée -->
     </div>
 </header>
 <main class="grid">
@@ -78,16 +95,48 @@
             <h2>Skins</h2>
             <img class="selectedSkin" src="../../../../assets/perso1.png">
             <h3>Name of skin</h3>
-            <button>Select</button>
+            <button class="explose">Select</button>
         </div>
     </div>
-    <a href="../ProfilePage.html" id="backButton">
+    <a href="../ProfilePage.html" id="backButton" class="explose">
         <button > < Back</button>
-
     </a>
+    <div class="tank" id="tank">
+        <div class="body"></div>
+        <div class="turret"></div>
+    </div>
 </main>
+<div id="chat-container">
+    <button id="chat-button" class="explose">Chat</button>
+    <div id="friends-list" class="hidden"></div>
+</div>
+
+<div id="message-popup" class="hidden">
+    <div id="popup-content">
+        <p>Send a message to <span id="friend-name"></span>:</p>
+        <textarea id="message-text"></textarea>
+        <button id="send-message-button">Send</button>
+        <button id="cancel-button">Cancel</button>
+    </div>
+</div>
+
+<div id="chat-interface" class="hidden">
+    <div class="chat-button">
+        <button id="back-to-friends-list">← Back to Friends</button>
+        <button id="invite-friend-button">Invite to Game</button>
+    </div>
+    <h3 id="chatting-with">Chatting with <span id="chat-with-friend-name"></span></h3>
+    <div id="chat-messages"></div>
+    <input type="text" id="chat-input" placeholder="Type a message..." />
+    <button id="send-chat-message">Send</button>
+</div>
 </body>
 </html>
+<script type="module" src="../../../../js/User/userInfo.js"></script>
+<script type="module" src="../../../../js/User/skins.js"></script>
+<script type="module" src="../../../../js/Chat/chatFriends.js"></script>
+<script type="module" src="../../../../js/Animations/tank.js"></script>
+
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');

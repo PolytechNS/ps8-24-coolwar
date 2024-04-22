@@ -1,4 +1,9 @@
 import { socketManager } from '../../Socket/socketManager.js';
+import {config} from "../../Utils/config.js";
+import {BotActionService} from "./WithBot/botActionService.js";
+import {WithFriendsActionService} from "./WithFriends/withFriendsActionService.js";
+import {withFriendsGameService} from "./WithFriends/withFriendsGameService.js";
+import {BotGameService} from "./WithBot/botGameService.js";
 
 export const gameService = {
     // ... Autres méthodes ...
@@ -27,6 +32,20 @@ export const gameService = {
         });
     },
 
+    getWinner(typeGame,gameId,callback){
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return;
+        }
+
+        if(typeGame === config.withBot){
+            BotGameService.getWinnerWithBot(gameId,callback);
+        }
+        else if(typeGame === config.withFriends){
+            withFriendsGameService.getWinnerWithFriends(gameId,callback);
+        }
+    },
+
     getGameWithIdUser(callback) {
         // Assurez-vous que la socket est initialisée et connectée
         if (!socketManager.socket || !socketManager.socket.connected) {
@@ -46,3 +65,4 @@ export const gameService = {
     }
     // ... Autres méthodes ...
 };
+

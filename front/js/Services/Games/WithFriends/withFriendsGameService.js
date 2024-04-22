@@ -5,9 +5,17 @@ import {BotGameService} from "../WithBot/botGameService.js";
 export const withFriendsGameService = {
     joinGame: function(token) {
         // Envoyer une requête pour rejoindre une partie avec le token d'identification de l'utilisateur
-        const dataToSend = { token: token };
-        socketManager.socket.emit('joinGameWithFriends', JSON.stringify(dataToSend));
+        socketManager.socket.emit('joinGameWithFriends', JSON.stringify({token: token, gameMode:"playNow"}));
     },
+
+    joinGameRequest: function(token,callback) {
+        // Envoyer une requête pour rejoindre une partie avec le token d'identification de l'utilisateur
+        socketManager.socket.emit('joinGameWithFriends', JSON.stringify({token: token, gameMode:"launchGameWithFriends"}));
+
+        socketManager.socket.on('joinGameWithFriendsResponse', (gameInfo) => {
+            callback(gameInfo);
+        });
+        },
 
     waitForOpponent: function(callback) {
         socketManager.socket.on('opponentFound', (gameInfo) => {
@@ -42,7 +50,6 @@ export const withFriendsGameService = {
             return
         }
         const dataToParse = {gameId};
-        console.log("dataToParse", dataToParse);
         socketManager.socket.emit('checkWinnerWithFriends', JSON.stringify(dataToParse));
 
         // Écouter la réponse du serveur sur la même socket
@@ -64,14 +71,21 @@ export const withFriendsGameService = {
         // Écouter la réponse du serveur sur la même socket
 
     },
+
+    getWinnerWithFriends(gameId,callback){
+        // Assurez-vous que la socket est initialisée et connectée
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            console.error('Socket not initialized or not connected.');
+            return;
+        }
+        let data = JSON.stringify({ gameId });
+        // Demander le modèle de jeu en utilisant la socket de socketManager
+        socketManager.socket.emit('getWinnerWithFriends', data);
+        // Écouter la réponse du serveur sur la même socket
+        socketManager.socket.once('getWinnerWithFriendsResponse', (winner) => {
+            callback(winner);
+        });
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const chatBox = document.querySelector('.chatBox');
-    const chatBoxToggle = document.querySelector('.chatBoxToggle');
 
-    chatBoxToggle.addEventListener('click', () => {
-        chatBox.classList.toggle('closed');
-        console.log("click chatbox");
-    });
-});

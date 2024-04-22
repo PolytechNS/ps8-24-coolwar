@@ -1,4 +1,5 @@
 import {config} from "../../Utils/config.js";
+import {socketManager} from "../../Socket/socketManager.js";
 const friendsService = {
     addFriend(token, username) {
         return fetch(`${config.API_ENDPOINT}/api/friends/sendRequest`, {
@@ -63,6 +64,59 @@ const friendsService = {
             },
             body: JSON.stringify({ token,username }) // Envoyez le nom d'utilisateur de la personne qui a envoyé la demande
         }).then(response => response.json());
+    },
+
+    sendGameRequest(invitedUserName, token) {
+        return fetch(`${config.API_ENDPOINT}/api/friends/invite`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ invitedUserName, token }) // Envoie les données nécessaires
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.json();
+            });
+    },
+
+    sendNotificationToUser(invitedUserName, token,typeNotification) {
+        console.log('Sending notification to FRIENDS SERVICE', invitedUserName);
+        socketManager.socket.emit('send notification', JSON.stringify({ invitedUserName, token,typeNotification }));
+        console.log("emit send notification");
+
+
+
+    },
+
+    acceptGameRequest(invitingUserName, token) {
+        return fetch(`${config.API_ENDPOINT}/api/friends/accept`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ invitingUserName, token }) // Envoie les données nécessaires
+        })
+            .then(response => response.json());
+    },
+
+    getGameRequests(token) {
+        return fetch(`${config.API_ENDPOINT}/api/friends/gameRequest`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        });
     }
 
 }

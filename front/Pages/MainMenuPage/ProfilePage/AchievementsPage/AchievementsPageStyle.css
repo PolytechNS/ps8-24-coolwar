@@ -59,10 +59,62 @@ p{
     max-height: 120px;
     max-width: 120px;
     display: block; /* Pour centrer l'image à l'intérieur de son conteneur */
-    margin: 0 auto; /* Pour centrer l'image horizontalement */
+    margin: 0 auto 10px;
 }
 
 .achievementName{
     margin: 0;
     color: black;
+}
+
+
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.popup-content {
+    width: auto;
+    max-width: 400px; /* Limite la largeur de la pop-up */
+    padding: 25px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #000;
+    z-index: 2;
+}
+
+.popup-image {
+    width: 100px; /* Taille réduite de l'image */
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.popup-title {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.popup-description {
+    font-size: 14px;
 }

@@ -68,3 +68,18 @@ button{
     right: 10px;
     bottom: 10px;
 }
+
+.notification {
+    position: absolute;
+    left: 0;
+    bottom: 40px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+}

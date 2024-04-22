@@ -47,6 +47,15 @@ export const actionGameService = {
         }
     },
 
+    explodeWall(typeGame,datas,callback){
+        switch (typeGame) {
+            case config.withFriends:
+                WithFriendsActionService.explodeWallWithFriends(datas,callback);
+                break;
+            default:
+                console.error('Unknown game type:', typeGame);
+        }
+    },
     placeWall(typeGame,datas,callback){
         switch (typeGame) {
             case config.withBot:
@@ -63,12 +72,12 @@ export const actionGameService = {
         }
     },
 
-    moveCharacter(typeGame,id, row, col, gameId, token, roomId, callback){
+    moveCharacter(typeGame,id, row, col, gameId, gameBoardId, token, roomId, callback){
         console.log("MOVE CHARACTER");
         console.log("typeGame",typeGame);
         switch (typeGame) {
             case config.withBot:
-                BotActionService.moveCharacterWithBot(id, row, col, gameId, token, callback);
+                BotActionService.moveCharacterWithBot(id, row, col, gameId, gameBoardId, token, callback);
                 break;
             case config.withFriends:
                 WithFriendsActionService.moveCharacterWithFriends(id, row, col, gameId, token,roomId, callback);
@@ -81,10 +90,7 @@ export const actionGameService = {
         }
     },
 
-
-
     getPlayerPosition(typeGame, idPlayer,gameId,callback){
-
         switch (typeGame) {
             case config.withBot:
                 BotGameService.getPlayerPositionWithBot(typeGame,idPlayer,gameId,callback);

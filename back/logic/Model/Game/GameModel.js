@@ -5,6 +5,7 @@ const {PlayerManager} = require("../Objects/PlayerManager.js");
 const {Position} = require("../Objects/Position.js");
 const {Graph} = require("../Graph/Graph.js");
 const {Djikstra} = require("../Graph/Djikstra.js");
+const {getOwnWalls} = require("../../AI/modelParser");
 
 
 class GameModel {
@@ -142,6 +143,66 @@ class GameModel {
         }
     }
 
+    getWallTwoCaseAround(wallInformations) {
+        let walls = [];
+        let row = parseInt(wallInformations[0]);
+        let col = parseInt(wallInformations[1]);
+        let type = wallInformations[2];
+        //verifier les murs dans un rayon de deux (lignes et colonnes)
+        for(let i=0;i<3;i++){
+            for(let j=0;j<3;j++){
+                    let wallRightUp = null;
+                    let wallRightDown = null;
+                    let wallLeftUp = null;
+                    let wallLeftDown = null;
+                    if(row+i>=0 && row+i<=8 && col+j>=0 && col+j<=8){wallRightUp = [row+i,col+j];}
+                    if(row+i>=0 && row+i<=8 && col-j>=0 && col-j<=8){wallLeftUp = [row+i,col-j];}
+                    if(row-i>=0 && row+i<=8 && col+j>=0 && col+j<=8){wallRightDown = [row-i,col+j];}
+                    if(row-i>=0 && row+i<=8 && col-j>=0 && col-j<=8){wallLeftDown = [row-i,col-j];}
+                    if(wallRightUp!==null){
+                        walls.push(this.vertical_Walls.getWall(wallRightUp[0],wallRightUp[1],'V'));
+                        walls.push(this.horizontal_Walls.getWall(wallRightUp[0],wallRightUp[1],'H'));
+                    }
+                    if(wallLeftUp!==null) {
+                        walls.push(this.vertical_Walls.getWall(wallLeftUp[0], wallLeftUp[1], 'V'));
+                        walls.push(this.horizontal_Walls.getWall(wallLeftUp[0], wallLeftUp[1], 'H'));
+                    }
+                    if(wallLeftDown!==null){
+                        walls.push(this.vertical_Walls.getWall(wallLeftDown[0],wallLeftDown[1],'V'));
+                        walls.push(this.horizontal_Walls.getWall(wallLeftDown[0],wallLeftDown[1],'H'));
+                    }
+                    if(wallRightDown!==null){
+                        walls.push(this.vertical_Walls.getWall(wallRightDown[0],wallRightDown[1],'V'));
+                        walls.push(this.horizontal_Walls.getWall(wallRightDown[0],wallRightDown[1],'H'));
+                    }
+            }
+        }
+        return walls;
+    }
+
+    explodeWall(originWall){
+        console.log("EXPLODE WALL !");
+        console.log(originWall);
+        let wallInformations = originWall.split("X");
+
+        let wallToDelete = this.getWallTwoCaseAround(wallInformations);
+        console.log("WALLS TO DELETE -> ",wallToDelete);
+
+        wallToDelete.forEach(wall =>{
+            if(wall!=null){
+                wall.setNotPresent();
+                wall.idPlayer = null;
+                this.wallGroup.forEach((group)=>{
+                    if(parseInt(group) === parseInt(wall.wallGroup)) {
+                        this.wallGroup.splice(this.wallGroup.indexOf(group),1);
+                    }
+                });
+                wall.wallGroup = null;
+            }
+        });
+        return wallToDelete;
+    }
+
     getWallByCoordinates(type,row,col){
         if(type==='H'){return this.horizontal_Walls.getWall(row,col,type);}
         else if(type==='V'){return this.vertical_Walls.getWall(row,col,type);}
@@ -219,7 +280,9 @@ class GameModel {
         return wallToAnalys.isPresent;
     }
 
+
     checkWinner(){
+        console.log("PLAYER ARRAY ->",this.player_array.players);
         let valueToReturn = -1;
         if(this.roundCounter>=200){console.log("STOP GAME !");valueToReturn = 0;}
         else{
@@ -526,7 +589,7 @@ class GameModel {
             //COMPUTE POUR TOUTE LA LIGNE
             let isImpossibleToReach = true;
             let DjikstraClass = new Djikstra();
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 9; i++) {
                 let res = DjikstraClass.compute_djikstra(graph, playerNode, graph.getNodeFromCoordinates(finishLine, i));
                 if(res.distance!==Infinity){isImpossibleToReach = false;}
             }
@@ -535,6 +598,8 @@ class GameModel {
         }
         return true;
     }
+
+
 }
 
 module.exports = {GameModel};

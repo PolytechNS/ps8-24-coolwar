@@ -51,6 +51,7 @@ function convertOurCoordinatesToVellaCooordinates(row,col){
 
 
 exports.getWallOpponent = function (gameModel) {
+    console.log("GETWALL OPPONENT -> CURR PLAYER ",gameModel.currentPlayer);
    let wallsReturn =[];
    let wallGroupList = [];
    //inverse current player
@@ -62,7 +63,7 @@ exports.getWallOpponent = function (gameModel) {
     }
 
     gameModel.horizontal_Walls.getAllWalls().forEach((wall) => {
-        if(wall.idPlayer !== currentPlayerOpponent  && wall.idPlayer !== null ){
+        if(wall.idPlayer === currentPlayerOpponent  && wall.idPlayer !== null ){
             if(wallGroupList.includes(wall.wallGroup)===false){
                 wallGroupList.push(wall.wallGroup);
                 let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);
@@ -72,7 +73,7 @@ exports.getWallOpponent = function (gameModel) {
         }
     });
     gameModel.vertical_Walls.getAllWalls().forEach((wall) => {
-        if(wall.idPlayer !== currentPlayerOpponent && wall.idPlayer !== null){
+        if(wall.idPlayer === currentPlayerOpponent && wall.idPlayer !== null){
             if(wallGroupList.includes(wall.wallGroup)===false){
                 wallGroupList.push(wall.wallGroup);
                 let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);
@@ -89,14 +90,8 @@ exports.getOwnWalls = function (gameModel) {
     let wallsReturn =[];
     let wallGroupList = [];
 
-    let currentPlayerOwn = null;
-    if(gameModel.currentPlayer === 1){
-        currentPlayerOwn = 2;
-    }else{
-        currentPlayerOwn = 1;
-    }
      gameModel.horizontal_Walls.getAllWalls().forEach((wall) => {
-          if(wall.idPlayer === currentPlayerOwn){
+          if(wall.idPlayer === gameModel.currentPlayer){
               if(wallGroupList.includes(wall.wallGroup)===false){
                   wallGroupList.push(wall.wallGroup);
                   let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);
@@ -107,7 +102,7 @@ exports.getOwnWalls = function (gameModel) {
      });
 
     gameModel.vertical_Walls.getAllWalls().forEach((wall) => {
-        if(wall.idPlayer === currentPlayerOwn){
+        if(wall.idPlayer === gameModel.currentPlayer){
             if(wallGroupList.includes(wall.wallGroup)===false){
                 wallGroupList.push(wall.wallGroup);
                 let wallVella = convertOurCoordinatesToVellaCooordinates(wall.position.row, wall.position.col);

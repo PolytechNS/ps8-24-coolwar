@@ -17,11 +17,28 @@
         <div class="nameAndLogout">
             <p class="username">Nom</p>
             <a href="../../../Login/login.html">
-                <button class="logout" >Logout</button>
-
+                <button class="logout">Logout</button>
             </a>
         </div>
-        <img class="level" src="../../../../assets/level.png">
+        <!-- Début de la section de niveau d'utilisateur modifiée -->
+        <div class="level-container">
+            <div class="level-circle">
+                <span class="level-number">42</span>
+            </div>
+            <div class="level-progress-info">
+                <div class="level-range">
+                    <span class="current-level">42</span> → <span class="next-level">43</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: 70%;"></div>
+                </div>
+                <div class="level-points">
+                    <span class="current-exp">700</span> / <span class="next-level-exp">1000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fin de la section de niveau d'utilisateur modifiée -->
     </div>
 </header>
 <main class="grid">
@@ -29,6 +46,7 @@
     <div class="cadre">
         <h2>Friends</h2>
         <div class="listFriends">
+            <!--
             <div class="friend">
                 <div class="leftSide">
                     <p>1.</p>
@@ -41,6 +59,7 @@
                     <img class="levelPic" src="../../../../assets/level99.png">
                 </div>
             </div>
+            -->
         </div>
         <button class="invite" >Invite</button>
     </div>
@@ -51,9 +70,12 @@
 </main>
 </body>
 </html>
+<script type="module" src="../../../../js/User/userInfo.js"></script>
+<script type="module" src="../../../../js/Friends/SendGameRequest.js"></script>
+
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
 </style>
 
-<script src="InviteFriendPageScript.js"></script>
+<!--<script src="InviteFriendPageScript.js"></script>

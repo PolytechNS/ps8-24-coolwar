@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             friendsService.addFriend(token, friendName)
                 .then(response => {
+                    friendsService.sendNotificationToUser(friendName, token, "friendRequest");
+
                     if (response.error) {
                         alert(`Error: ${response.error}`);
                     } else {
