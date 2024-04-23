@@ -447,10 +447,12 @@ button{
 
     main{
         height: 100%;
+        width: 100%;
     }
 
     body{
         font-size: 12px;
+        height: 100%;
     }
 
     .logo{
@@ -468,16 +470,11 @@ button{
     }
 
     .cadre{
-        margin: 10px auto;
+        margin: 30px auto;
         min-width: 300px;
         width: 90%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        height: min-content;
         padding: 10px;
+        height: 60%;
     }
 
     h2{
