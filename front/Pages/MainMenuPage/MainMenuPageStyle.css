@@ -21,5 +21,6 @@ h2{
     .cadre{
         align-self:start;
         margin-top: 30px;
+        height: unset;
     }
 }
