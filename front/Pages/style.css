@@ -441,12 +441,21 @@ button{
 
 
 @media screen and (max-width: 600px) {
+    html{
+        height: 100%;
+    }
+
+    main{
+        height: 100%;
+    }
+
     body{
         font-size: 12px;
     }
 
     .logo{
-        max-height: 11%;
+        max-height: 8%;
+        margin-left: 5px;
     }
 
     .head{
@@ -459,9 +468,9 @@ button{
     }
 
     .cadre{
-        margin-top: 10px;
+        margin: 10px auto;
         min-width: 300px;
-        width: fit-content;
+        width: 90%;
         display: flex;
         flex-direction: column;
         align-items: center;
