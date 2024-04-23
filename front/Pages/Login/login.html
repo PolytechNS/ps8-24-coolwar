@@ -17,17 +17,16 @@
         <h2>Login</h2>
         <form id="loginForm">
             <label for="usernameLogin">Username:</label>
-            <input type="text" id="usernameLogin" name="username"><br>
+            <br>
+            <input type="text" id="usernameLogin" name="username">
+            <br>
             <label for="passwordLogin">Password:</label>
-            <input type="password" id="passwordLogin" name="password"><br><br>
-            <div>
-                <input class="button" type="submit" value="Login">
-                <a href="../Login/signup.html">
-                    <button class="button">Sign up</button>
-                </a>
-            </div>
+            <br>
+            <input type="password" id="passwordLogin" name="password">
+            <br><br>
+            <input class="button" type="submit" value="Login">
+            <input class="button" type="button" value="Sign up" onclick="window.location.href = '../Login/signup.html';">
         </form>
-
     </div>
 </main>
 <script src="../../js/Login/login.js" type="module"></script>
