@@ -142,7 +142,6 @@ p{
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* Deux colonnes */
         gap: 2px;
-        max-height: 250px; /* Hauteur maximale de la liste d'accomplissements */
         margin-left: 10px;
         margin-right: 0;
     }
@@ -160,5 +159,13 @@ p{
 
     .popup-content {
         max-width: 250px; /* Limite la largeur de la pop-up */
+    }
+
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        justify-content: unset;
+        height: unset;
     }
 }

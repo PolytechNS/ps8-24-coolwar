@@ -105,12 +105,15 @@ input:checked + .slider:before {
 
 @media screen and (max-width: 600px){
     .cadre{
-        width: 330px;
+        width: 90%;
         justify-content: start;
+        align-self:start;
+        margin-top: 30px;
     }
 
     .language{
         max-height: 40px;
+        width: 100%;
     }
 
     img{
@@ -120,6 +123,7 @@ input:checked + .slider:before {
     .line{
         max-height: 30px;
         min-height: 30px;
+        margin:0;
     }
 
     h3{
@@ -143,5 +147,9 @@ input:checked + .slider:before {
         -webkit-transform: translateX(20px);
         -ms-transform: translateX(20px);
         transform: translateX(20px);
+    }
+
+    .settings{
+        width: 100%;
     }
 }

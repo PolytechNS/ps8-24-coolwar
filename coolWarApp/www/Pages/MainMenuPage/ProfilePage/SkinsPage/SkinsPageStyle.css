@@ -65,7 +65,7 @@ button{
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
         gap: 5px;
-        max-height: 400px;
+        max-height: 100%;
         width: 200px;
         overflow-y: auto;
         order: 2;
@@ -100,9 +100,11 @@ button{
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-        min-width: 300px;
-        width: fit-content;
         position: relative;
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        height: unset;
     }
 
     button{

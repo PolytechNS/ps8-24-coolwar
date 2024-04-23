@@ -473,9 +473,12 @@ button{
         min-width: 300px;
         width: 90%;
         padding: 10px;
-        height: 60%;
+        height: 70%;
     }
 
+    .grid{
+        grid-template-columns: 1fr 15fr 1fr;
+    }
     h2{
         font-size: 30px;
         padding: 0;

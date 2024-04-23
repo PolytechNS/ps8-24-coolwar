@@ -17,4 +17,11 @@ h2{
     h2 {
         margin-top: 0;
     }
+
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        justify-content: unset;
+    }
 }

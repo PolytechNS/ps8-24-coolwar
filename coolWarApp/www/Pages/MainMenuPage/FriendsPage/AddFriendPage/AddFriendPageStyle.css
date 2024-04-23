@@ -37,8 +37,10 @@
 
 @media screen and (max-width: 600px){
     .cadre{
-        width: 330px;
+        width: 90%;
         justify-content: start;
+        align-self:start;
+        margin-top: 30px;
     }
 
     #friendName{

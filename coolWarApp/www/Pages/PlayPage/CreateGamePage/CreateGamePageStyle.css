@@ -129,13 +129,20 @@ input:checked + .slider:before {
 
 @media screen and (max-width: 600px){
     .cadre{
-        width: 330px;
+        width: 90%;
         justify-content: start;
-        height: 300px;
+        align-self:start;
+        margin-top: 30px;
     }
 
     .gameCreation{
         margin-bottom: 0;
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    h2{
+        margin-top: 10px;
     }
 
     h3{
@@ -147,6 +154,11 @@ input:checked + .slider:before {
     .gameName{
         padding: 0;
         margin-left: 0;
+        width: 100%;
+    }
+
+    .aline{
+        margin-bottom:20px;
     }
 
     .line{
@@ -184,6 +196,6 @@ input:checked + .slider:before {
         font-size: 15px;
         padding: 5px;
         margin-left: 0;
-        max-width: 150px;
+        width: 100%;
     }
 }
