@@ -23,7 +23,7 @@ body{
 
 
 .logo{
-    max-height: 18%;
+    max-height: 13%;
     width: auto;
     object-fit: contain;
     background-color: #345128;
@@ -433,7 +433,6 @@ button{
 .logout-pic{
     display:none;
 }
-
 
 .back{
     display: none;

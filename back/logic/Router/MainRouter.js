@@ -5,9 +5,10 @@ const fileManager = require('../Utils/front');
 const friendsRouter = require('./friendsRouter');
 const handleGameRoutes = require('./GameRouter');
 const handleUserRoutes = require('./userRoutes');
-
+const { addCors } = require('../Utils/api.js');
 function mainRouter(req, res, db) {
 
+    addCors(res);
     // Handle the authentication routing
     if (req.url.startsWith('/api/auth')) {
         authRouter(req, res, db);
