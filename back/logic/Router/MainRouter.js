@@ -5,7 +5,6 @@ const fileManager = require('../Utils/front');
 const friendsRouter = require('./friendsRouter');
 const handleGameRoutes = require('./GameRouter');
 const handleUserRoutes = require('./userRoutes');
-const { addCors } = require('../Utils/api.js');
 
 function mainRouter(req, res, db) {
 
