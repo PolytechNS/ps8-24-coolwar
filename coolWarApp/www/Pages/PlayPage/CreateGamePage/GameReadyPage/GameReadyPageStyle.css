@@ -4,7 +4,7 @@
     position: relative;
 }
 
-h2{margin: 10px}
+h2{margin: 10px;}
 
 .listPlayers {
     width: 1000px;
@@ -126,3 +126,79 @@ button{
     margin: 10px 0;
 }
 
+
+@media screen and (max-width: 600px){
+    .cadre{
+        width: 330px;
+        justify-content: start;
+    }
+
+    h2{
+        font-size: 20px;
+        margin: 5px 0;
+    }
+
+    .listPlayers {
+        width: 300px;
+        height: 350px;
+    }
+
+    .player{
+        width: 300px;
+        padding: 0;
+        margin-bottom: 10px;
+    }
+
+    p{
+        font-size: 15px;
+        margin: 0;
+    }
+
+    .playerReady, .playerWaiting{
+        border-radius: 50%;
+        max-height: 40px;
+        margin: 0 10px;
+    }
+
+    button{
+        font-size: 15px;
+    }
+
+    .profilePic{
+        border-radius: 50%;
+        max-height: 50px;
+        margin: 0 20px;
+    }
+
+    .popup {
+        width: 300px;
+        height: 200px;
+        padding: 20px;
+        top: 30%;
+    }
+
+    .popup-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .closePopup {
+        top: 10px;
+        right: 20px;
+        font-size: 15px;
+    }
+
+    .sent{
+        margin-left: 10px;
+    }
+
+    .countdown {
+        font-size: 15px;
+        margin: 0;
+    }
+
+}

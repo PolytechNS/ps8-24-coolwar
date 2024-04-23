@@ -127,6 +127,8 @@ function emitPlayerReady(token) {
 // Affichage de la popup des amis
 function openFriendsListPopup() {
     console.log('Opening friends list popup');
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('popup-overlay');
     const popup = document.getElementById('friendsListPopup');
     popup.style.display = 'block';
     loadFriends(); // Charger la liste des amis si nécessaire
@@ -136,6 +138,8 @@ function openFriendsListPopup() {
 function closePopup() {
     const popup = document.getElementById('friendsListPopup');
     popup.style.display = 'none';
+    const overlay = document.getElementById('overlay');
+    overlay.style.display = 'none';
 }
 
 // Chargement et affichage des amis

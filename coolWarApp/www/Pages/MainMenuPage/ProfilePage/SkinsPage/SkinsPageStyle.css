@@ -54,3 +54,76 @@ button{
 .skin .imgSkin:hover {
     opacity: 1; /* Pour éventuellement mettre en évidence au survol */
 }
+
+@media screen and (max-width: 600px){
+    h2{
+        margin:0;
+        font-size: 20px;
+    }
+
+    .listOfSkin {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+        gap: 5px;
+        max-height: 400px;
+        width: 200px;
+        overflow-y: auto;
+        order: 2;
+        margin-left: 10px;
+    }
+
+    .skin {
+        background: rgba(85.1, 85.1, 85.1, 0.5);
+        border-radius: 10%;
+        min-height: 50px;
+        text-align: center;
+    }
+
+    .imgSkin {
+        max-height: 50px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .line {
+        max-width: 100%;
+        border: 1px solid #D9D9D9;
+    }
+
+    p {
+        font-size: 10px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .cadre{
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        min-width: 300px;
+        width: fit-content;
+        position: relative;
+    }
+
+    button{
+        font-size: 15px;
+    }
+
+    .selectedSkin{
+        max-height: 50px;
+    }
+
+    .selectSkin{
+        order: 1;
+        align-self: center;
+        margin:auto;
+    }
+
+    .back{
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 10px;
+    }
+
+}
