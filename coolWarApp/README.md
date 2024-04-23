@@ -18,3 +18,7 @@ https://cordova.apache.org/docs/en/latest/
 4. ` cordova run android`
    OU
 5. avoir un tel externe branché et juste copié collé le .apk généré quand on fait ` cordova build android` 
+
+## Installation plugins
+
+1. cordova plugin add cordova-plugin-firebase-messaging
