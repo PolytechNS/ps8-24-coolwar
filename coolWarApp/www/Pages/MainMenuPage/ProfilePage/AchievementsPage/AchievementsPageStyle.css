@@ -118,3 +118,47 @@ p{
 .popup-description {
     font-size: 14px;
 }
+
+
+@media screen and (max-width: 600px) {
+    .display{
+        width: 300px;
+    }
+
+    .userPic{
+        border-radius: 100%;
+        max-height: 100px;
+        max-width: 100px;
+        min-height: 100px;
+        min-width:100px;
+    }
+
+    .skin{
+        max-height:60px;
+        margin-right: 20px;
+    }
+
+    .listAchievements {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Deux colonnes */
+        gap: 2px;
+        max-height: 250px; /* Hauteur maximale de la liste d'accomplissements */
+        margin-left: 10px;
+        margin-right: 0;
+    }
+
+    .achievement{
+        margin: 5px;
+        max-width: 60px; /* Largeur maximale des éléments */
+        text-align: center; /* Centrer le contenu horizontalement */
+    }
+
+    .achievementImg{
+        max-height: 40px;
+        max-width: 40px;
+    }
+
+    .popup-content {
+        max-width: 250px; /* Limite la largeur de la pop-up */
+    }
+}

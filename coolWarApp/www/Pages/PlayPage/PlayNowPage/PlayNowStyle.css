@@ -1,0 +1,10 @@
+@media screen and (max-width: 600px){
+    h2{
+        margin:0;
+    }
+
+    button{
+        font-size: 15px;
+        padding: 10px;
+    }
+}

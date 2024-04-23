@@ -19,3 +19,14 @@
     margin: 15px;
     border: 1px solid #345128;
 }
+
+@media screen and (max-width: 600px){
+    .button{
+        margin-bottom: 0;
+    }
+
+    #usernameSignup, #passwordSignup{
+        margin-bottom: 10px;
+    }
+}
+

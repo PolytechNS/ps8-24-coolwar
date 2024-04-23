@@ -33,3 +33,23 @@
     padding: 5px 20px;
     margin-top: 30px;
 }
+
+
+@media screen and (max-width: 600px){
+    .cadre{
+        width: 330px;
+        justify-content: start;
+    }
+
+    #friendName{
+        font-size: 15px;
+    }
+
+    .friend{
+        max-height: 40px;
+    }
+
+    button{
+        font-size: 15px;
+    }
+}

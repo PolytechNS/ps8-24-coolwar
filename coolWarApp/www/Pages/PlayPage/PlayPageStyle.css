@@ -8,3 +8,14 @@ h2{
     margin-bottom: 30px;
 }
 
+
+
+@media screen and (max-width: 600px){
+    h2{
+        margin:0;
+    }
+
+    button{
+        font-size: 16px;
+    }
+}
