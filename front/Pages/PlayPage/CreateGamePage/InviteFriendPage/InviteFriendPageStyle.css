@@ -13,4 +13,10 @@
     .invite{
         font-size: 15px;
     }
+
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+    }
 }

@@ -477,6 +477,9 @@ button{
         height: 60%;
     }
 
+    .grid{
+        grid-template-columns: 1fr 15fr 1fr;
+    }
     h2{
         font-size: 30px;
         padding: 0;

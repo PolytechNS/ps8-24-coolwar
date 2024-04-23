@@ -91,8 +91,10 @@ button{
 
 @media screen and (max-width: 600px){
     .cadre{
-        width: 330px;
+        width: 90%;
         justify-content: start;
+        align-self:start;
+        margin-top: 30px;
     }
 
     h2{
@@ -100,11 +102,11 @@ button{
     }
 
     .listFriendRequest {
-        width: 320px;
+        width: 100%;
     }
 
     .friendRequest{
-        width: 310px;
+        width: 100%;
         padding: 5px;
         margin-bottom: 10px;
     }
