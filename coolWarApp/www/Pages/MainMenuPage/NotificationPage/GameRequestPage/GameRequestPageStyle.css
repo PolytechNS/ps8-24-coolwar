@@ -81,3 +81,43 @@ button{
     background-color: #497637;
     color: white;
 }
+
+@media screen and (max-width: 600px){
+    .cadre{
+        width: 330px;
+        justify-content: start;
+    }
+
+    h2{
+        margin: 0;
+    }
+
+    .listGameRequest {
+        width: 320px;
+        text-align: unset;
+    }
+
+    .gameRequest{
+        width: 300px;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    p{
+        font-size: 10px;
+    }
+
+    .middleSide{
+        margin-right: 5px;
+    }
+
+    .profilePic{
+        max-height:40px;
+        margin: 0 10px;
+    }
+
+    button{
+        min-width: 90px;
+        font-size: 10px;
+    }
+}
