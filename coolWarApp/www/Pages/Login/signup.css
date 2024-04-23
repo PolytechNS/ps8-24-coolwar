@@ -19,16 +19,3 @@
     margin: 15px;
     border: 1px solid #345128;
 }
-
-@media screen and (max-width: 600px){
-    .button{
-        font-size: 15px;
-        margin-bottom: 0;
-    }
-
-    #usernameSignup, #passwordSignup{
-        font-size: 15px;
-        padding: 5px;
-        margin-bottom: 10px;
-    }
-}

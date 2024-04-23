@@ -19,17 +19,3 @@
     border: 1px solid #345128;
     min-width: 150px;
 }
-
-@media screen and (max-width: 600px){
-    .button{
-        font-size: 15px;
-        margin: 5px;
-    }
-
-    #usernameLogin, #passwordLogin{
-        font-size: 15px;
-        padding: 5px;
-        margin-bottom: 10px;
-    }
-
-}
