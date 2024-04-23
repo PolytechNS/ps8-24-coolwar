@@ -27,7 +27,8 @@
     }
     .button{
         font-size: 15px;
-        margin: 5px;
+        display: inline-block; /* Assure que les boutons sont alignés horizontalement */
+        margin: 5px 5px 5px 10px;
     }
 
     main{
@@ -42,6 +43,11 @@
     #usernameLogin, #passwordLogin{
         font-size: 15px;
         padding: 5px;
-        margin-bottom: 10px;
+        margin-bottom: 30px;
+        margin-top: 10px;
+    }
+
+    h2{
+        margin-bottom: 20px;
     }
 }
