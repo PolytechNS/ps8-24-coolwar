@@ -8,11 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.onresize = loginAdaptation;
 
-    const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const username = loginForm.querySelector('[name="username"]').value;
-        const password = loginForm.querySelector('[name="password"]').value;
+    const loginButton = document.getElementById('LoginBTN');
+    loginButton.addEventListener('click', function() {
+        const username = document.querySelector('#usernameLogin').value
+        const password = document.querySelector('#passwordLogin').value
+
+        console.log('Login button clicked:', username, password);
 
         AuthService.login(username, password)
             .then(data => {
@@ -25,3 +26,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
+

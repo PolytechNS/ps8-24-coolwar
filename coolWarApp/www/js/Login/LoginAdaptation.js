@@ -23,5 +23,10 @@ export const loginAdaptation = () => {
 
         usernameINPUT.placeholder = 'Username';
         passwordINPUT.placeholder = 'Password';
+
+        const form = document.getElementById('loginForm');
+        const formBR = form.getElementsByTagName('br');
+
+        for(var i=0;i<formBR.length;i++){formBR[i].remove();}
     }
 }
