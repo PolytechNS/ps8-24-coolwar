@@ -595,12 +595,12 @@ h1{
 
     .horizontal_wall{
         opacity: 0;
-        height: 10px;
-        width: 40px;
+        height: 15px;
+        width: 45px;
     }
 
     .vertical_wall{
-        margin: 5px 5px 0 10px;
+        margin: -6px;
         height: 60px;
         width: 20px;
     }
@@ -610,8 +610,8 @@ h1{
     }
 
     .vertical_hitbox{
-        margin: -20px;
-        padding: 0px 4px 0px 4px;
+        margin: -5px;
+        padding: 0px 2px 0px 2px;
         z-index: 1;
     }
     .horizontal_hitbox{
