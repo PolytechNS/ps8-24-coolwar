@@ -1,10 +1,12 @@
 // login.js
 import { AuthService } from '../Services/Login/authService.js'; // Mettez à jour le chemin selon votre structure de projet
-
+import { loginAdaptation } from './LoginAdaptation.js';
 document.addEventListener('DOMContentLoaded', () => {
 
     //clean le cache localstorage
     localStorage.clear();
+
+    window.onresize = loginAdaptation;
 
     const loginForm = document.getElementById('loginForm');
     loginForm.addEventListener('submit', function(event) {
