@@ -16,6 +16,7 @@ const handleChat = require('./Chat.js');
 
 
 const connectedUsers = {};
+let eventGiven = false;
 
 module.exports = (server) => {
     const io = socketIo(server, {
@@ -31,6 +32,43 @@ module.exports = (server) => {
         handleWithBotsMode(io, socket);
         handleOfflineMode(io, socket);
         handleChat(io, socket);
+        manageEvents(io, socket);
+
+        function manageEvents(io, socket){
+            if(!eventGiven){
+                setTimeout(async () => {
+                        console.log("EVENT DANCEEER !");
+                        for(let socketId in connectedUsers){
+                            io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
+                            eventGiven = true;
+                            for(let socketId in connectedUsers){
+                                let userId = connectedUsers[socketId].userId;
+
+                                await client.connect();
+                                const db = client.db();
+
+                                const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+                                await db.collection('users').updateOne(
+                                    { _id: userObjectId }, // Critère de recherche
+                                    { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
+                                );
+
+                            }
+                    }
+                }, 10000);
+
+                setTimeout(async () => {
+                    console.log("EVENT HALLOWWEEEENN!");
+                    for(let socketId in connectedUsers){
+                        io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
+                        eventGiven = true;
+                    }
+                }, 20000);
+
+            }
+
+        }
 
         // Exemple de récupération de l'ID utilisateur lors de la connexion
         // Cela suppose que l'ID de l'utilisateur est envoyé juste après la connexion via un événement 'authenticate' ou similaire
@@ -45,6 +83,8 @@ module.exports = (server) => {
 
             // Vous pouvez également stocker d'autres informations ici
         });
+
+
 
         socket.on('disconnect', () => {
             console.log(`Client disconnected: ${connectedUsers[socket.id]?.userId}`);
