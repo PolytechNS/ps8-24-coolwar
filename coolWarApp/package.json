@@ -17,14 +17,11 @@
       "android"
     ],
     "plugins": {
-      "cordova-plugin-firebase-messaging": {
-        "ANDROID_FIREBASE_BOM_VERSION": "32.5.0"
-      }
+      "onesignal-cordova-plugin": {}
     }
   },
   "devDependencies": {
     "cordova-android": "^12.0.1",
-    "cordova-plugin-firebase-messaging": "^8.0.1",
-    "cordova-support-android-plugin": "~2.0.4"
+    "onesignal-cordova-plugin": "^5.1.2"
   }
 }
