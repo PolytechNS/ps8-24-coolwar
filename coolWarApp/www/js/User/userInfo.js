@@ -3,6 +3,7 @@ import {userService} from "../Services/User/userService.js";
 
 document.addEventListener('deviceready', OneSignalInit, false);
 function OneSignalInit() {
+
     console.log("OneSignalInit");
     // Remove this method to stop OneSignal Debugging
     window.plugins.OneSignal.Debug.setLogLevel(6);

@@ -21,4 +21,6 @@ https://cordova.apache.org/docs/en/latest/
 
 ## Installation plugins
 
-1. cordova plugin add cordova-plugin-firebase-messaging
+cordova plugin add onesignal-cordova-plugin
+2. cordova plugin add cordova-plugin-lottie-splashscreen https://github.com/timbru31/cordova-plugin-lottie-splashscreen/tree/master
+

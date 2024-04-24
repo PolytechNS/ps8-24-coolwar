@@ -23,3 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 });
+
+
+document.addEventListener('deviceready', () => {
+    console.log('Device is ready');
+    // setTimeout(() => {
+    //     lottie.splashscreen
+    //         .hide()
+    //         .then(_ => console.log('Lottie successfully hid the animation'))
+    //         .catch(_ => console.error('Uh oh, there was an error hiding the animation'));
+    // }, 1000);
+});

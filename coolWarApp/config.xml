@@ -14,9 +14,23 @@
     <allow-navigation href="http://coolwar.ps8.academy/*" />
     <preference name="hostname" value="10.0.2.2:3000" />
     <preference name="AndroidXEnabled" value="true" />
+
+    <!-- Lottie Animation preferences common to all platforms -->
+    <preference name="LottieRemoteEnabled" value="false" />
+    <preference name="LottieAnimationLocation" value="www/lottie/anim.json" />
+    <preference name="LottieLoopAnimation" value="true" />
+    <preference name="LottieBackgroundColor" value="#345128" />
+    <preference name="LottieEnableHardwareAcceleration" value="true" />
+    <preference name="LottieFullScreen" value="true" />
+    <preference name="LottieHideTimeout" value="5000" />
+    <preference name="LottieCacheDisabled" value="true" />
+
     <platform name="android">
+        <preference name="GradlePluginKotlinEnabled" value="true" />
+        <preference name="GradlePluginKotlinVersion" value="1.7.22" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:usesCleartextTraffic="true" />
         </edit-config>
+
     </platform>
 </widget>

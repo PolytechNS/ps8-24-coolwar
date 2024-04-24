@@ -17,11 +17,13 @@
       "android"
     ],
     "plugins": {
-      "onesignal-cordova-plugin": {}
+      "onesignal-cordova-plugin": {},
+      "cordova-plugin-lottie-splashscreen": {}
     }
   },
   "devDependencies": {
     "cordova-android": "^12.0.1",
+    "cordova-plugin-lottie-splashscreen": "^0.10.0",
     "onesignal-cordova-plugin": "^5.1.2"
   }
 }
