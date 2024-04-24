@@ -12,7 +12,7 @@
     <access origin="*" />
     <allow-navigation href="http://localhost:3000/*" />
     <allow-navigation href="http://coolwar.ps8.academy/*" />
-    <preference name="hostname" value="10.0.2.2:3000" />
+    <preference name="hostname" value="coolwar.ps8.academy" />
     <preference name="AndroidXEnabled" value="true" />
 
     <!-- Lottie Animation preferences common to all platforms -->
@@ -28,11 +28,16 @@
     <preference name="SplashScreenDelay" value="0"/>
     <preference name="AutoHideSplashScreen" value="true"/>
 
+
     <platform name="android">
         <preference name="GradlePluginKotlinEnabled" value="true" />
         <preference name="GradlePluginKotlinVersion" value="1.7.22" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:usesCleartextTraffic="true" />
+        </edit-config>
+
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/uses-permission">
+            <uses-permission android:name="android.permission.VIBRATE" />
         </edit-config>
 
     </platform>

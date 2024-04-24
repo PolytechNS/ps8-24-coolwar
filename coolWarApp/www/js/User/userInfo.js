@@ -16,6 +16,7 @@ function OneSignalInit() {
         const notificationPayload = JSON.stringify(event);
         console.log("OneSignal notification clicked:", notificationPayload);
         console.log(notificationPayload);
+        navigator.vibrate(1000);
     };
     window.plugins.OneSignal.Notifications.addEventListener("click", listener);
 
