@@ -50,7 +50,7 @@ p{
 }
 
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 600px) {
     .cadre{
         width: 90%;
         justify-content: start;
@@ -93,5 +93,4 @@ p{
         margin-right: 5px;
         align-self: center;
     }
-
 }

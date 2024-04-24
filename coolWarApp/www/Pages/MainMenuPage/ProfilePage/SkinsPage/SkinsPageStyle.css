@@ -65,7 +65,7 @@ button{
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
         gap: 5px;
-        max-height: 100%;
+        max-height: 600px;
         width: 200px;
         overflow-y: auto;
         order: 2;
@@ -80,7 +80,7 @@ button{
     }
 
     .imgSkin {
-        max-height: 50px;
+        max-height: 80px;
         display: block;
         margin: 0 auto;
     }
@@ -112,7 +112,7 @@ button{
     }
 
     .selectedSkin{
-        max-height: 50px;
+        max-height: 90px;
     }
 
     .selectSkin{
@@ -128,4 +128,85 @@ button{
         margin: 10px;
     }
 
+}
+
+
+@media screen and (max-width: 1100px) and (min-width: 600px){
+    h2{
+        margin:0;
+        font-size: 35px;
+    }
+
+    .listOfSkin {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        width: auto;
+        overflow-y: auto;
+        order: 2;
+        margin: auto;
+    }
+
+    .skinPosition{
+        margin-top: 80px;
+        margin-left: 30px;
+        margin-right: 70px;
+    }
+
+    .skin {
+        background: rgba(85.1, 85.1, 85.1, 0.5);
+        border-radius: 10%;
+        min-height: 50px;
+        text-align: center;
+    }
+
+    .imgSkin {
+        max-height: 100px;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .line {
+        max-width: 100%;
+        border: 1px solid #D9D9D9;
+    }
+
+    p {
+        font-size: 20px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .cadre{
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        position: relative;
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        height: unset;
+    }
+
+    button{
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .selectedSkin{
+        max-height: 200px;
+    }
+
+    .selectSkin{
+        order: 1;
+        align-self: center;
+        margin:auto;
+    }
+
+    .back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 10px;
+    }
 }

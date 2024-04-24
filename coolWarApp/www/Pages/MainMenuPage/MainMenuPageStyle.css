@@ -17,6 +17,17 @@ h2{
     h2 {
         margin-top: 0;
     }
+}
+
+@media screen and (max-width: 1100px) and (min-width: 600px){
+    h2{
+        font-size: 45px;
+    }
+
+    button{
+        font-size: 25px;
+        margin: 17px;
+    }
 
     .cadre{
         align-self:start;
