@@ -15,8 +15,6 @@ const handleChat = require('./Chat.js');
 
 
 
-
-
 const connectedUsers = {};
 
 module.exports = (server) => {

@@ -9,8 +9,9 @@ export const socketManager = {
             console.log('Token is null, cannot initialize socket');
             return;
         }
-        this.socket = io('http://10.0.2.2:3000', {
+        this.socket = io('http://localhost:3000', {
             //http://coolwar.ps8.academy
+            //http://10.0.2.2:3000
             auth: { token },
         });
 

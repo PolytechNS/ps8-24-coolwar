@@ -3,7 +3,6 @@ import {socketManager} from "../../Socket/socketManager.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
-
     socketManager.socket.on('event alert', (data) => {
         const eventAlertSpan = document.querySelector('.alert');
 
