@@ -12,6 +12,7 @@ const handleWithFriendsMode = require('./GameModes/withFriends.js');
 const handleWithBotsMode = require('./GameModes/withBots');
 const handleOfflineMode = require('./GameModes/offline');
 const handleChat = require('./Chat.js');
+const sendNotification  = require('./onSignal.js');
 
 
 
@@ -36,27 +37,34 @@ module.exports = (server) => {
 
         function manageEvents(io, socket){
             if(!eventGiven){
-                setTimeout(async () => {
-                        console.log("EVENT DANCEEER !");
-                        for(let socketId in connectedUsers){
-                            io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
-                            eventGiven = true;
-                            for(let socketId in connectedUsers){
-                                let userId = connectedUsers[socketId].userId;
 
-                                await client.connect();
-                                const db = client.db();
+                sendNotification("Event halloween soon !")
+                    .then(() => console.log('Notification sent on server start'))
+                    .catch((error) => console.error('Error sending server-start notification:', error));
 
-                                const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
 
-                                await db.collection('users').updateOne(
-                                    { _id: userObjectId }, // Critère de recherche
-                                    { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
-                                );
 
-                            }
-                    }
-                }, 10000);
+                // setTimeout(async () => {
+                //         console.log("EVENT DANCEEER !");
+                //         for(let socketId in connectedUsers){
+                //             io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
+                //             eventGiven = true;
+                //             for(let socketId in connectedUsers){
+                //                 let userId = connectedUsers[socketId].userId;
+                //
+                //                 await client.connect();
+                //                 const db = client.db();
+                //
+                //                 const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+                //
+                //                 await db.collection('users').updateOne(
+                //                     { _id: userObjectId }, // Critère de recherche
+                //                     { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
+                //                 );
+                //
+                //             }
+                //     }
+                // }, 20000);
 
                 setTimeout(async () => {
                     console.log("EVENT HALLOWWEEEENN!");
@@ -64,7 +72,7 @@ module.exports = (server) => {
                         io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
                         eventGiven = true;
                     }
-                }, 20000);
+                }, 10000);
 
             }
 
