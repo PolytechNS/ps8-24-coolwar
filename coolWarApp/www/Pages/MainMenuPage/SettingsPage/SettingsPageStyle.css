@@ -138,6 +138,56 @@ input:checked + .slider:before {
     }
 
     .slider:before{
+        height: 25px;
+        width: 20px;
+        left: 0;
+        bottom: 0;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(24px);
+        -ms-transform: translateX(24px);
+        transform: translateX(24px);
+    }
+
+    .settings{
+        width: 100%;
+    }
+}
+@media screen and (max-width: 1100px) and (min-width: 599px) {
+    .cadre{
+        width: 90%;
+        justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+        height: unset;
+    }
+
+    .language{
+        max-height: 40px;
+    }
+
+    img{
+        max-height: 37px;
+    }
+
+    .line{
+        max-height: 30px;
+        min-height: 30px;
+        margin-right: 5px;
+    }
+
+    h3{
+        min-width: fit-content;
+        max-width: fit-content;
+    }
+
+    .switch{
+        width: 44px;
+        height: 25px;
+    }
+
+    .slider:before{
         height: 22px;
         width: 20px;
         left: 2px;
@@ -151,6 +201,7 @@ input:checked + .slider:before {
     }
 
     .settings{
-        width: 100%;
+        width: 70%;
     }
 }
+
