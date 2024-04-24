@@ -21,6 +21,6 @@ https://cordova.apache.org/docs/en/latest/
 
 ## Installation plugins
 
-cordova plugin add onesignal-cordova-plugin
+1 cordova plugin add onesignal-cordova-plugin
 2. cordova plugin add cordova-plugin-lottie-splashscreen https://github.com/timbru31/cordova-plugin-lottie-splashscreen/tree/master
 

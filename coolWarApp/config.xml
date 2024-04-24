@@ -25,6 +25,9 @@
     <preference name="LottieHideTimeout" value="5000" />
     <preference name="LottieCacheDisabled" value="true" />
 
+    <preference name="SplashScreenDelay" value="0"/>
+    <preference name="AutoHideSplashScreen" value="true"/>
+
     <platform name="android">
         <preference name="GradlePluginKotlinEnabled" value="true" />
         <preference name="GradlePluginKotlinVersion" value="1.7.22" />
