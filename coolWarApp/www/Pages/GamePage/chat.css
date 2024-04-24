@@ -1,12 +1,14 @@
 .chatWrapper {
-    position: relative;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 .chatPlaceholder {
     position: absolute;
     bottom: 10px; /* Adjust based on your layout */
     right: 10px; /* Adjust based on your layout */
-    width: 250px; /* Adjust based on your preference */
+    width: 100px; /* Adjust based on your preference */
     background-color: #45a049;
     color: #fff;
     padding: 5px 10px;

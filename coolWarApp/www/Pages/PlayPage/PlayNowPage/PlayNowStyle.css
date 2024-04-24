@@ -1,18 +1,7 @@
-button{
-    margin: 15px;
-}
-
-
-h2{
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-
-
 @media screen and (max-width: 600px){
+
     h2{
-        margin:0;
+        margin:unset;
     }
 
     .cadre{
@@ -20,5 +9,14 @@ h2{
         margin-top: 30px;
         width: 90%;
         justify-content: unset;
+    }
+
+    .theButton{
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    button{
+        font-size: 22px;
     }
 }

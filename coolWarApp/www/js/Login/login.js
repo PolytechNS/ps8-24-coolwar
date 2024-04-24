@@ -1,25 +1,29 @@
 // login.js
 import { AuthService } from '../Services/Login/authService.js'; // Mettez à jour le chemin selon votre structure de projet
-
+import { loginAdaptation } from './LoginAdaptation.js';
 document.addEventListener('DOMContentLoaded', () => {
 
     //clean le cache localstorage
     localStorage.clear();
 
-    const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const username = loginForm.querySelector('[name="username"]').value;
-        const password = loginForm.querySelector('[name="password"]').value;
+    window.onresize = loginAdaptation;
+
+    const loginButton = document.getElementById('LoginBTN');
+    loginButton.addEventListener('click', function() {
+        const username = document.querySelector('#usernameLogin').value
+        const password = document.querySelector('#passwordLogin').value
+
+        console.log('Login button clicked:', username, password);
 
         AuthService.login(username, password)
             .then(data => {
                 console.log('Login success:', data);
                 localStorage.setItem('token', data.token);
-                window.location.href = '../WelcomePage/WelcomePage.html'; // Redirigez vers la page après connexion
+                window.location.href = '../MainMenuPage/MainMenuPage.html'; // Redirigez vers la page après connexion
             })
             .catch(error => {
                 console.error('Login error:', error);
             });
     });
 });
+

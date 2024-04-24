@@ -126,3 +126,76 @@ input:checked + .slider:before {
     right: 10px;
     bottom: 10px;
 }
+
+@media screen and (max-width: 600px){
+    .cadre{
+        width: 90%;
+        justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+    }
+
+    .gameCreation{
+        margin-bottom: 0;
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    h2{
+        margin-top: 10px;
+    }
+
+    h3{
+        padding: 0;
+        margin-right: 10px;
+        min-width: 100px;
+    }
+
+    .gameName{
+        padding: 0;
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .aline{
+        margin-bottom:20px;
+    }
+
+    .line{
+        min-height: 50px;
+        margin: 0;
+    }
+
+    img {
+        max-height: 40px;
+    }
+
+    button{
+        font-size: 15px;
+    }
+
+    .switch {
+        width: 48px;
+        height: 30px;
+    }
+
+    .slider:before {
+        height: 23px;
+        width: 28px;
+        left: 4px;
+        bottom: 4px;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(14px);
+        -ms-transform: translateX(14px);
+        transform: translateX(14px);
+    }
+
+    #gameName{
+        font-size: 15px;
+        padding: 5px;
+        margin-left: 0;
+        width: 100%;
+    }
+}

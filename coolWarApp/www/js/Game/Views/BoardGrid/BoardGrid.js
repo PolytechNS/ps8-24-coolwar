@@ -50,9 +50,7 @@ export class BoardGrid{
 
     openPopUp(){
         document.getElementById('modal').style.display = 'none'
-        document.getElementById('validateTurn').addEventListener('click', function(e) {
-            document.getElementById('modal').style.display = 'block'
-        });
+
         //document.getElementById('modalClose').addEventListener('click', function(e) {
         //    document.getElementById('modal').style.display = 'none'
         //});

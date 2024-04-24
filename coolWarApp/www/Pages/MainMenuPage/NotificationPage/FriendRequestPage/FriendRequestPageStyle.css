@@ -4,7 +4,7 @@
     position: relative;
 }
 
-h2{margin: 10px}
+h2{margin: 10px;}
 
 .listFriendRequest {
     width: 1000px;
@@ -86,4 +86,64 @@ button{
     position: absolute;
     left: 10px;
     bottom: 10px;
+}
+
+
+@media screen and (max-width: 600px){
+    .cadre{
+        width: 90%;
+        justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+        height: 80%;
+    }
+
+    h2{
+        margin: 0;
+    }
+
+    .listFriendRequest {
+        width: 100%;
+    }
+
+    .friendRequest{
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    p{
+        font-size: 10px;
+    }
+
+    .profilePic{
+        border-radius: 50%;
+        max-height: 50px;
+        margin: 5px;
+    }
+
+    .levelPic{
+        max-height: 50px;
+        margin-left: 5px;
+    }
+
+    .banner{
+        padding: 5px;
+    }
+
+    button{
+        min-width: 60px;
+    }
+
+    .reject{
+        font-size: 12px;
+    }
+
+    .accept{
+        font-size: 12px;
+    }
+
+    .sentFriendRequest{
+        font-size: 15px;
+    }
 }

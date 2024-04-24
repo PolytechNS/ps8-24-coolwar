@@ -8,3 +8,15 @@
     color: #497637;
     margin-left: 30px;
 }
+
+@media screen and (max-width: 600px) {
+    .invite{
+        font-size: 15px;
+    }
+
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+    }
+}
