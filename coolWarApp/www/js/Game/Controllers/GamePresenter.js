@@ -311,6 +311,23 @@ export class GamePresenter {
                         actionGameService.explodeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                             if(isAuthorized){
                                 this.sendUpdateToBack();
+                                document.addEventListener('deviceready', () => {
+                                    console.log("Device ready");
+
+                                    // Définir le chemin vers le fichier sonore
+                                    var mediaUrl = '/android_asset/www/assets/audio/explosion.wav';
+
+                                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                                        // Succès lors de la lecture du son
+                                        console.log("Audio played successfully");
+                                    }, function onError(error) {
+                                        // Erreur lors de la lecture du son
+                                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                                    });
+                                    clickSound.play();
+
+                                });
                                 // Ici, l'animation d'explosion est déclenchée
                                 /*const explodeElement = document.createElement('div');
                                 explodeElement.classList.add('explode');
