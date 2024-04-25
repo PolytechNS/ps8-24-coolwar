@@ -469,7 +469,6 @@ export class GamePresenter {
         actionGameService.checkWinner(this.model.typeGame,this.model.gameId,(callback)=>{
             console.log(callback);
             if(callback===1  || callback===2){
-                displayUnlockedAchievements(callback);
                 document.addEventListener('deviceready', () => {
                     console.log("Device ready");
 
@@ -627,36 +626,6 @@ export class GamePresenter {
         const confirmButtons = document.querySelectorAll('.action-buttons').item(0);
         confirmButtons.style.opacity = "0.5";
     }
-}
-
-
-function displayUnlockedAchievements(winnerIndex) {
-    // Determine if the user won or lost
-    const resultText = winnerIndex !== this.gameModel.ownIndexPlayer ? "vous avez perdu" : "vous avez gagné";
-
-    console.log("JE DISPLAY LES ACHIEVEMENTS");
-
-    // Create the result popup container
-    const resultContainer = document.createElement('div');
-    resultContainer.classList.add('result-alert');
-
-    // Create the result text element
-    const resultMessage = document.createElement('p');
-    resultMessage.textContent = resultText;
-    resultMessage.classList.add('result-message');
-
-    // Append elements to the result container
-    resultContainer.appendChild(resultMessage);
-
-    // Append the result container to the body
-    document.body.appendChild(resultContainer);
-
-    // Set a timeout to automatically remove the alert after 5 seconds
-    // setTimeout(() => {
-    //     if (document.body.contains(resultContainer)) {
-    //         document.body.removeChild(resultContainer);
-    //     }
-    // }, 5000); // 5 seconds
 }
 
 
