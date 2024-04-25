@@ -320,7 +320,7 @@ export class GamePresenter {
                             navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
                             resolve(true);
                         };
-                        confirmButton.onclick = () => {
+                        cancelButton.onclick = () => {
                             navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
                             resolve(false);
                         };
@@ -380,7 +380,7 @@ export class GamePresenter {
                             navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
                             resolve(true);
                         };
-                        confirmButton.onclick = () => {
+                        cancelButton.onclick = () => {
                             navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
                             resolve(false);
                         };
