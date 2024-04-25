@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>${friend.username}</p>
                     </div>
                     <div class="rightSide">
-                        <img class="levelPic" src="../../../assets/level${friend.level}.png">
                     </div>
                 `;
                 listFriendsDiv.appendChild(friendDiv);

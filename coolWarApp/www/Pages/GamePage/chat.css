@@ -5,7 +5,7 @@
 }
 
 .chatPlaceholder {
-    position: absolute;
+    position: fixed;
     bottom: 10px; /* Adjust based on your layout */
     right: 10px; /* Adjust based on your layout */
     width: 100px; /* Adjust based on your preference */
@@ -104,4 +104,47 @@
 
 #sendChat:hover {
     background-color: #45a049;
+}
+
+
+@media screen and (max-width: 600px) {
+    #chat-button{
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    #friends-list{
+        width: 150px;
+    }
+
+    .friend-name{
+        font-size: 15px;
+    }
+
+    #chat-interface{
+        width: 200px;
+    }
+
+    #chatting-with{
+        font-size: 1rem;
+    }
+
+    #chat-input{
+        font-size: 10px;
+    }
+
+    #send-chat-message{
+        min-width: unset;
+        margin-top: 5px;
+    }
+
+    #back-to-friends-list{
+        min-width: unset;
+        font-size: 15px;
+    }
+
+    #invite-friend-button{
+        font-size: 15px;
+        min-width: unset;
+    }
 }

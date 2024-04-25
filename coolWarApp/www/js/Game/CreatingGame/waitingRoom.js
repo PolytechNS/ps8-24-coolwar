@@ -168,7 +168,6 @@ function loadFriends() {
                             <p>${friend.username}</p>
                         </div>
                         <div class="rightSide">
-                            <p>Level ${friend.level}</p>
                         </div>
                     </div>
                 `;
