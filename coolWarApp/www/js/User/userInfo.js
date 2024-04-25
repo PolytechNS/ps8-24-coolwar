@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await userService.getUserInfo(async (userInfo) => {
-        if (userInfo.watch && window.innerWidth === 352 && window.innerHeight === 430) {
+        if (userInfo.watch && window.innerWidth <= 400 && window.innerHeight <= 500) {
             showCssWatch();
             return;
         }
