@@ -92,7 +92,7 @@ button{
     flex-direction: row;
     background-color: rgba(253, 253, 253, 0.6);
     color: black;
-    font-size: 30px;
+    font-size: 25px;
     align-items: center;
     position: absolute;
     right: 1.20%;
@@ -121,8 +121,8 @@ button{
     border-radius: 20px;
     padding: 5px;
     font-family: 'Kumar One', serif;
-    font-size: 20px;
-    margin: 15px;
+    font-size: 15px;
+    margin: 0 0 0 15px;
     border: 1px solid #345128;
 }
 
@@ -1020,7 +1020,7 @@ body {
     }
 
     .logo {
-        max-height:22%;
+        max-height:11%;
     }
 
     .cadre{
