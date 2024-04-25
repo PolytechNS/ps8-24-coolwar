@@ -62,12 +62,10 @@ function showCssWatch(){
         padding: 0;
         width: 352px;
         height: 430px;
-        background-color: black; // Fond noir pour un affichage de montre typique
-        color: white; // Texte en blanc pour contraste
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 16px; // Taille de police pour un petit écran
+        font-size: 40px; // Taille de police pour un petit écran
     `;
 
     // Supprimer tous les enfants du body sauf l'élément voulu pour le mode montre
