@@ -2,6 +2,33 @@ import {socketManager} from "../Socket/socketManager.js";
 import {userService} from "../Services/User/userService.js";
 
 
+document.addEventListener('deviceready', OneSignalInit, false);
+function OneSignalInit() {
+
+    console.log("OneSignalInit");
+    // Remove this method to stop OneSignal Debugging
+    window.plugins.OneSignal.Debug.setLogLevel(6);
+
+    // Replace YOUR_ONESIGNAL_APP_ID with your OneSignal App ID
+    window.plugins.OneSignal.initialize("bc1f28b3-edce-43eb-88d4-6a9b1fb09860");
+
+    //Adds an event listener for clicks on notifications
+    const listener = (event) => {
+        const notificationPayload = JSON.stringify(event);
+        console.log("OneSignal notification clicked:", notificationPayload);
+        console.log(notificationPayload);
+        navigator.vibrate(1000);
+    };
+    window.plugins.OneSignal.Notifications.addEventListener("click", listener);
+
+    //Prompts the user for notification permissions.
+    //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 6) to better communicate to your users what notifications they will get.
+    window.plugins.OneSignal.Notifications.requestPermission(true).then((accepted) => {
+        console.log("User accepted notifications: " + accepted);
+    });
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('token');
     if (!socketManager.isSocketInitialized(token)) {
