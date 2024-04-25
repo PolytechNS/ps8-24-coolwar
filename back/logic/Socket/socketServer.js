@@ -85,11 +85,13 @@ module.exports = (server) => {
             await client.connect();
             const db = client.db();
             let user = await db.collection('users').findOne({ token: token});
-            connectedUsers[socket.id] = { userId: user._id};
-            console.log(`Client authenticated: ${user._id}`);
-            console.log('Connected users:', connectedUsers);
+            console.log("user", user);
+            if(user){
+                connectedUsers[socket.id] = { userId: user._id};
+                console.log(`Client authenticated: ${user._id}`);
+                console.log('Connected users:', connectedUsers);
+            }
 
-            // Vous pouvez également stocker d'autres informations ici
         });
 
 
