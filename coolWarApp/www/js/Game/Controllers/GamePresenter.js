@@ -254,6 +254,7 @@ export class GamePresenter {
                                         console.error("Error playing audio: " + error.code + " - " + error.message);
                                     });
                                     clickSound.play();
+                                    navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
 
                                 });
                                 this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
@@ -423,7 +424,7 @@ export class GamePresenter {
                 document.addEventListener('deviceready', () => {
                     console.log("Device ready");
 
-                    if(this.model.ownIndexPlayer===1 || this.model.ownIndexPlayer===2){
+                    if(this.model.ownIndexPlayer===callback){
                         var mediaUrl = '/android_asset/www/assets/audio/victory.mp3';
 
                     }else{
