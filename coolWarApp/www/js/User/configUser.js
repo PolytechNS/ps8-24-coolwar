@@ -1,7 +1,7 @@
 import { userService } from "../Services/User/userService.js";
 
 document.addEventListener('DOMContentLoaded', function() {
-    const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
+    const watchSwitch = document.querySelector('.watch-slider');
     console.log('Watch switch:', watchSwitch);
 
     userService.getUserInfo((userInfo) => {
