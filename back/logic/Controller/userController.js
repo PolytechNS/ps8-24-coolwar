@@ -237,6 +237,42 @@ async function getLeaderBoard(req, res, db) {
     res.end(JSON.stringify({ users }));
 }
 
+async function activateWatch(req, res, db) {
+    parseJSON(req, async (err, data) => {
+        if (err) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Invalid JSON');
+            return;
+        }
+
+        const { token, watch } = data;
+
+        if (!token || !watch) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Missing token or watch');
+            return;
+        }
+
+        try {
+            const user = await db.collection('users').findOne({ token });
+            if (!user) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('User not found');
+                return;
+            }
+
+            await db.collection('users').updateOne({ token }, { $set: { watch } });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Watch activated successfully' }));
+        } catch (error) {
+            console.error('Error activating watch', error);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Error activating watch');
+        }
+    });
+}
+
 
 let skinsServer = ["perso1", "perso2", "perso3", "perso4", "perso5", "perso6", "perso7", "perso8", "perso9"];
 async function getSkinsUser(req,res,db) {
