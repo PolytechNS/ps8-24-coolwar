@@ -147,6 +147,13 @@ button{
     z-index: 2;
 }
 
+.faisLeFou{
+    position: absolute;
+    top: 20%;
+    left: 15px;
+    z-index: 2;
+}
+
 .body {
     width: 100px;
     height: 60px;
@@ -871,6 +878,16 @@ body {
         margin-bottom: 50px;
     }
 
+    .faisLeFou{
+        position: fixed;
+        bottom: 28px;
+        left: 15px;
+        top: unset;
+        z-index: 2;
+        height: 100px;
+        width: 100px;
+    }
+
     h2{
         font-size: 30px;
         padding: 0;
@@ -1019,6 +1036,16 @@ body {
 
     label{
         font-size: 25px;
+    }
+
+    .faisLeFou{
+        position: fixed;
+        bottom: 35px;
+        left: 15px;
+        top:unset;
+        z-index: 2;
+        height: 100px;
+        width: 100px;
     }
 
     .tank, .body, .turret, .cannon{

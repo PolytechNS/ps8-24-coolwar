@@ -137,8 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('dancer tu fais le fou');
             wootDance.style.display = 'block';
             ghostCanvas.style.display = 'none';
-        }
 
+            const mainElement = document.querySelector('main');
+
+            mainElement.insertAdjacentHTML('afterbegin', `
+                    <iframe width="150" height="150" scrolling="no" frameborder="no" allow="autoplay" class="faisLeFou" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1788018703%3Fsecret_token%3Ds-uqqvuwf8xj5&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+                    `);
+        }
     });
 
 
