@@ -18,3 +18,11 @@ https://cordova.apache.org/docs/en/latest/
 4. ` cordova run android`
    OU
 5. avoir un tel externe branché et juste copié collé le .apk généré quand on fait ` cordova build android` 
+
+## Installation plugins
+
+1 cordova plugin add onesignal-cordova-plugin
+2. cordova plugin add cordova-plugin-lottie-splashscreen https://github.com/timbru31/cordova-plugin-lottie-splashscreen/tree/master
+3. cordova plugin add cordova-plugin-media
+4. cordova plugin add cordova-plugin-vibration
+

@@ -1,0 +1,190 @@
+.cadre{
+    width: 1000px;
+    justify-content: start;
+    position: relative;
+}
+
+h2{margin: 10px;}
+
+.listGameRequest {
+    width: 1000px;
+    height: 450px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: justify;
+}
+
+.gameRequest{
+    display: flex;
+    background-color: #D9D9D9;
+    width: 950px;
+    padding: 15px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-direction: row;
+}
+
+.leftSide{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.middleSide{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.rightSide{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+p{
+    color: black;
+    font-size: 25px;
+    margin: 0;
+}
+
+.profilePic{
+    border-radius: 50%;
+    max-height: 80px;
+    margin: 0 20px;
+}
+
+.deleteGame{
+    position: absolute;
+    right: 110px;
+    bottom: 10px;
+}
+
+.loadGame{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+button{
+    min-width: auto;
+    margin: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .cadre {
+        justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        height: unset;
+    }
+
+    h2{
+        margin: 0;
+    }
+
+    .listGameRequest {
+        width: 100%;
+    }
+
+
+    .gameRequest{
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    p{
+        font-size: 10px;
+    }
+
+    .middleSide{
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+
+    .rightSide{
+        align-self: center;
+        margin-right: 5px;
+    }
+
+    .profilePic{
+        border-radius: 50%;
+        max-height: 50px;
+        margin: 0;
+    }
+
+    .deleteGame{
+        font-size: 15px;
+        right: 80px;
+    }
+
+    .loadGame{
+        font-size: 15px;
+    }
+
+    button{
+        margin: 0;
+    }
+}
+
+
+@media screen and (max-width: 1100px) and (min-width: 599px){
+    .cadre {
+        justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        height: unset;
+    }
+
+    h2{
+        margin: 0;
+        font-size: 40px;
+    }
+
+    .listGameRequest {
+        width: 100%;
+    }
+
+
+    .gameRequest{
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    p{
+        font-size: 10px;
+    }
+
+    .middleSide{
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+
+    .rightSide{
+        align-self: center;
+        margin-right: 5px;
+    }
+
+    .profilePic{
+        border-radius: 50%;
+        max-height: 50px;
+        margin: 0;
+    }
+
+    .deleteGame{
+        font-size: 15px;
+        right: 80px;
+    }
+
+    .loadGame{
+        font-size: 15px;
+    }
+
+    button{
+        margin: 0;
+    }
+}

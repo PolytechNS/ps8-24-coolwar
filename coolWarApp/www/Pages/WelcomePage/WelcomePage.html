@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <title>Welcome Page</title>
+</head>
+
+<body>
+    <header class="head">
+        <img class="logo" src="../../assets/logo.png"/>
+        <h1>CoolWar</h1>
+        <div class="user">
+            <img class="profilePicture" src="../../assets/profilePicture.png">
+            <div class="nameAndLogout">
+                <p class="username">Nom</p>
+                <a href="../Login/login.html">
+                    <button class="logout">Logout</button>
+                </a>
+            </div>
+            <!-- Début de la section de niveau d'utilisateur modifiée -->
+            <div class="level-container">
+                <div class="level-circle">
+                    <span class="level-number">42</span>
+                </div>
+                <div class="level-progress-info">
+                    <div class="level-range">
+                        <span class="current-level">42</span> → <span class="next-level">43</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" style="width: 70%;"></div>
+                    </div>
+                    <div class="level-points">
+                        <span class="current-exp">700</span> / <span class="next-level-exp">1000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fin de la section de niveau d'utilisateur modifiée -->
+        </div>
+    </header>
+    <main>
+        <div class="cadre">
+            <h2>Welcome</h2>
+            <a href="../MainMenuPage/MainMenuPage.html" class="theButton explose">
+                <button>Play Online</button>
+            </a>
+            <a href="../OfflineMenuPage/OfflineMenuPage.html" class="theButton explose">
+                <button>Play Offline</button>
+            </a>
+        </div>
+        <div class="tank" id="tank">
+            <div class="body"></div>
+            <div class="turret"></div>
+        </div>
+    </main>
+</body>
+</html>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>
+<script type="module" src="../../js/User/userInfo.js"></script>
+<script type="module" src="../../js/Animations/tank.js"></script>
+<script type="module" src="../../js/Socket/socketManager.js"></script>
+<script type="module" src="../../js/index.js"></script>

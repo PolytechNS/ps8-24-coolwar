@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "306587670876",
+    "project_id": "coolwar-app-cordova",
+    "storage_bucket": "coolwar-app-cordova.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306587670876:android:67e7173e32a19cf6128999",
+        "android_client_info": {
+          "package_name": "com.ps8.coolwar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7hemYkwSkiuzz8rR_2H2sB5h9JLlhMLQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

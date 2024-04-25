@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="SettingsPageStyle.css">
+    <title>Settings Page</title>
+</head>
+
+<body>
+<header class="head">
+    <img class="logo" src="../../../assets/logo.png"/>
+    <h1>CoolWar</h1>
+    <div class="user">
+        <div>
+            <a href="../../Login/login.html">
+                <img class="logout-pic" src="../../../assets/logout.png">
+            </a>
+        </div>
+        <img class="profilePicture" src="../../../assets/profilePicture.png">
+        <div class="nameAndLogout">
+            <p class="username">Nom</p>
+            <a href="../../Login/login.html">
+                <button class="logout">Logout</button>
+            </a>
+        </div>
+        <!-- Début de la section de niveau d'utilisateur modifiée -->
+        <div class="level-container">
+            <div class="level-circle">
+                <span class="level-number">42</span>
+            </div>
+            <div class="level-progress-info">
+                <div class="level-range">
+                    <span class="current-level">42</span> → <span class="next-level">43</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: 70%;"></div>
+                </div>
+                <div class="level-points">
+                    <span class="current-exp">700</span> / <span class="next-level-exp">1000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fin de la section de niveau d'utilisateur modifiée -->
+    </div>
+</header>
+<main class="grid">
+    <div></div>
+    <div class="cadre">
+        <a href="../MainMenuPage.html" class="back">
+            <img class="back-img" src="../../../assets/back-button.svg">
+        </a>
+        <h2>Settings</h2>
+        <div class="settings">
+            <div class="aline">
+                <h3>Language</h3>
+                <div class="language">
+                    <img src="../../../assets/language.png">
+                    <div class="line"></div>
+                    <p>Language</p>
+                </div>
+            </div>
+            <div class="aline">
+                <h3>Chat</h3>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+
+            </div>
+            <div class="aline">
+                <h3>Notifications</h3>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <a href="../MainMenuPage.html" id="backButton">
+        <button> < Back</button>
+    </a>
+</main>
+</body>
+</html>
+<script type="module" src="../../../js/User/userInfo.js"></script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>

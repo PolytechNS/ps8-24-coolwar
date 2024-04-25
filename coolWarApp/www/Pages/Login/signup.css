@@ -1,0 +1,51 @@
+
+#usernameSignup, #passwordSignup{
+    border-radius: 8px;
+    background-color: #D9D9D9;
+    font-size: 20px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin-left: 15px;
+}
+
+
+.button{
+    background-color: #345128;
+    color: #fff;
+    border-radius: 8px;
+    padding: 5px;
+    font-family: 'Kumar One', serif;
+    font-size: 20px;
+    margin: 15px;
+    border: 1px solid #345128;
+}
+
+@media screen and (max-width: 600px){
+    .button{
+        margin-bottom: 0;
+    }
+
+    #usernameSignup, #passwordSignup{
+        margin-bottom: 30px;
+    }
+
+    h2{
+        margin-bottom: 20px;
+    }
+}
+
+
+@media screen and (max-width: 1100px) and (min-width: 599px){
+    .button{
+        margin-bottom: 0;
+    }
+
+    #usernameSignup, #passwordSignup{
+        margin-bottom: 30px;
+    }
+
+    h2{
+        margin-bottom: 20px;
+    }
+}
