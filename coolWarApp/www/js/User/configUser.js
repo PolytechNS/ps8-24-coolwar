@@ -3,6 +3,13 @@ import { userService } from "../Services/User/userService.js";
 document.addEventListener('DOMContentLoaded', function() {
     const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
 
+    userService.getUserInfo().then(response => {
+        console.log('User info in config:', response);
+
+    }).catch(error => {
+        console.error('Error getting user info:', error);
+    });
+
     watchSwitch.addEventListener('change', function() {
         // Récupérer le token du localStorage
         const token = localStorage.getItem('token');
