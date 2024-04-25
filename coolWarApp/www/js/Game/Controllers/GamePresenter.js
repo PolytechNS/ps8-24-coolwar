@@ -315,8 +315,14 @@ export class GamePresenter {
                         const cancelButton = document.getElementById("cancelMove");
 
                         // Gestionnaires d'événements pour résoudre la promesse
-                        confirmButton.onclick = () => resolve(true);
-                        cancelButton.onclick = () => resolve(false);
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(true);
+                        };
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(false);
+                        };
                     });
                 }
                 async function handleUserAction() {
@@ -370,8 +376,14 @@ export class GamePresenter {
                         const cancelButton = document.getElementById("cancelMove");
 
                         // Gestionnaires d'événements pour résoudre la promesse
-                        confirmButton.onclick = () => resolve(true);
-                        cancelButton.onclick = () => resolve(false);
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(true);
+                        };
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(false);
+                        };
                     });
                 }
                 async function handleUserAction() {

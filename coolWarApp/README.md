@@ -23,4 +23,6 @@ https://cordova.apache.org/docs/en/latest/
 
 1 cordova plugin add onesignal-cordova-plugin
 2. cordova plugin add cordova-plugin-lottie-splashscreen https://github.com/timbru31/cordova-plugin-lottie-splashscreen/tree/master
+3. cordova plugin add cordova-plugin-media
+4. cordova plugin add cordova-plugin-vibration
 

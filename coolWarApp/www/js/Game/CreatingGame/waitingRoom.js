@@ -115,6 +115,7 @@ function updatePlayersList(players) {
 // Envoi de l'état "Prêt" au serveur
 function emitPlayerReady(token) {
     console.log('Player ready');
+    navigator.vibrate(500);
     socketManager.socket.emit('ready', JSON.stringify({ token }));
 
 
