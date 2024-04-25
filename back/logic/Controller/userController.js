@@ -325,11 +325,12 @@ async function getNotifications(req, res, db) {
 
     console.log("token dans get notifications", token);
     const user = await db.collection('users').findOne({ token:token });
-    const notifications = await db.collection('notifications').find({ to: user._id }).toArray();
-
     if (!user) {
         return { success: false, message: 'User not found' };
     }
+    const notifications = await db.collection('notifications').find({ to: user._id }).toArray();
+
+
     console.log("les notifications", notifications);
     res.writeHead(201, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, notifications }));
