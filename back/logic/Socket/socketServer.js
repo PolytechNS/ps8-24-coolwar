@@ -120,7 +120,7 @@ module.exports = (server) => {
                 date: new Date(), // Date de la notification
             };
 
-            await db.collection('notifications').insertOne(notification);
+            await  db.collection('notifications').insertOne(notification);
 
             for (let socketId in connectedUsers) {
                 console.log("socketId", socketId);
