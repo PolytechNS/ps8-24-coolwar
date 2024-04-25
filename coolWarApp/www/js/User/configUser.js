@@ -8,9 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
     userService.getUserInfo((userInfo) => {
         console.log('User info in config:', userInfo);
         console.log('User info watch in config:', userInfo.watch);
-        if(userInfo.watch){
-            watchSwitch.checked = true;
-        }
+        // Force the reflow/update of the checkbox
+        setTimeout(() => {
+            watchSwitch.checked = !!userInfo.watch; // !! pour convertir en booléen
+        }, 0);
     });
 
 
