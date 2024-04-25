@@ -100,7 +100,6 @@ function attachAchievementsListener() {
         console.log('Achievements unlocked:', achievementsUnlocked);
         displayUnlockedAchievements(achievementsUnlocked);
     });
-    displayUnlockedAchievements([{ name: 'First win', description: 'You won your first game!', imagePath: 'first_win.png' }]);
 }
 
 function displayUnlockedAchievements(achievements) {
@@ -119,7 +118,7 @@ function displayUnlockedAchievements(achievements) {
         // Create the image element
         const achievementImage = document.createElement('img');
 
-        achievementImage.src = `../../../../assets/achievements/${achievement.imagePath}`; // Adjust the path as necessary
+        achievementImage.src = `../../../../assets/${achievement.imagePath}`; // Adjust the path as necessary
         achievementImage.alt = achievement.name;
         achievementImage.classList.add('achievement-image');
 

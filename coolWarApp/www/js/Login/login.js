@@ -63,7 +63,7 @@ document.addEventListener('deviceready', () => {
 
     // Ajouter un écouteur d'événements pour les clics sur un élément spécifique
     // Remplacez 'elementSelector' par le sélecteur CSS de l'élément sur lequel vous souhaitez détecter les clics
-    const exploseButtons = document.querySelectorAll(".explose");
+    const exploseButtons = document.querySelectorAll(".soundApp");
 
     // Boucler sur chaque élément et attacher un écouteur d'événements pour les clics
     exploseButtons.forEach(button => {
@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => {
                 console.error('Login error:', error);
+                alert('Mauvais Login ! Veuillez reessayer', error);
             });
     });
 });

@@ -28,9 +28,7 @@ function updateProfilePage(userInfo) {
     // Supposons que vous avez un moyen de calculer le ratio victoires/défaites et le meilleur temps
     const winLossRatio = userInfo.wins > 0 ? (userInfo.wins / (userInfo.wins + userInfo.losses)).toFixed(2) : 0;
     document.querySelector('.userStats').innerHTML = `
-        <p>Games won: ${userInfo.wins}</p>
-        <p>Win/lose ratio: ${winLossRatio}</p>
-        <p>Level: ${userInfo.lvl}</p>
+        <p>Trophies: ${userInfo.trophies}</p>
     `;
 
     // Mise à jour des informations de niveau

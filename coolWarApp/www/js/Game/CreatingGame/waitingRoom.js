@@ -61,6 +61,24 @@ function handleGameStart() {
 }
 
 function handleClockLaunch(seconds) {
+
+    document.addEventListener('deviceready', () => {
+        console.log("Device ready");
+
+        // Définir le chemin vers le fichier sonore
+        var mediaUrl = '/android_asset/www/assets/audio/clock.wav';
+
+        // Créer l'objet Media une seule fois après que l'appareil est prêt
+        var clickSound = new Media(mediaUrl, function onSuccess() {
+            // Succès lors de la lecture du son
+            console.log("Audio played successfully");
+        }, function onError(error) {
+            // Erreur lors de la lecture du son
+            console.error("Error playing audio: " + error.code + " - " + error.message);
+        });
+        clickSound.play();
+
+    });
     console.log(`Game starting in ${seconds} seconds...`);
     // Mettre à jour l'interface utilisateur avec le compte à rebours
     const countdownElement = document.getElementById('countdown'); // Assurez-vous d'avoir cet élément dans votre HTML
@@ -69,6 +87,7 @@ function handleClockLaunch(seconds) {
         return;
     }
     countdownElement.innerText = `Game starting in ${seconds} seconds...`;
+
 
     // Si le compte à rebours atteint 0, vous pouvez choisir de masquer l'élément ou de mettre à jour le texte
     if (seconds === 0) {
@@ -123,6 +142,24 @@ function emitPlayerReady(token) {
         console.log('player ready response');
         console.log(data);
     });
+
+    document.addEventListener('deviceready', () => {
+        console.log("Device ready");
+
+        // Définir le chemin vers le fichier sonore
+        var mediaUrl = '/android_asset/www/assets/audio/ready.wav';
+
+        // Créer l'objet Media une seule fois après que l'appareil est prêt
+        var clickSound = new Media(mediaUrl, function onSuccess() {
+            // Succès lors de la lecture du son
+            console.log("Audio played successfully");
+        }, function onError(error) {
+            // Erreur lors de la lecture du son
+            console.error("Error playing audio: " + error.code + " - " + error.message);
+        });
+        clickSound.play();
+
+    });
 }
 
 // Affichage de la popup des amis
@@ -168,7 +205,6 @@ function loadFriends() {
                             <p>${friend.username}</p>
                         </div>
                         <div class="rightSide">
-                            <p>Level ${friend.level}</p>
                         </div>
                     </div>
                 `;

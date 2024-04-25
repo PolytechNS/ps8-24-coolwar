@@ -30,7 +30,6 @@ function populateLeaderboard(users) {
             </div>
             <div class="rightSide">
                 <p>${user.trophies} Trophées</p>
-                <img class="levelPic" src="../../../assets/level${user.lvl}.png">
             </div>
         `;
 

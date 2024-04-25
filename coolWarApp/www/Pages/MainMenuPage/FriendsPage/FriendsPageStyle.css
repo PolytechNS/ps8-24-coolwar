@@ -132,6 +132,14 @@ button{
         font-size: 15px;
     }
 
+    .friendRequest{
+        margin-right: 5px;
+        left: 8px;
+    }
+
+    .addFriend{
+        margin-left: 5px;
+    }
 }
 
 

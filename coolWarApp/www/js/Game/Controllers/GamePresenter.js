@@ -64,10 +64,28 @@ export class GamePresenter {
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
 
+
        this.init_walls(horizontal_walls_HTML, model);
        this.init_walls(vertical_walls_HTML,model);
        this.init_playable_case(playable_case_HTML);
+       this.initValidationBtn();
        if(this.model.typeGame === "withFriends"){this.init_bonus();}
+    }
+
+    initValidationBtn(){
+        // Les boutons sont déjà dans le DOM, on ne change que leur comportement
+        const confirmButton = document.getElementById("confirmMove");
+        const cancelButton = document.getElementById("cancelMove");
+
+        confirmButton.onclick = () => {
+            console.log("Confirm button clicked");
+            console.log(confirmButton.classList);
+            if(!confirmButton.classList.contains('active_BTN_SELECTION')){alert("You must select a move before confirming !");}
+        }
+        cancelButton.onclick = () => {
+            console.log("Cancel button clicked");
+            if(!cancelButton.classList.contains('active_BTN_SELECTION')){alert("You must select a move before canceling !");}
+        }
     }
 
     init_bonus() {
@@ -221,6 +239,24 @@ export class GamePresenter {
                         //token
                         actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
                             if(res){
+                                document.addEventListener('deviceready', () => {
+                                    console.log("Device ready");
+
+                                    // Définir le chemin vers le fichier sonore
+                                    var mediaUrl = '/android_asset/www/assets/audio/foot.mp3';
+
+                                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                                        // Succès lors de la lecture du son
+                                        console.log("Audio played successfully");
+                                    }, function onError(error) {
+                                        // Erreur lors de la lecture du son
+                                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                                    });
+                                    clickSound.play();
+                                    navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+
+                                });
                                 this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                                 //ON RETIRE L'ANCIEN STYLE
                                 this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
@@ -231,74 +267,6 @@ export class GamePresenter {
                     playable_case.style.backgroundColor = originalBackGroundColor;
                     this.hideConfirmationButtons();
                 });
-
-
-                /* POPUP DE CONFIRMATION
-                const popup = document.getElementById("validationPopup");
-                const span = document.getElementsByClassName("validationPOPUP-close")[0];
-                const confirmButton = document.getElementById("confirmMove");
-                const cancelButton = document.getElementById("cancelMove");
-
-                const openPopup = () => {popup.style.display = "block";};
-                const closePopup = () => {popup.style.display = "none";};
-
-                span.onclick = function() {popup.style.display = "none";}
-
-                window.onclick = function(event) {if (event.target === popup) {popup.style.display = "none";}}
-
-                openPopup();
-
-                function waitForUserAction() {
-                    return new Promise((resolve, reject) => {
-                        // Obtenez les boutons de confirmation et d'annulation
-                        const confirmButton = document.getElementById("confirmMove");
-                        const cancelButton = document.getElementById("cancelMove");
-
-                        // Définir les gestionnaires d'événements pour résoudre la promesse
-                        confirmButton.onclick = () => resolve(true);
-                        cancelButton.onclick = () => resolve(false);
-                    });
-                }
-                async function handleUserAction() {
-                    // Ouvrir la popup avant d'attendre la réponse
-                    document.getElementById("validationPopup").style.display = "block";
-
-                    try {
-                        const userConfirmed = await waitForUserAction();
-                        if (userConfirmed) {
-                            console.log("L'utilisateur a confirmé");
-                            // Insérer ici la logique à exécuter en cas de confirmation
-                        } else {
-                            console.log("L'utilisateur a annulé");
-                            // Insérer ici la logique à exécuter en cas d'annulation
-                        }
-                        return userConfirmed;
-                    } catch (error) {
-                        console.error("Une erreur s'est produite:", error);
-                    }
-                }
-
-                handleUserAction().then((value)=>{
-                    console.log("INDSIDE POPUP CHOICE !",value);
-                    //si le choix est true (confirmer effectuer) -> on fait l'action
-                    if(value){
-                        actionGameService.getPlayerPosition(this.model.typeGame,this.model.ownIndexPlayer,this.model.gameId,(res)=>{
-                            oldPosition = res;
-                        });
-                        //token
-                        actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
-                            if(res){
-                                this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
-                                //ON RETIRE L'ANCIEN STYLE
-                                this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
-                                this.sendUpdateToBack();
-                            }
-                        });
-                    }
-                    else{}
-                    closePopup();
-                });
-                */
             };
             playable_case.addEventListener('click', clickMoveHandler);
         });
@@ -343,6 +311,23 @@ export class GamePresenter {
                         actionGameService.explodeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                             if(isAuthorized){
                                 this.sendUpdateToBack();
+                                document.addEventListener('deviceready', () => {
+                                    console.log("Device ready");
+
+                                    // Définir le chemin vers le fichier sonore
+                                    var mediaUrl = '/android_asset/www/assets/audio/explosion.wav';
+
+                                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                                        // Succès lors de la lecture du son
+                                        console.log("Audio played successfully");
+                                    }, function onError(error) {
+                                        // Erreur lors de la lecture du son
+                                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                                    });
+                                    clickSound.play();
+
+                                });
                                 // Ici, l'animation d'explosion est déclenchée
                                 /*const explodeElement = document.createElement('div');
                                 explodeElement.classList.add('explode');
@@ -413,6 +398,23 @@ export class GamePresenter {
                         console.log(" -> ",dataToSend);
                         actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                             if(isAuthorized) {
+                                document.addEventListener('deviceready', () => {
+                                    console.log("Device ready");
+
+                                    // Définir le chemin vers le fichier sonore
+                                    var mediaUrl = '/android_asset/www/assets/audio/wall.wav';
+
+                                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                                        // Succès lors de la lecture du son
+                                        console.log("Audio played successfully");
+                                    }, function onError(error) {
+                                        // Erreur lors de la lecture du son
+                                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                                    });
+                                    clickSound.play();
+
+                                });
                                 //GESTION DES SUPERS-POUVOIRS SUR LES MUR
                                 wallListObj.forEach((wallToEdit) => {
                                     let wallInside = wallToEdit.children.item(0);
@@ -432,9 +434,33 @@ export class GamePresenter {
     };
 
     checkEndGame(){
+        console.log("CHECK END GAME");
         actionGameService.checkWinner(this.model.typeGame,this.model.gameId,(callback)=>{
             console.log(callback);
             if(callback===1  || callback===2){
+                document.addEventListener('deviceready', () => {
+                    console.log("Device ready");
+
+                    if(this.model.ownIndexPlayer===callback){
+                        var mediaUrl = '/android_asset/www/assets/audio/victory.mp3';
+
+                    }else{
+                        var mediaUrl = '/android_asset/www/assets/audio/loose.mp3';
+
+                    }
+                    // Définir le chemin vers le fichier sonore
+
+                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                        // Succès lors de la lecture du son
+                        console.log("Audio played successfully");
+                    }, function onError(error) {
+                        // Erreur lors de la lecture du son
+                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                    });
+                    clickSound.play();
+
+                });
                 let winner_HTML = document.querySelectorAll('#winner');
                 winner_HTML.item(0).innerHTML = "Winner = "+callback;
                 this.cancel_behaviour();
@@ -562,13 +588,27 @@ export class GamePresenter {
 
     showConfirmationButtons() {
         console.log("SHOW CONFIRMATION BUTTONS");
-        const confirmButtons = document.querySelectorAll('.action-buttons').item(0);
-        confirmButtons.style.opacity = "1";
+        // Les boutons sont déjà dans le DOM, on ne change que leur comportement
+        const confirmButton = document.getElementById("confirmMove");
+        const cancelButton = document.getElementById("cancelMove");
+
+        confirmButton.classList.add('active_BTN_SELECTION');
+        cancelButton.classList.add('active_BTN_SELECTION');
+        confirmButton.classList.remove('inactive_BTN_SELECTION');
+        cancelButton.classList.remove('inactive_BTN_SELECTION');
     }
     hideConfirmationButtons() {
-        const confirmButtons = document.querySelectorAll('.action-buttons').item(0);
-        confirmButtons.style.opacity = "0.5";
+        console.log("SHOW CONFIRMATION BUTTONS");
+        // Les boutons sont déjà dans le DOM, on ne change que leur comportement
+        const confirmButton = document.getElementById("confirmMove");
+        const cancelButton = document.getElementById("cancelMove");
+
+        confirmButton.classList.remove('active_BTN_SELECTION');
+        cancelButton.classList.remove('active_BTN_SELECTION');
+        confirmButton.classList.add('inactive_BTN_SELECTION');
+        cancelButton.classList.add('inactive_BTN_SELECTION');
     }
 }
+
 
 

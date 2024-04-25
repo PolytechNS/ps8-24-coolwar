@@ -6,6 +6,10 @@ export const userService = {
 
     getUserInfo(callback){
         // Demander le modèle de jeu en utilisant la socket de socketManager
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            socketManager.initializeSocket(localStorage.getItem('token'));
+
+        }
         console.log("le token" ,localStorage.getItem('token'));
         socketManager.socket.emit('get info user', JSON.stringify(localStorage.getItem('token')));
 
@@ -101,7 +105,26 @@ export const userService = {
                 }
                 return response.json();
             });
+    },
+
+    activateWatchAd(token,watch){
+        return fetch(`${config.API_ENDPOINT}/api/users/activateWatch`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({token,watch}),
+        })
+            .then(response => {
+                console.log("response",response);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            });
     }
+
 
 
 }

@@ -44,7 +44,7 @@ document.addEventListener('deviceready', () => {
         console.error("Error playing audio: " + error.code + " - " + error.message);
     });
 
-    const exploseButtons = document.querySelectorAll(".explose");
+    const exploseButtons = document.querySelectorAll(".soundApp");
 
     // Boucler sur chaque élément et attacher un écouteur d'événements pour les clics
     exploseButtons.forEach(button => {
@@ -55,18 +55,101 @@ document.addEventListener('deviceready', () => {
     });
 });
 
+function showCssWatch(watch) {
+    // Appliquer le style pour cacher tout le contenu existant
+    document.body.style.cssText = `
+        margin: 0;
+        padding: 0;
+        width: 352px;
+        height: 430px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px; // Taille de police pour un petit écran
+    `;
 
-document.addEventListener("DOMContentLoaded", () => {
+    // Supprimer tous les enfants du body
+    while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
+    }
+
+    // Importer la police et appliquer le style
+    var styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `
+        @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+        .watch-content {
+            font-family: 'Kumar One', cursive; // Utilisation de la police Kumar One
+            color: white; // Couleur du texte
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
+    // Créer et ajouter le contenu spécifique pour le mode montre
+    const watchContent = document.createElement("div");
+    watchContent.className = "watch-content";
+    if(watch){
+        watchContent.textContent = "notifications : ";
+        injectNotificationStyles();
+        listenToNotificationsWatch(watchContent);
+
+
+    }else{
+        watchContent.textContent = "Activez le mode watch dans les settings ";
+
+    }
+    document.body.appendChild(watchContent);
+}
+
+function listenToNotificationsWatch(watchContent) {
+    socketManager.socket.on('receive notification', (notification) => {
+        console.log('New notification received:', notification);
+
+        let notificationBell = document.querySelector('.notification-bell');
+        if (!notificationBell) {
+            notificationBell = document.createElement('img');
+            notificationBell.src = '../../../../assets/bell-icon.png'; // Assurez-vous que le chemin d'accès est correct
+            notificationBell.className = 'notification-bell';
+            notificationBell.style.width = '92px';
+            notificationBell.style.height = '92px';
+
+            // Modifier le style de watchContent pour utiliser le flexbox et centrer le contenu
+            watchContent.style.display = 'flex';
+            watchContent.style.flexDirection = 'column';
+            watchContent.style.alignItems = 'center';
+            watchContent.style.justifyContent = 'center';
+            watchContent.style.height = '100%'; // S'assurer que la div prend toute la hauteur
+
+            // Ajouter la cloche directement au contenu de la montre
+            watchContent.appendChild(notificationBell);
+        }
+
+        // Ajouter la classe 'shake' pour activer l'animation
+        notificationBell.classList.add('shake');
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
     if (!socketManager.isSocketInitialized(token)) {
         socketManager.initializeSocket(token);
     }
+
+    await userService.getUserInfo(async (userInfo) => {
+        if (window.innerWidth <= 400 && window.innerHeight <= 500) {
+            showCssWatch(userInfo.watch);
+            return;
+        }
+    });
+
     updateNotificationRequest();
     listenToNotifications();
     listenToNotificationsMobile()
     if (token) {
         userService.getUserInfo((userInfo) => {
             // Mettre à jour le nom d'utilisateur
+            console.log('USER INFO:', userInfo);
             const usernameElement = document.querySelector('.nameAndLogout .username');
             if (usernameElement) {
                 usernameElement.textContent = userInfo.username;
@@ -220,5 +303,3 @@ function listenToNotifications() {
 
 // Appeler cette fonction pour injecter les styles lorsque le script est exécuté
 injectNotificationStyles();
-
-

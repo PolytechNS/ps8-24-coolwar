@@ -4,6 +4,7 @@ const { MONGO_URL, exp_earned_bot, exp_earned_online, trophies_earned_online
     , trophies_lost_online,
     withBot,
     withFriends, ex_earned_bot_looser, ex_earned_online_looser } = require("../Utils/constants");
+const {retrieveCharacterFromDb} = require("./gameUserController");
 
 const client = new MongoClient(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -33,49 +34,48 @@ async function addExpToPlayerWithBot(token, typeGame) {
     }
 }
 
-    async function manageEndGameUser(gameId, winner,looser) {
+    async function manageEndGameUser(gameId, winner) {
     await client.connect();
     const db = client.db();
     let gameBoard = await db.collection('gameboards').findOne({ gameId: new ObjectId(gameId) });
-    console.log("gameBoard", gameBoard);
+    //console.log("gameBoard", gameBoard);
     let players = await db.collection('character').find({gameBoardId: new ObjectId(gameBoard._id)}).toArray();
-    console.log("players", players);
     let player1 = players.find(player => player.currentPlayerIndex === 1);
-    console.log("player1", player1);
     let player2 = players.find(player => player.currentPlayerIndex === 2);
-    console.log("player2", player2);
     let play1Db = await db.collection('users').findOne({_id: new ObjectId(player1.userId)});
     let play2Db = await db.collection('users').findOne({_id: new ObjectId(player2.userId)});
     console.log("play1Db", play1Db);
     console.log("play2Db", play2Db);
     //checker qui est winner
     if(winner === 1){
-        let newExp = play1Db.exp + exp_earned_online;
-        let newWins = play1Db.wins + 1;
-        let newTro = play1Db.trophies + trophies_earned_online;
-        let newLosses = play2Db.losses + 1;
+        console.log("winner is player1 !");
+        let newExp_WINNER = play1Db.exp + exp_earned_online;
+        let newWins_WINNER = play1Db.wins + 1;
+        let newTro_WINNER = play1Db.trophies + trophies_earned_online;
+        let newLosses_LOOSER = play2Db.losses + 1;
 
-        let newTro2 = play2Db.trophies + trophies_lost_online;
-        if(newTro2<0){
-            newTro2 = 0;
+        let newTro_LOOSER = play2Db.trophies + trophies_lost_online;
+        if(newTro_LOOSER<0){
+            newTro_LOOSER = 0;
         }
-        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId)}, { $set: { exp: newExp, wins:newWins, trophies:newTro } });
+        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId)}, { $set: { exp: newExp_WINNER, wins:newWins_WINNER, trophies:newTro_WINNER } });
         let newExp2 = play2Db.exp + ex_earned_online_looser;
-        await db.collection('users').updateOne({ _id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses: newLosses,trophies:newTro2 } });
+        await db.collection('users').updateOne({ _id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses: newLosses_LOOSER,trophies:newTro_LOOSER } });
 
     }
     else{
-        let newExp = play1Db.exp + ex_earned_online_looser;
-        let newTro = play1Db.trophies + trophies_lost_online;
-        if(newTro<0){
-            newTro = 0;
+        console.log("winner is player2 !");
+        let newExp_LOOSER = play1Db.exp + ex_earned_online_looser;
+        let newTro_LOOSER = play1Db.trophies + trophies_lost_online;
+        if(newTro_LOOSER<0){
+            newTro_LOOSER = 0;
         }
-        let newWins = play2Db.wins + 1;
-        let newLosses = play1Db.losses + 1;
-        let newTro2 = play2Db.trophies + trophies_earned_online;
-        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId) }, { $set: { exp: newExp, wins :newWins, trophies:newTro } });
-        let newExp2 = play2Db.exp + exp_earned_online;
-        await db.collection('users').updateOne({_id: new ObjectId(player2.userId) }, { $set: { exp: newExp2, losses:newLosses, trophies:newTro2 } });
+        let newWins_WINNER = play2Db.wins + 1;
+        let newLosses_LOOSER = play1Db.losses + 1;
+        let newTro_WINNER = play2Db.trophies + trophies_earned_online;
+        await db.collection('users').updateOne({ _id: new ObjectId(player1.userId) }, { $set: { exp: newExp_LOOSER, losses :newLosses_LOOSER, trophies:newTro_LOOSER } });
+        let newExp_WINNER = play2Db.exp + exp_earned_online;
+        await db.collection('users').updateOne({_id: new ObjectId(player2.userId) }, { $set: { exp: newExp_WINNER, wins:newWins_WINNER, trophies:newTro_WINNER } });
     }
     manageLvl(play1Db.token);
     manageLvl(play2Db.token);
@@ -113,8 +113,9 @@ async function manageLvl(token) {
     }
 }
 
-async function checkAchievements(token) {
+async function checkAchievements(token,winner,gameId) {
     try {
+        console.log("----------CHECK ACHIEVEMENT----------");
         await client.connect();
         const db = client.db();
         const user = await db.collection('users').findOne({ token });
@@ -122,11 +123,24 @@ async function checkAchievements(token) {
             return { success: false, message: 'User not found' };
         }
 
+        console.log("user", user);
+        console.log("winner", winner);
+        console.log("gameId", gameId);
+        //call db pour avoir le tableau des personnages
+        const gameIdDb = await db.collection('games').findOne({ _id: new ObjectId(gameId) });
+        console.log("gameDb", gameIdDb);
+        const gameBoardId = await db.collection('gameboards').findOne({ gameId: gameIdDb._id });
+        const playerBd = await retrieveCharacterFromDb(db,gameBoardId._id);
+        const winnerPlayer = playerBd.find(player => player.currentPlayerIndex === winner);
+        const amIWinner = (String(winnerPlayer.userId) === String(user._id));
+
+        console.log("amIWinner for token ", token, " : ", amIWinner);
+
         const achievements = user.achievements || [];
         let unlockedAchievements = []; // Pour stocker les achievements débloqués
 
         // Vérifier chaque condition d'achievement et mettre à jour le tableau des débloqués
-        if (!achievements.includes('first_win.png') && user.wins > 0) {
+        if (amIWinner && user.wins === 1){
             await db.collection('users').updateOne({ token }, { $push: { achievements: 'first_win.png' } });
             unlockedAchievements.push('first_win.png');
         }
@@ -237,6 +251,45 @@ async function getLeaderBoard(req, res, db) {
     res.end(JSON.stringify({ users }));
 }
 
+async function activateWatch(req, res, db) {
+    parseJSON(req, async (err, data) => {
+        if (err) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Invalid JSON');
+            return;
+        }
+
+        const { token, watch } = data;
+
+        if (!token || !watch) {
+            res.writeHead(400, { 'Content-Type': 'text/plain' });
+            res.end('Missing token or watch');
+            return;
+        }
+
+        try {
+            const user = await db.collection('users').findOne({ token });
+            if (!user) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('User not found');
+                return;
+            }
+
+            await db.collection('users').updateOne({ token }, { $set: { watch } });
+
+            const updatedUser = await db.collection('users').findOne({ token});
+            console.log("updatedUser", updatedUser);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Watch activated successfully' }));
+        } catch (error) {
+            console.error('Error activating watch', error);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Error activating watch');
+        }
+    });
+}
+
 
 let skinsServer = ["perso1", "perso2", "perso3", "perso4", "perso5", "perso6", "perso7", "perso8", "perso9"];
 async function getSkinsUser(req,res,db) {
@@ -272,11 +325,12 @@ async function getNotifications(req, res, db) {
 
     console.log("token dans get notifications", token);
     const user = await db.collection('users').findOne({ token:token });
-    const notifications = await db.collection('notifications').find({ to: user._id }).toArray();
-
     if (!user) {
         return { success: false, message: 'User not found' };
     }
+    const notifications = await db.collection('notifications').find({ to: user._id }).toArray();
+
+
     console.log("les notifications", notifications);
     res.writeHead(201, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, notifications }));
@@ -327,6 +381,7 @@ async function removeNotification(req, res, db) {
 
 
 module.exports = {
+    activateWatch,
     addExpToPlayerWithBot,
     manageEndGameUser,
     checkAchievements,
