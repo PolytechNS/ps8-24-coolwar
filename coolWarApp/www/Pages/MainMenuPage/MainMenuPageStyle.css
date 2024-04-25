@@ -18,6 +18,11 @@ h2{
     h2 {
         margin-top: 0;
     }
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        height: unset;
+    }
 }
 
 @media screen and (max-width: 1100px) and (min-width: 599px){

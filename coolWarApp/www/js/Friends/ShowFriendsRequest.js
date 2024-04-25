@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p>${request.username}</p> <!-- Nom de l'utilisateur qui a envoyé la demande -->
                         </div>
                         <div class="rightSide">
-                            <p>En ligne il y a 14h...</p> <!-- Supposons que vous avez cette information -->
                             <img class="levelPic" src="../../../../assets/level99.png"> <!-- Remplacez par le niveau de l'utilisateur si disponible -->
                         </div>
                     </div>

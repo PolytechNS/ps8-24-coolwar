@@ -429,6 +429,7 @@ button{
     height: 24px;
     vertical-align: middle;
     /* Ajoutez ici d'autres styles si nécessaire */
+    margin-right: 15px;
 }
 
 .logout-pic{
@@ -442,6 +443,15 @@ button{
 
 
 @media screen and (max-width: 600px) {
+    html{
+        height: 100%;
+    }
+
+    main{
+        height: 100%;
+        width: 100%;
+    }
+
     body{
         font-size: 12px;
         height: 100%;
@@ -453,8 +463,7 @@ button{
     }
 
     .head{
-        padding:12px;
-        margin:0;
+        padding: 20px;
     }
 
     h1{
@@ -462,11 +471,15 @@ button{
     }
 
     .cadre{
-        min-width: 300px;
+        margin: 30px auto;
+        width: 90%;
+        padding: 10px;
+        min-width: unset;
     }
 
     .grid{
         grid-template-columns: 1fr 15fr 1fr;
+        margin-bottom: 50px;
     }
 
     h2{
@@ -597,6 +610,7 @@ button{
 
     .grid{
         grid-template-columns: 1fr 15fr 1fr;
+        margin-bottom: 50px;
     }
 
     .logo {
@@ -674,7 +688,7 @@ button{
     }
 
     .nameAndLogout {
-        display: none;
+        margin-left: 5px;
     }
 
     .profilePicture {
@@ -699,5 +713,9 @@ button{
 
     #backButton{
         display:none;
+    }
+
+    .username{
+        display: none;
     }
 }
