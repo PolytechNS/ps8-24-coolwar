@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     userService.getUserInfo((userInfo) => {
         console.log('User info in config:', userInfo);
 
-    }).catch(error => {
-        console.error('Error getting user info:', error);
     });
 
     watchSwitch.addEventListener('change', function() {
