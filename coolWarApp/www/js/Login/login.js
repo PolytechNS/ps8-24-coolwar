@@ -83,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginButton = document.getElementById('LoginBTN');
     loginButton.addEventListener('click', function(event) {
         event.preventDefault();
-        navigator.vibrate(10);
         const username = document.querySelector('#usernameLogin').value
         const password = document.querySelector('#passwordLogin').value
 
