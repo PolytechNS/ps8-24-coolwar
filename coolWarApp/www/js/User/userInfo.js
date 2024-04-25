@@ -73,6 +73,9 @@ function updateNotificationRequest() {
         if(notifications.notifications.length > 0){
             let notificationBell = document.querySelector('.notification-bell');
             if (!notificationBell) {
+                const anchorElement = document.createElement('a');
+                anchorElement.href = 'NotificationPage/NotificationPage.html';
+
                 notificationBell = document.createElement('img');
                 notificationBell.src = '../../../../assets/bell-icon.png';
                 notificationBell.className = 'notification-bell';
@@ -80,9 +83,11 @@ function updateNotificationRequest() {
                 notificationBell.style.height = '24px';
                 notificationBell.style.verticalAlign = 'middle';
 
+                anchorElement.appendChild(notificationBell);
+
                 const nameAndLogoutDiv = document.querySelector('.nameAndLogout');
                 if (nameAndLogoutDiv) {
-                    nameAndLogoutDiv.appendChild(notificationBell);
+                    nameAndLogoutDiv.appendChild(anchorElement);
                 }
             }
 

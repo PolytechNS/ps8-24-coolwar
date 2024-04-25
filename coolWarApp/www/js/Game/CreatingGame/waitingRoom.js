@@ -167,8 +167,7 @@ function loadFriends() {
                             <p>${friend.username}</p>
                         </div>
                         <div class="rightSide">
-                            <p>En ligne il y a 14h...</p>
-                            <img class="levelPic" src="../../../assets/level${friend.level}.png">
+                            <p>Level ${friend.level}</p>
                         </div>
                     </div>
                 `;
