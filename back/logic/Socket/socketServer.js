@@ -43,34 +43,34 @@ module.exports = (server) => {
                     .catch((error) => console.error('Error sending server-start notification:', error));
 
 
-                // setTimeout(async () => {
-                //         console.log("EVENT DANCEEER !");
-                //         for(let socketId in connectedUsers){
-                //             io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
-                //             eventGiven = true;
-                //             for(let socketId in connectedUsers){
-                //                 let userId = connectedUsers[socketId].userId;
-                //
-                //                 await client.connect();
-                //                 const db = client.db();
-                //
-                //                 const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
-                //
-                //                 await db.collection('users').updateOne(
-                //                     { _id: userObjectId }, // Critère de recherche
-                //                     { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
-                //                 );
-                //
-                //             }
-                //     }
-                // }, 10000);
-
                 setTimeout(async () => {
-                    console.log("EVENT HALLOWWEEEENN!");
-                    for(let socketId in connectedUsers){
-                        io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
+                        console.log("EVENT DANCEEER !");
+                        for(let socketId in connectedUsers){
+                            io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
+                            eventGiven = true;
+                            for(let socketId in connectedUsers){
+                                let userId = connectedUsers[socketId].userId;
+
+                                await client.connect();
+                                const db = client.db();
+
+                                const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+
+                                await db.collection('users').updateOne(
+                                    { _id: userObjectId }, // Critère de recherche
+                                    { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
+                                );
+
+                            }
                     }
                 }, 10000);
+
+                // setTimeout(async () => {
+                //     console.log("EVENT HALLOWWEEEENN!");
+                //     for(let socketId in connectedUsers){
+                //         io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
+                //     }
+                // }, 10000);
                 eventGiven = true;
 
 

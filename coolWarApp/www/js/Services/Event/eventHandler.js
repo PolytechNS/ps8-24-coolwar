@@ -10,13 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('event alert', data);
 
-
         document.addEventListener('deviceready', OneSignalInit, false);
         function OneSignalInit() {
 
             var pattern = [500, 250, 500, 250, 500, 250, 500, 250, 500];
             navigator.vibrate(pattern);
         }
+
+
 
         // Immediately show the alert element when the event is received
         eventAlertSpan.style.display = 'block';
