@@ -56,31 +56,28 @@ document.addEventListener('deviceready', () => {
 });
 
 function showCssWatch(){
-    // Créer et ajouter un élément de style
-    var css = document.createElement("style");
-    css.type = "text/css";
-    css.innerHTML = `
-    body, html {
+    // Appliquer le style pour cacher tout le contenu existant
+    document.body.style.cssText = `
         margin: 0;
         padding: 0;
         width: 352px;
         height: 430px;
+        background-color: black; // Fond noir pour un affichage de montre typique
+        color: white; // Texte en blanc pour contraste
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: black; /* Fond noir pour un affichage de montre typique */
-    }
-    .watch-content {
-        color: white; /* Texte blanc pour contraste */
-        font-size: 24px; /* Taille de police appropriée pour un petit écran */
-    }
+        font-size: 16px; // Taille de police pour un petit écran
     `;
-    document.head.appendChild(css);
+
+    // Supprimer tous les enfants du body sauf l'élément voulu pour le mode montre
+    while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
+    }
 
     // Créer et ajouter le contenu spécifique pour le mode montre
-    var watchContent = document.createElement("div");
-    watchContent.className = "watch-content";
-    watchContent.textContent = "notifications : "; // Vous pouvez ajouter ici la logique pour afficher les notifications réelles
+    const watchContent = document.createElement("div");
+    watchContent.textContent = "notifications : ";
     document.body.appendChild(watchContent);
 }
 
