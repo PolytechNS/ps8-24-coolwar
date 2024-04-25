@@ -12,12 +12,12 @@ const handleWithFriendsMode = require('./GameModes/withFriends.js');
 const handleWithBotsMode = require('./GameModes/withBots');
 const handleOfflineMode = require('./GameModes/offline');
 const handleChat = require('./Chat.js');
-
-
+const sendNotification  = require('./onSignal.js');
 
 
 
 const connectedUsers = {};
+let eventGiven = false;
 
 module.exports = (server) => {
     const io = socketIo(server, {
@@ -33,6 +33,51 @@ module.exports = (server) => {
         handleWithBotsMode(io, socket);
         handleOfflineMode(io, socket);
         handleChat(io, socket);
+        manageEvents(io, socket);
+
+        function manageEvents(io, socket){
+            if(!eventGiven){
+
+                sendNotification("Event halloween soon !")
+                    .then(() => console.log('Notification sent on server start'))
+                    .catch((error) => console.error('Error sending server-start notification:', error));
+
+
+
+                // setTimeout(async () => {
+                //         console.log("EVENT DANCEEER !");
+                //         for(let socketId in connectedUsers){
+                //             io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
+                //             eventGiven = true;
+                //             for(let socketId in connectedUsers){
+                //                 let userId = connectedUsers[socketId].userId;
+                //
+                //                 await client.connect();
+                //                 const db = client.db();
+                //
+                //                 const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+                //
+                //                 await db.collection('users').updateOne(
+                //                     { _id: userObjectId }, // Critère de recherche
+                //                     { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
+                //                 );
+                //
+                //             }
+                //     }
+                // }, 20000);
+
+                setTimeout(async () => {
+                    console.log("EVENT HALLOWWEEEENN!");
+                    for(let socketId in connectedUsers){
+                        io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
+                    }
+                }, 10000);
+                eventGiven = true;
+
+
+            }
+
+        }
 
         // Exemple de récupération de l'ID utilisateur lors de la connexion
         // Cela suppose que l'ID de l'utilisateur est envoyé juste après la connexion via un événement 'authenticate' ou similaire
@@ -41,12 +86,16 @@ module.exports = (server) => {
             await client.connect();
             const db = client.db();
             let user = await db.collection('users').findOne({ token: token});
-            connectedUsers[socket.id] = { userId: user._id};
-            console.log(`Client authenticated: ${user._id}`);
-            console.log('Connected users:', connectedUsers);
+            console.log("user", user);
+            if(user){
+                connectedUsers[socket.id] = { userId: user._id};
+                console.log(`Client authenticated: ${user._id}`);
+                console.log('Connected users:', connectedUsers);
+            }
 
-            // Vous pouvez également stocker d'autres informations ici
         });
+
+
 
         socket.on('disconnect', () => {
             console.log(`Client disconnected: ${connectedUsers[socket.id]?.userId}`);

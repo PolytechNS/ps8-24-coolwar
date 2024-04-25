@@ -18,6 +18,11 @@ h2{
     h2 {
         margin-top: 0;
     }
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        height: unset;
+    }
 }
 
 @media screen and (max-width: 1100px) and (min-width: 599px){
@@ -34,5 +39,113 @@ h2{
         align-self:start;
         margin-top: 30px;
         height: unset;
+    }
+}
+
+.alert {
+    font-size: 200%;
+    color: #F00;
+    text-shadow:-1px -1px 0 #900, 1px -1px 0 #900, -1px 1px 0 #900, 1px 1px 0 #900, 0 0 20px #990000;
+    text-transform:uppercase;
+    display: none;
+    animation: alert 1s linear infinite;
+    -webkit-animation: alert 1s linear infinite;}
+
+@keyframes warp {
+    0% {
+        opacity: 0.25;
+        transform: scale(1);
+        animation-timing-function: ease-in;
+        -webkit-animation-timing-function: ease-in;}
+    85% {
+        opacity: 1;
+        transform: scale(2.8);
+        animation-timing-function: linear;
+        -webkit-animation-timing-function: linear;}
+    100% {
+        opacity: 0;
+        transform: scale(3.5);
+        -webkit-animation-timing-function: ease-out;
+        animation-timing-function: ease-out;}
+}
+@keyframes alert {
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+@-webkit-keyframes warp {
+    0% {
+        opacity: 0;
+        transform: scale(1);
+        animation-timing-function: ease-in;
+        -webkit-animation-timing-function: ease-in;}
+    85% {
+        opacity: 1;
+        transform: scale(2.8);
+        animation-timing-function: linear;
+        -webkit-animation-timing-function: linear;}
+    100% {
+        opacity: 0;
+        transform: scale(3.5);}
+}
+@-webkit-keyframes alert {
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+
+
+canvas#ghost {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+    width: 100%;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    font-size: 4vw;
+    text-shadow: 0 0 5px #000000;
+}
+
+.lil-gui {
+    --width: 300px;
+    max-width: 90%;
+    --widget-height: 20px;
+    font-size: 15px;
+    --input-font-size: 15px;
+    --padding: 10px;
+    --spacing: 10px;
+    --slider-knob-width: 5px;
+    --background-color: rgba(5, 0, 15, .8);
+    --widget-color: rgba(255, 255, 255, .3);
+    --focus-color: rgba(255, 255, 255, .4);
+    --hover-color: rgba(255, 255, 255, .5);
+    --font-family: monospace;
+    z-index: 1;
+}
+
+.woot-dance {
+    position: fixed;
+    bottom: 0;
+    display: none;
+    transform: translateX(-100px);
+    animation: dance linear 10s infinite alternate;
+}
+@keyframes dance {
+    0% {
+        transform: translateX(-100px);
+    }
+    100% {
+        transform: translateX(calc(100vw - (290px)));
     }
 }

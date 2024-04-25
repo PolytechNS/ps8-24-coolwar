@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p>${friend.username}</p>
                         </div>
                         <div class="rightSide">
-                            <p>En ligne il y a 14h...</p>
                             <img class="levelPic" src="../../../assets/level${friend.level}.png">
                         </div>
                     </div>
