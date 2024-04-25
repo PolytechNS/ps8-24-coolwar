@@ -103,9 +103,15 @@ function listenToNotificationsWatch(watchContent) {
             notificationBell = document.createElement('img');
             notificationBell.src = '../../../../assets/bell-icon.png'; // Assurez-vous que le chemin d'accès est correct
             notificationBell.className = 'notification-bell';
-            notificationBell.style.width = '24px';
-            notificationBell.style.height = '24px';
-            notificationBell.style.verticalAlign = 'middle';
+            notificationBell.style.width = '92px';
+            notificationBell.style.height = '92px';
+
+            // Modifier le style de watchContent pour utiliser le flexbox et centrer le contenu
+            watchContent.style.display = 'flex';
+            watchContent.style.flexDirection = 'column';
+            watchContent.style.alignItems = 'center';
+            watchContent.style.justifyContent = 'center';
+            watchContent.style.height = '100%'; // S'assurer que la div prend toute la hauteur
 
             // Ajouter la cloche directement au contenu de la montre
             watchContent.appendChild(notificationBell);
@@ -118,6 +124,7 @@ function listenToNotificationsWatch(watchContent) {
         setTimeout(() => notificationBell.classList.remove('shake'), 2000);
     });
 }
+
 
 document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem('token');
