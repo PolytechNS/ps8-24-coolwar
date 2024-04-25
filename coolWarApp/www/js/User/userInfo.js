@@ -90,6 +90,8 @@ function showCssWatch() {
     watchContent.className = "watch-content";
     watchContent.textContent = "notifications : ";
     document.body.appendChild(watchContent);
+
+    listenToNotifications();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
