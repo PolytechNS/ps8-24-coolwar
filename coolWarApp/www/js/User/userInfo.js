@@ -56,6 +56,10 @@ document.addEventListener('deviceready', () => {
 });
 
 function showCssWatch(){
+    // Supprimer tous les enfants du body sauf l'élément voulu pour le mode montre
+    while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
+    }
     // Créer un conteneur pour le mode montre
     const watchDiv = document.createElement("div");
     watchDiv.id = "watchModeContainer"; // Ajouter un ID pour des styles spécifiques
@@ -80,10 +84,7 @@ function showCssWatch(){
     // Ajouter la div du mode montre au body
     document.body.appendChild(watchDiv);
 
-    // Supprimer tous les enfants du body sauf l'élément voulu pour le mode montre
-    while (document.body.firstChild) {
-        document.body.removeChild(document.body.firstChild);
-    }
+
 
     const watchContent = document.createElement("div");
     watchContent.textContent = "notifications : ";
