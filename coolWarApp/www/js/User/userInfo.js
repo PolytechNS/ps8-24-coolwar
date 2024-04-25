@@ -1,6 +1,7 @@
 import {socketManager} from "../Socket/socketManager.js";
 import {userService} from "../Services/User/userService.js";
 
+var myMedia = null;
 
 document.addEventListener('deviceready', OneSignalInit, false);
 function OneSignalInit() {
@@ -28,6 +29,28 @@ function OneSignalInit() {
     });
 }
 
+document.addEventListener('deviceready', () => {
+    console.log("Device ready");
+
+    // Définir le chemin vers le fichier sonore
+    var mediaUrl = '/android_asset/www/assets/audio/click.wav';
+
+    // Créer l'objet Media une seule fois après que l'appareil est prêt
+    var clickSound = new Media(mediaUrl, function onSuccess() {
+        // Succès lors de la lecture du son
+        console.log("Audio played successfully");
+    }, function onError(error) {
+        // Erreur lors de la lecture du son
+        console.error("Error playing audio: " + error.code + " - " + error.message);
+    });
+
+    // Ajouter un écouteur d'événements pour les clics sur un élément spécifique
+    // Remplacez 'elementSelector' par le sélecteur CSS de l'élément sur lequel vous souhaitez détecter les clics
+    document.addEventListener('click', (event) => {
+        clickSound.play();
+    });
+});
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('token');
@@ -36,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateNotificationRequest();
     listenToNotifications();
+    listenToNotificationsMobile()
     if (token) {
         userService.getUserInfo((userInfo) => {
             // Mettre à jour le nom d'utilisateur
@@ -141,9 +165,34 @@ function injectNotificationStyles() {
     document.head.appendChild(style);
 }
 
+function listenToNotificationsMobile() {
+
+    // Ajouter un écouteur d'événements pour les clics sur la cloche de notification
+    document.addEventListener('deviceready', () => {
+        console.log("Device ready AND LISTENING TO NOTIFICATIONS MOBILE");
+        socketManager.socket.on('receive notification', (notification) => {
+            var mediaUrl = '/android_asset/www/assets/audio/notif.wav';
+            // Création d'un objet Media, prêt à jouer le son
+            myMedia = new Media(mediaUrl,
+                function onSuccess() {
+                    // Succès lors de la lecture du son
+                    console.log("Audio played successfully");
+                },
+                function onError(error) {
+                    // Erreur lors de la lecture du son
+                    console.error("Error playing audio: " + error.code + " - " + error.message);
+                }
+            );
+            myMedia.play();
+        });
+    });
+}
+
 function listenToNotifications() {
     socketManager.socket.on('receive notification', (notification) => {
         console.log('New notification received:', notification);
+        //vibrate
+
 
         let notificationBell = document.querySelector('.notification-bell');
         if (!notificationBell) {

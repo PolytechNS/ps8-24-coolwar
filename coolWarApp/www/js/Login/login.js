@@ -1,11 +1,27 @@
 // login.js
 import { AuthService } from '../Services/Login/authService.js'; // Mettez à jour le chemin selon votre structure de projet
 import { loginAdaptation } from './LoginAdaptation.js';
+var myMedia = null;
+
 
 
 document.addEventListener('deviceready', OneSignalInit, false);
 function OneSignalInit() {
-
+    var mediaUrl = '/android_asset/www/assets/audio/welcome_sound.mp3';
+    // Création d'un objet Media, prêt à jouer le son
+    myMedia = new Media(mediaUrl,
+        function onSuccess() {
+            // Succès lors de la lecture du son
+            console.log("Audio played successfully");
+        },
+        function onError(error) {
+            // Erreur lors de la lecture du son
+            console.error("Error playing audio: " + error.code + " - " + error.message);
+        }
+    );
+    myMedia.play();
+    console.log(navigator.vibrate);
+    navigator.vibrate(1000);
     console.log("OneSignalInit");
     // Remove this method to stop OneSignal Debugging
     window.plugins.OneSignal.Debug.setLogLevel(6);
@@ -29,6 +45,28 @@ function OneSignalInit() {
     });
 }
 
+
+document.addEventListener('deviceready', () => {
+    console.log("Device ready");
+
+    // Définir le chemin vers le fichier sonore
+    var mediaUrl = '/android_asset/www/assets/audio/click.wav';
+
+    // Créer l'objet Media une seule fois après que l'appareil est prêt
+    var clickSound = new Media(mediaUrl, function onSuccess() {
+        // Succès lors de la lecture du son
+        console.log("Audio played successfully");
+    }, function onError(error) {
+        // Erreur lors de la lecture du son
+        console.error("Error playing audio: " + error.code + " - " + error.message);
+    });
+
+    // Ajouter un écouteur d'événements pour les clics sur un élément spécifique
+    // Remplacez 'elementSelector' par le sélecteur CSS de l'élément sur lequel vous souhaitez détecter les clics
+    document.addEventListener('click', (event) => {
+        clickSound.play();
+    });
+});
 document.addEventListener('DOMContentLoaded', () => {
 
     //clean le cache localstorage
@@ -37,7 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.onresize = loginAdaptation;
 
     const loginButton = document.getElementById('LoginBTN');
-    loginButton.addEventListener('click', function() {
+    loginButton.addEventListener('click', function(event) {
+        event.preventDefault();
+        navigator.vibrate(10);
         const username = document.querySelector('#usernameLogin').value
         const password = document.querySelector('#passwordLogin').value
 
