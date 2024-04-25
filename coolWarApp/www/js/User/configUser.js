@@ -1,7 +1,7 @@
 import { userService } from "../Services/User/userService.js";
 
 document.addEventListener('DOMContentLoaded', function() {
-    const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
+    const notificationSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
 
     watchSwitch.checked = false;
 
