@@ -1,3 +1,10 @@
+.active_BTN_SELECTION{
+    opacity: 1;
+}
+
+.inactive_BTN_SELECTION{
+    opacity: 0.5;
+}
 
 main{
     display: flex;
