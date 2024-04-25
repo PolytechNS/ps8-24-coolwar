@@ -3,8 +3,8 @@ import { userService } from "../Services/User/userService.js";
 document.addEventListener('DOMContentLoaded', function() {
     const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
 
-    userService.getUserInfo().then(response => {
-        console.log('User info in config:', response);
+    userService.getUserInfo((userInfo) => {
+        console.log('User info in config:', userInfo);
 
     }).catch(error => {
         console.error('Error getting user info:', error);
