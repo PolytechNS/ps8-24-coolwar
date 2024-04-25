@@ -44,7 +44,7 @@ document.addEventListener('deviceready', () => {
         console.error("Error playing audio: " + error.code + " - " + error.message);
     });
 
-    const exploseButtons = document.querySelectorAll(".explose");
+    const exploseButtons = document.querySelectorAll(".soundApp");
 
     // Boucler sur chaque élément et attacher un écouteur d'événements pour les clics
     exploseButtons.forEach(button => {
