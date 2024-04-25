@@ -32,7 +32,7 @@
     <platform name="android">
         <preference name="GradlePluginKotlinEnabled" value="true" />
         <preference name="GradlePluginKotlinVersion" value="1.7.22" />
-        <icon src="www/assets/logo.png" />
+        <icon src="www/assets/logo_bien.png" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:usesCleartextTraffic="true" />
         </edit-config>
