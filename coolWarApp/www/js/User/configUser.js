@@ -3,7 +3,7 @@ import { userService } from "../Services/User/userService.js";
 document.addEventListener('DOMContentLoaded', function() {
     const watchSwitch = document.querySelector('.watch-slider');
     console.log('Watch switch:', watchSwitch);
-
+    watchSwitch.checked = false;
     userService.getUserInfo((userInfo) => {
         console.log('User info in config:', userInfo);
         console.log('User info watch in config:', userInfo.watch);
