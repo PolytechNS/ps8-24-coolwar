@@ -263,6 +263,9 @@ async function activateWatch(req, res, db) {
 
             await db.collection('users').updateOne({ token }, { $set: { watch } });
 
+            const updatedUser = await db.collection('users').findOne({ token});
+            console.log("updatedUser", updatedUser);
+
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Watch activated successfully' }));
         } catch (error) {
