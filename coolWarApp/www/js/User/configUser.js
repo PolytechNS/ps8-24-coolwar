@@ -3,10 +3,12 @@ import { userService } from "../Services/User/userService.js";
 document.addEventListener('DOMContentLoaded', function() {
     const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
 
+    watchSwitch.checked = false;
+
     userService.getUserInfo((userInfo) => {
         console.log('User info in config:', userInfo);
-        // Définir l'état du slider basé sur userInfo.watch
-        watchSwitch.checked = userInfo.watch === true;
+        // Si userInfo.watch est undefined ou false, le slider sera non coché.
+        watchSwitch.checked = !!userInfo.watch; // Coche le slider si userInfo.watch est true
     });
 
 
