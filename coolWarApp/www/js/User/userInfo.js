@@ -55,42 +55,41 @@ document.addEventListener('deviceready', () => {
     });
 });
 
-function showCssWatch(){
-    // Supprimer tous les enfants du body sauf l'élément voulu pour le mode montre
-    while (document.body.firstChild) {
-        document.body.removeChild(document.body.firstChild);
-    }
-    // Créer un conteneur pour le mode montre
-    const watchDiv = document.createElement("div");
-    watchDiv.id = "watchModeContainer"; // Ajouter un ID pour des styles spécifiques
-    watchDiv.style.cssText = `
-        position: fixed; // Assure que la div est positionnée de façon absolue sur la page
-        top: 0;
-        left: 0;
+function showCssWatch() {
+    // Appliquer le style pour cacher tout le contenu existant
+    document.body.style.cssText = `
+        margin: 0;
+        padding: 0;
         width: 352px;
         height: 430px;
-        background-color: black; // Fond noir pour un affichage de montre typique
-        color: white; // Texte en blanc pour le contraste
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 24px; // Taille de police pour un petit écran
-        z-index: 1000; // S'assurer que la div est au-dessus des autres contenus
+        font-size: 40px; // Taille de police pour un petit écran
     `;
 
+    // Supprimer tous les enfants du body
+    while (document.body.firstChild) {
+        document.body.removeChild(document.body.firstChild);
+    }
+
+    // Importer la police et appliquer le style
+    var styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `
+        @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+        .watch-content {
+            font-family: 'Kumar One', cursive; // Utilisation de la police Kumar One
+            color: white; // Couleur du texte
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
     // Créer et ajouter le contenu spécifique pour le mode montre
-
-
-    // Ajouter la div du mode montre au body
-    document.body.appendChild(watchDiv);
-
-
-
     const watchContent = document.createElement("div");
+    watchContent.className = "watch-content";
     watchContent.textContent = "notifications : ";
-    watchDiv.appendChild(watchContent); // Ajouter le contenu à la div du mode montre
-
-
+    document.body.appendChild(watchContent);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
