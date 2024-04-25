@@ -2,8 +2,7 @@ import { userService } from "../Services/User/userService.js";
 
 document.addEventListener('DOMContentLoaded', function() {
     const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
-
-    watchSwitch.checked = false;
+    
 
     userService.getUserInfo((userInfo) => {
         console.log('User info in config:', userInfo);
