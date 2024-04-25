@@ -142,6 +142,7 @@ export class GamePresenter {
          return () => {
              if(!this.wallIsSelected){
                  let neighborhood = getWallNeighborhood(wall);
+                 console.log("NEIGHBORHOOD -> ",neighborhood);
                  if(!this.gameBehaviour.isPresentWall(neighborhood,this.model)){
                      neighborhood.children.item(0).style.opacity = "0.8";
                  }
@@ -366,7 +367,6 @@ export class GamePresenter {
             else{
                 //VALIDATION DE L'ACTION (previsualisation du placement des murs)
                 this.showConfirmationButtons();
-
                 //on previent le handler de survol que le mur est selectionné
                 this.wallIsSelected = true;
                 function waitForUserAction() {

@@ -1,5 +1,5 @@
 const config = {
-    API_ENDPOINT: 'http://coolwar.ps8.academy',
+    API_ENDPOINT: 'http://localhost:3000',
     //http://coolwar.ps8.academy
     //http://10.0.2.2:3000
     //
