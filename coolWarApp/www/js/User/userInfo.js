@@ -216,5 +216,3 @@ function listenToNotifications() {
 
 // Appeler cette fonction pour injecter les styles lorsque le script est exécuté
 injectNotificationStyles();
-
-
