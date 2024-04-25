@@ -6,6 +6,10 @@ export const userService = {
 
     getUserInfo(callback){
         // Demander le modèle de jeu en utilisant la socket de socketManager
+        if (!socketManager.socket || !socketManager.socket.connected) {
+            socketManager.initializeSocket(localStorage.getItem('token'));
+
+        }
         console.log("le token" ,localStorage.getItem('token'));
         socketManager.socket.emit('get info user', JSON.stringify(localStorage.getItem('token')));
 

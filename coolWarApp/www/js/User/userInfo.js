@@ -55,7 +55,7 @@ document.addEventListener('deviceready', () => {
     });
 });
 
-function showCssWatch() {
+function showCssWatch(watch) {
     // Appliquer le style pour cacher tout le contenu existant
     document.body.style.cssText = `
         margin: 0;
@@ -88,10 +88,17 @@ function showCssWatch() {
     // Créer et ajouter le contenu spécifique pour le mode montre
     const watchContent = document.createElement("div");
     watchContent.className = "watch-content";
-    watchContent.textContent = "notifications : ";
+    if(watch){
+        watchContent.textContent = "notifications : ";
+        injectNotificationStyles();
+        listenToNotificationsWatch(watchContent);
+
+
+    }else{
+        watchContent.textContent = "Activez le mode watch dans les settings ";
+
+    }
     document.body.appendChild(watchContent);
-    injectNotificationStyles();
-    listenToNotificationsWatch(watchContent);
 }
 
 function listenToNotificationsWatch(watchContent) {
@@ -130,8 +137,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await userService.getUserInfo(async (userInfo) => {
-        if (userInfo.watch && window.innerWidth <= 400 && window.innerHeight <= 500) {
-            showCssWatch();
+        if (window.innerWidth <= 400 && window.innerHeight <= 500) {
+            showCssWatch(userInfo.watch);
             return;
         }
     });

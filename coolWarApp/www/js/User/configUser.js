@@ -1,7 +1,18 @@
 import { userService } from "../Services/User/userService.js";
 
 document.addEventListener('DOMContentLoaded', function() {
-    const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
+    const watchSwitch = document.querySelector('.watch-slider');
+    console.log('Watch switch:', watchSwitch);
+    watchSwitch.checked = false;
+    userService.getUserInfo((userInfo) => {
+        console.log('User info in config:', userInfo);
+        console.log('User info watch in config:', userInfo.watch);
+        // Force the reflow/update of the checkbox
+        setTimeout(() => {
+            watchSwitch.checked = !!userInfo.watch; // !! pour convertir en booléen
+        }, 0);
+    });
+
 
     watchSwitch.addEventListener('change', function() {
         // Récupérer le token du localStorage
