@@ -8,7 +8,6 @@ export const userService = {
         // Demander le modèle de jeu en utilisant la socket de socketManager
         if (!socketManager.socket || !socketManager.socket.connected) {
             console.error('Socket not initialized or not connected.');
-            return;
         }else{
             socketManager.initializeSocket(localStorage.getItem('token'));
         }
