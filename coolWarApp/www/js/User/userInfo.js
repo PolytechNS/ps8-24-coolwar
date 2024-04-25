@@ -67,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (token) {
         userService.getUserInfo((userInfo) => {
             // Mettre à jour le nom d'utilisateur
+            console.log('USER INFO:', userInfo);
             const usernameElement = document.querySelector('.nameAndLogout .username');
             if (usernameElement) {
                 usernameElement.textContent = userInfo.username;
