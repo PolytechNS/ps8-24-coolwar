@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rules</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="RulesStyle.css">
+</head>
+<body>
+<header class="head">
+    <img class="logo" src="../../../assets/logo.png"/>
+    <h1>CoolWar</h1>
+    <div class="user">
+        <div>
+            <a href="../../Login/login.html">
+                <img class="logout-pic" src="../../../assets/logout.png">
+            </a>
+        </div>
+        <img class="profilePicture" src="../../../assets/profilePicture.png">
+        <div class="nameAndLogout">
+            <p class="username">Nom</p>
+            <a href="../../Login/login.html">
+                <button class="logout">Logout</button>
+            </a>
+        </div>
+        <!-- Début de la section de niveau d'utilisateur modifiée -->
+        <div class="level-container">
+            <div class="level-circle">
+                <span class="level-number">42</span>
+            </div>
+            <div class="level-progress-info">
+                <div class="level-range">
+                    <span class="current-level">42</span> → <span class="next-level">43</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" style="width: 70%;"></div>
+                </div>
+                <div class="level-points">
+                    <span class="current-exp">700</span> / <span class="next-level-exp">1000</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fin de la section de niveau d'utilisateur modifiée -->
+    </div>
+</header>
+    <div class="rules_container">
+        <section class="slider-wrapper">
+            <button class="slide-arrow" id="slide-arrow-prev">
+                &#8249;
+            </button>
+            <button class="slide-arrow" id="slide-arrow-next">
+                &#8250;
+            </button>
+            <ul class="slides-container" id="slides-container">
+                <li class="slide">
+                    <h2>CLERVIE BGGGG</h2>
+                    <p>Clervie est bg parce que...</p>
+                </li>
+                <li class="slide">B</li>
+                <li class="slide">C</li>
+                <li class="slide">D</li>
+            </ul>
+        </section>
+
+    </div>
+
+
+
+</body>
+</html>
+
+<script type="module" src="../../../js/Animations/rules.js"></script>
+<script type="module" src="../../../js/Animations/slider.js"></script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kumar+One&display=swap');
+</style>
