@@ -70,9 +70,10 @@ module.exports = (server) => {
                     console.log("EVENT HALLOWWEEEENN!");
                     for(let socketId in connectedUsers){
                         io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
-                        eventGiven = true;
                     }
                 }, 10000);
+                eventGiven = true;
+                
 
             }
 
