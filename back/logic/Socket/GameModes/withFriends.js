@@ -276,19 +276,25 @@ module.exports = (io, socket) => {
         if(response !==-1){
             console.log("GAME FINISHED");
             let winner = response;
+            console.log("winner",winner);
             let looser = (winner === 1) ? 2 : 1;
             await manageEndGameUser(dataParse.gameId,winner,looser);
             await updateWinnerAndLooser(dataParse.gameId,winner);
-            let achievementsUnlockedPl1 = await checkAchievements(games.get(dataParse.gameId).player1Token);
+
+            console.log("token Player 1 --> ",games.get(dataParse.gameId).player1Token);
+            console.log("token Player 2 --> ",games.get(dataParse.gameId).player2Token);
+
+            let achievementsUnlockedPl1 = await checkAchievements(games.get(dataParse.gameId).player1Token, winner, dataParse.gameId);
             //faudrait que ça retourne ls achievements du joueur 1
-            let achievementsUnlockedPl2 = await checkAchievements(games.get(dataParse.gameId).player2Token);
+            let achievementsUnlockedPl2 = await checkAchievements(games.get(dataParse.gameId).player2Token, winner, dataParse.gameId);
+
+            console.log("achievementsUnlockedPl1",achievementsUnlockedPl1);
+            console.log("achievementsUnlockedPl2",achievementsUnlockedPl2);
 
             await sendNotifToUser(io,games.get(dataParse.gameId).player1Token,achievementsUnlockedPl1);
             await sendNotifToUser(io,games.get(dataParse.gameId).player2Token,achievementsUnlockedPl2);
             //ensuite on emit la réponse des achievements
             //Et cote front on a une méthode dans l'indexFriends qui va écouter cette réponse et afficher les achievements sur une pop up
-
-
         }
         socket.emit('checkWinnerWithFriendsResponse',response);
     });
@@ -546,6 +552,7 @@ async function launchGameWithFriends(io, socket, data) {
 
                 // Continuer avec la logique de mise en place de la partie...
                 const playerTokens = [token, opponentToken];
+                console.log("*************playerTokens*****************",playerTokens);
                 const playersSocketIds = [socket.id, opponentSocketId];
 
                 let gamesToSend = await createGame(roomId, playerTokens, playersSocketIds, gameId);
@@ -580,7 +587,7 @@ async function launchGameWithFriends(io, socket, data) {
 
 
 async function joinInstantGame(io, socket, tokenParsed) {
-    console.log("JOIN INSTANT GAME");
+    console.log("JOIN INSTANT GAME WITH TOKEN ->", tokenParsed);
     // Recherche d'un joueur en attente
     const opponentToken = [...waitingPlayersForInstantGame.keys()].find(t => t !== tokenParsed);
 
@@ -598,6 +605,7 @@ async function joinInstantGame(io, socket, tokenParsed) {
 
         // Continuer avec la logique de mise en place de la partie...
         const playerTokens = [tokenParsed, opponentToken];
+        console.log("*************playerTokens*****************",playerTokens);
         const playersSocketIds = [socket.id, opponentSocketId];
 
         let gamesToSend = await createGame(roomId, playerTokens, playersSocketIds);
@@ -709,8 +717,8 @@ async function createGame(roomId,playerTokens, playersSocketIds, gameId){
         let player2SocketId = playersSocketIds[1];
 
         let playersInfo = [];
-        for (const token of playerTokens) {
-            const userInfo = await db.collection('users').findOne({token: token});
+        for (let token of playerTokens) {
+            let userInfo = await db.collection('users').findOne({token: token});
             if (userInfo) {
                 playersInfo.push(userInfo);
             }

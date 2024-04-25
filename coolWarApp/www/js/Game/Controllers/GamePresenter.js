@@ -432,6 +432,7 @@ export class GamePresenter {
     };
 
     checkEndGame(){
+        console.log("CHECK END GAME");
         actionGameService.checkWinner(this.model.typeGame,this.model.gameId,(callback)=>{
             console.log(callback);
             if(callback===1  || callback===2){
