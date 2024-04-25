@@ -63,8 +63,14 @@ document.addEventListener('deviceready', () => {
 
     // Ajouter un écouteur d'événements pour les clics sur un élément spécifique
     // Remplacez 'elementSelector' par le sélecteur CSS de l'élément sur lequel vous souhaitez détecter les clics
-    document.addEventListener('click', (event) => {
-        clickSound.play();
+    const exploseButtons = document.querySelectorAll(".soundApp");
+
+    // Boucler sur chaque élément et attacher un écouteur d'événements pour les clics
+    exploseButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            // Jouer le son lors du clic
+            clickSound.play();
+        });
     });
 });
 document.addEventListener('DOMContentLoaded', () => {
@@ -77,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginButton = document.getElementById('LoginBTN');
     loginButton.addEventListener('click', function(event) {
         event.preventDefault();
-        navigator.vibrate(10);
         const username = document.querySelector('#usernameLogin').value
         const password = document.querySelector('#passwordLogin').value
 

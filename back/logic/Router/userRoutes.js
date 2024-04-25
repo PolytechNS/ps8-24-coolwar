@@ -15,6 +15,10 @@ function handleUserRoutes(req, res,db) {
     else if(url.pathname === '/api/users/removeNotifications' && req.method === 'POST'){
         userController.removeNotification(req, res, db);
     }
+    else if(url.pathname === '/api/users/activateWatch' && req.method === 'POST'){
+        userController.activateWatch(req, res, db);
+    }
+
 
 }
 

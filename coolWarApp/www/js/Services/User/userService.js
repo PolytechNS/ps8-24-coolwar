@@ -101,7 +101,26 @@ export const userService = {
                 }
                 return response.json();
             });
+    },
+
+    activateWatchAd(token,watch){
+        return fetch(`${config.API_ENDPOINT}/api/users/activateWatch`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({token,watch}),
+        })
+            .then(response => {
+                console.log("response",response);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            });
     }
+
 
 
 }

@@ -239,6 +239,23 @@ export class GamePresenter {
                         //token
                         actionGameService.moveCharacter(this.model.typeGame,this.model.ownIndexPlayer, tab[0], tab[1],this.model.gameId,this.model.gameBoardId,localStorage.getItem('token'),this.roomId,(res)=>{
                             if(res){
+                                document.addEventListener('deviceready', () => {
+                                    console.log("Device ready");
+
+                                    // Définir le chemin vers le fichier sonore
+                                    var mediaUrl = '/android_asset/www/assets/audio/foot.mp3';
+
+                                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                                        // Succès lors de la lecture du son
+                                        console.log("Audio played successfully");
+                                    }, function onError(error) {
+                                        // Erreur lors de la lecture du son
+                                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                                    });
+                                    clickSound.play();
+
+                                });
                                 this.view.boardGrid.displayPlayer(tab[0], tab[1], this.model.currentPlayer);
                                 //ON RETIRE L'ANCIEN STYLE
                                 this.view.boardGrid.deletePlayer(oldPosition.row.toString(), oldPosition.col.toString(), this.model.currentPlayer);
@@ -363,6 +380,23 @@ export class GamePresenter {
                         console.log(" -> ",dataToSend);
                         actionGameService.placeWall(this.model.typeGame,dataToSend, (isAuthorized)=>{
                             if(isAuthorized) {
+                                document.addEventListener('deviceready', () => {
+                                    console.log("Device ready");
+
+                                    // Définir le chemin vers le fichier sonore
+                                    var mediaUrl = '/android_asset/www/assets/audio/wall.wav';
+
+                                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                                        // Succès lors de la lecture du son
+                                        console.log("Audio played successfully");
+                                    }, function onError(error) {
+                                        // Erreur lors de la lecture du son
+                                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                                    });
+                                    clickSound.play();
+
+                                });
                                 //GESTION DES SUPERS-POUVOIRS SUR LES MUR
                                 wallListObj.forEach((wallToEdit) => {
                                     let wallInside = wallToEdit.children.item(0);
@@ -386,6 +420,29 @@ export class GamePresenter {
         actionGameService.checkWinner(this.model.typeGame,this.model.gameId,(callback)=>{
             console.log(callback);
             if(callback===1  || callback===2){
+                document.addEventListener('deviceready', () => {
+                    console.log("Device ready");
+
+                    if(this.model.ownIndexPlayer===1 || this.model.ownIndexPlayer===2){
+                        var mediaUrl = '/android_asset/www/assets/audio/victory.mp3';
+
+                    }else{
+                        var mediaUrl = '/android_asset/www/assets/audio/loose.mp3';
+
+                    }
+                    // Définir le chemin vers le fichier sonore
+
+                    // Créer l'objet Media une seule fois après que l'appareil est prêt
+                    var clickSound = new Media(mediaUrl, function onSuccess() {
+                        // Succès lors de la lecture du son
+                        console.log("Audio played successfully");
+                    }, function onError(error) {
+                        // Erreur lors de la lecture du son
+                        console.error("Error playing audio: " + error.code + " - " + error.message);
+                    });
+                    clickSound.play();
+
+                });
                 let winner_HTML = document.querySelectorAll('#winner');
                 winner_HTML.item(0).innerHTML = "Winner = "+callback;
                 this.cancel_behaviour();
@@ -534,5 +591,6 @@ export class GamePresenter {
         cancelButton.classList.add('inactive_BTN_SELECTION');
     }
 }
+
 
 
