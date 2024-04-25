@@ -1,3 +1,4 @@
+
 button{
     margin: 10px;
 }
@@ -10,11 +11,37 @@ h2{
 
 
 @media screen and (max-width: 600px) {
-    button{
+    button {
         font-size: 16px;
     }
 
     h2 {
         margin-top: 0;
+    }
+
+    .cadre {
+        align-self: start;
+        margin-top: 30px;
+        width: 90%;
+        justify-content: unset;
+        height: unset;
+    }
+}
+
+@media screen and (max-width: 1100px) and (min-width: 599px) {
+    h2 {
+        font-size: 45px;
+    }
+
+    button {
+        font-size: 25px;
+    }
+
+    .cadre {
+        align-self: start;
+        margin-top: 30px;
+        width: 90%;
+        justify-content: unset;
+        height: unset;
     }
 }

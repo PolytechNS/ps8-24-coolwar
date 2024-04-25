@@ -1,3 +1,4 @@
+
 .cadre{
     width: 1000px;
     justify-content: start;
@@ -91,8 +92,11 @@ button{
 
 @media screen and (max-width: 600px){
     .cadre{
-        width: 330px;
+        width: 90%;
         justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+        height: 80%;
     }
 
     h2{
@@ -100,11 +104,11 @@ button{
     }
 
     .listFriendRequest {
-        width: 320px;
+        width: 100%;
     }
 
     .friendRequest{
-        width: 310px;
+        width: 100%;
         padding: 5px;
         margin-bottom: 10px;
     }
@@ -142,5 +146,67 @@ button{
 
     .sentFriendRequest{
         font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 1100px) and (min-width: 599px){
+    .cadre{
+        width: 90%;
+        justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+        height: 80%;
+    }
+
+    h2{
+        margin: 0;
+        font-size: 40px;
+    }
+
+    .listFriendRequest {
+        width: 100%;
+        margin-bottom: 70px;
+    }
+
+    .friendRequest{
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    p{
+        font-size: 15px;
+    }
+
+    .profilePic{
+        border-radius: 50%;
+        max-height: 50px;
+        margin: 5px;
+    }
+
+    .levelPic{
+        max-height: 50px;
+        margin-left: 5px;
+    }
+
+    .banner{
+        padding: 5px 10px 0 5px;
+        margin-bottom: 5px;
+    }
+
+    button{
+        min-width: 60px;
+    }
+
+    .reject{
+        font-size: 16px;
+    }
+
+    .accept{
+        font-size: 16px;
+    }
+
+    .sentFriendRequest{
+        font-size: 25px;
     }
 }

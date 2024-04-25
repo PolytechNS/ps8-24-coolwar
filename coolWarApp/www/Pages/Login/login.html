@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../Login/login.css">
@@ -15,18 +16,24 @@
 <main>
     <div class="cadre">
         <h2>Login</h2>
-        <form id="loginForm">
-            <label for="usernameLogin">Username:</label>
-            <input type="text" id="usernameLogin" name="username"><br>
-            <label for="passwordLogin">Password:</label>
-            <input type="password" id="passwordLogin" name="password"><br><br>
-            <input class="button" type="submit" value="Login">
-        </form>
-        <a href="../Login/signup.html">
-            <button class="button">Sign up</button>
-        </a>
+        <div id="loginForm">
+            <p>
+                <label for="usernameLogin">Username</label>
+                <br>
+                <input type="text" id="usernameLogin" name="username">
+            </p>
+            <p>
+                <label for="passwordLogin">Password</label>
+                <br>
+                <input type="password" id="passwordLogin" name="password">
+            </p>
+            <button class="button" id="LoginBTN">Login</button>
+            <button class="button" id="SignUpBTN" onclick="window.location.href = '../Login/signup.html';">Sign Up</button>
+        </div>
+
     </div>
 </main>
+<script type="text/javascript" src="../../cordova.js"></script>
 <script src="../../js/Login/login.js" type="module"></script>
 </body>
 </html>

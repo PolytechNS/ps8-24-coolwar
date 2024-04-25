@@ -115,6 +115,7 @@ function updatePlayersList(players) {
 // Envoi de l'état "Prêt" au serveur
 function emitPlayerReady(token) {
     console.log('Player ready');
+    navigator.vibrate(500);
     socketManager.socket.emit('ready', JSON.stringify({ token }));
 
 
@@ -167,8 +168,7 @@ function loadFriends() {
                             <p>${friend.username}</p>
                         </div>
                         <div class="rightSide">
-                            <p>En ligne il y a 14h...</p>
-                            <img class="levelPic" src="../../../assets/level${friend.level}.png">
+                            <p>Level ${friend.level}</p>
                         </div>
                     </div>
                 `;

@@ -1,10 +1,48 @@
+
 @media screen and (max-width: 600px){
+
     h2{
-        margin:0;
+        margin:unset;
+    }
+
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        justify-content: unset;
+    }
+
+    .theButton{
+        padding-top: 15px;
+        padding-bottom: 15px;
     }
 
     button{
-        font-size: 15px;
-        padding: 10px;
+        font-size: 22px;
+    }
+}
+
+
+@media screen and (max-width: 1100px) and (min-width: 599px){
+
+    h2{
+        margin:unset;
+    }
+
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        justify-content: unset;
+        height: unset;
+    }
+
+    .theButton{
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    button{
+        font-size: 22px;
     }
 }

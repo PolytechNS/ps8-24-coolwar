@@ -142,7 +142,6 @@ p{
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* Deux colonnes */
         gap: 2px;
-        max-height: 250px; /* Hauteur maximale de la liste d'accomplissements */
         margin-left: 10px;
         margin-right: 0;
     }
@@ -160,5 +159,65 @@ p{
 
     .popup-content {
         max-width: 250px; /* Limite la largeur de la pop-up */
+    }
+
+}
+
+
+@media screen and (max-width:1100px) and (min-width: 599px){
+    .cadre{
+        align-self:start;
+        margin-top: 30px;
+        width: 90%;
+        justify-content: unset;
+        height: unset;
+    }
+
+    .display{
+        width: fit-content;
+    }
+
+    h2{
+        margin-top: unset;
+    }
+
+    .userPic{
+        border-radius: 100%;
+        max-height: 100px;
+        max-width: 100px;
+        min-height: 100px;
+        min-width:100px;
+    }
+
+    .skin{
+        max-height:60px;
+        margin-right: 20px;
+    }
+
+    .listAchievements {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        margin-left: 10px;
+        margin-right: 0;
+        max-height: 500px;
+    }
+
+    .achievement{
+        max-width: 80px;
+        min-width: 80px;
+    }
+
+    .achievementImg{
+        max-height: 80px;
+        max-width: 80px;
+    }
+
+    .popup-content {
+        max-width: 250px; /* Limite la largeur de la pop-up */
+    }
+
+    p{
+        font-size: 70%;
     }
 }

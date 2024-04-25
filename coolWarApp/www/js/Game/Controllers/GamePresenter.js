@@ -315,8 +315,14 @@ export class GamePresenter {
                         const cancelButton = document.getElementById("cancelMove");
 
                         // Gestionnaires d'événements pour résoudre la promesse
-                        confirmButton.onclick = () => resolve(true);
-                        cancelButton.onclick = () => resolve(false);
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(true);
+                        };
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(false);
+                        };
                     });
                 }
                 async function handleUserAction() {
@@ -370,8 +376,14 @@ export class GamePresenter {
                         const cancelButton = document.getElementById("cancelMove");
 
                         // Gestionnaires d'événements pour résoudre la promesse
-                        confirmButton.onclick = () => resolve(true);
-                        cancelButton.onclick = () => resolve(false);
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(true);
+                        };
+                        confirmButton.onclick = () => {
+                            navigator.vibrate(1000); // Vibre pendant 2000 millisecondes (2 secondes)
+                            resolve(false);
+                        };
                     });
                 }
                 async function handleUserAction() {
@@ -521,6 +533,8 @@ export class GamePresenter {
         let rounds = document.querySelectorAll('#rounds');
         let curplayer_HTML = document.querySelectorAll('#curplayer');
         let nbWallsLeft_HTML = document.querySelectorAll('#nbWallsLeft');
+        let nbWallsLeft_mobile = document.querySelectorAll('#nbWallsLeftMobile');
+
         rounds.item(0).innerHTML = "Rounds : "+this.model.roundCounter;
 
         if(this.model.ownIndexPlayer !== this.model.currentPlayer){
@@ -535,9 +549,11 @@ export class GamePresenter {
 
         if(this.model.player_array.length<=1){
             nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[0].nbWalls + " walls left";
+            nbWallsLeft_mobile.item(0).innerHTML = this.model.player_array[0].nbWalls + " walls left";
         }
         else{
             nbWallsLeft_HTML.item(0).innerHTML = this.model.player_array[this.model.ownIndexPlayer-1].nbWalls + " walls left";
+            nbWallsLeft_mobile.item(0).innerHTML = this.model.player_array[this.model.ownIndexPlayer-1].nbWalls + " walls left";
         }
 
         console.log("-------------------------------------------------------------")

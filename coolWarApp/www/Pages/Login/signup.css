@@ -1,3 +1,4 @@
+
 #usernameSignup, #passwordSignup{
     border-radius: 8px;
     background-color: #D9D9D9;
@@ -26,7 +27,25 @@
     }
 
     #usernameSignup, #passwordSignup{
-        margin-bottom: 10px;
+        margin-bottom: 30px;
+    }
+
+    h2{
+        margin-bottom: 20px;
     }
 }
 
+
+@media screen and (max-width: 1100px) and (min-width: 599px){
+    .button{
+        margin-bottom: 0;
+    }
+
+    #usernameSignup, #passwordSignup{
+        margin-bottom: 30px;
+    }
+
+    h2{
+        margin-bottom: 20px;
+    }
+}

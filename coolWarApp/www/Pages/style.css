@@ -1,3 +1,4 @@
+
 body{
     color: #fff;
     font-family: 'Kumar One', serif;
@@ -23,7 +24,7 @@ body{
 
 
 .logo{
-    max-height: 18%;
+    max-height: 13%;
     width: auto;
     object-fit: contain;
     background-color: #345128;
@@ -428,30 +429,41 @@ button{
     height: 24px;
     vertical-align: middle;
     /* Ajoutez ici d'autres styles si nécessaire */
+    margin-right: 15px;
 }
 
 .logout-pic{
     display:none;
 }
 
-
 .back{
     display: none;
 }
 
 
+
 @media screen and (max-width: 600px) {
+    html{
+        height: 100%;
+    }
+
+    main{
+        height: 100%;
+        width: 100%;
+    }
+
     body{
         font-size: 12px;
+        height: 100%;
     }
 
     .logo{
-        max-height: 11%;
+        max-height: 8%;
+        margin-left: 5px;
     }
 
     .head{
-        padding:12px;
-        margin:0;
+        padding: 20px;
     }
 
     h1{
@@ -459,16 +471,15 @@ button{
     }
 
     .cadre{
-        margin-top: 10px;
-        min-width: 300px;
-        width: fit-content;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        height: min-content;
+        margin: 30px auto;
+        width: 90%;
         padding: 10px;
+        min-width: unset;
+    }
+
+    .grid{
+        grid-template-columns: 1fr 15fr 1fr;
+        margin-bottom: 50px;
     }
 
     h2{
@@ -512,16 +523,17 @@ button{
         display:none;
     }
 
-    .level-container {
-        margin-left: 0;
-    }
-
     .level-circle {
         display: none;
     }
 
     .level-number {
         display: none;
+    }
+
+
+    .level-container {
+        margin-left: 0;
     }
 
     .level-range, .level-points {
@@ -571,5 +583,139 @@ button{
 
     #backButton{
         display:none;
+    }
+}
+
+
+@media screen and (max-width: 1100px) and (min-width: 599px){
+    html{
+        height: 100%;
+    }
+
+    main{
+        height: 100%;
+        width: 100%;
+    }
+    body{
+        font-size: 18px;
+    }
+
+    .head{
+        padding: 20px;
+    }
+
+    h1{
+        font-size:  40px;
+    }
+
+    .grid{
+        grid-template-columns: 1fr 15fr 1fr;
+        margin-bottom: 50px;
+    }
+
+    .logo {
+        max-height: 10%;
+    }
+
+    .cadre{
+        margin: 30px auto;
+        width: 90%;
+        padding: 10px;
+        height: 70%;
+    }
+
+    h2{
+        font-size: 35px;
+    }
+
+    label{
+        font-size: 25px;
+    }
+
+    .tank, .body, .turret, .cannon{
+        display: none;
+    }
+
+    .theButton{
+        background-color: #D9D9D9;
+        border-radius: 8px;
+        margin: 5px;
+        min-width: 90%;
+        padding: 0;
+    }
+
+    .user {
+        font-size: 15px;
+        right: 2%;
+    }
+
+    .logout{
+        display: none;
+    }
+
+    .profilePicture{
+        border-radius: 50%;
+        max-height: 50px;
+    }
+
+    .level-circle {
+        display: none;
+    }
+
+    .level-number {
+        display: none;
+    }
+
+    .level-range, .level-points {
+        font-size: 0.8rem;
+    }
+
+    .progress-bar {
+        width: 80px; /* Width of the progress bar */
+        height: 10px; /* Height of the progress bar */
+        margin-bottom: 0;
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+
+    .user {
+        display: flex;
+        flex-direction: row; /* Aligner les éléments en colonne */
+    }
+
+    .nameAndLogout, .level-container {
+        width: 100%;
+    }
+
+    .nameAndLogout {
+        margin-left: 5px;
+    }
+
+    .profilePicture {
+        display: none;
+    }
+
+    .logout-pic{
+        display: block;
+        width: 40px;
+        margin: 5px;
+    }
+
+    .back {
+        display: block;
+        margin: 0 auto 0 0;
+    }
+
+    .back-img{
+        width: 50px;
+        height: 50px;
+    }
+
+    #backButton{
+        display:none;
+    }
+
+    .username{
+        display: none;
     }
 }

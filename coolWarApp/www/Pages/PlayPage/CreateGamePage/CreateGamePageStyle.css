@@ -1,3 +1,4 @@
+
 .cadre{
     width: 1000px;
     padding: 10px;
@@ -129,13 +130,21 @@ input:checked + .slider:before {
 
 @media screen and (max-width: 600px){
     .cadre{
-        width: 330px;
+        width: 90%;
         justify-content: start;
-        height: 300px;
+        align-self:start;
+        margin-top: 30px;
+        margin-bottom: 50px;
     }
 
     .gameCreation{
-        margin-bottom: 0;
+        margin-bottom: 20px;
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    h2{
+        margin-top: 10px;
     }
 
     h3{
@@ -147,11 +156,17 @@ input:checked + .slider:before {
     .gameName{
         padding: 0;
         margin-left: 0;
+        width: 100%;
+    }
+
+    .aline{
+        margin-bottom:20px;
     }
 
     .line{
         min-height: 50px;
-        margin: 0;
+        margin-left: 5px;
+        margin-right: 5px;
     }
 
     img {
@@ -184,6 +199,82 @@ input:checked + .slider:before {
         font-size: 15px;
         padding: 5px;
         margin-left: 0;
-        max-width: 150px;
+        width: 100%;
+    }
+}
+
+
+@media screen and (max-width: 1100px) and (min-width: 599px){
+    .cadre{
+        width: 90%;
+        justify-content: start;
+        align-self:start;
+        margin-top: 30px;
+        height: unset;
+    }
+
+    .gameCreation{
+        margin-bottom: 0;
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    h2{
+        margin-top: 10px;
+    }
+
+    h3{
+        padding: 5px;
+        margin-right: 10px;
+        min-width: 100px;
+    }
+
+    .gameName{
+        padding: 0;
+        margin-left: 0;
+    }
+
+    .aline{
+        margin-bottom:20px;
+    }
+
+    .line{
+        min-height: 50px;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    img {
+        max-height: 40px;
+    }
+
+    button{
+        font-size: 15px;
+    }
+
+    .switch {
+        width: 58px;
+        height: 37px;
+    }
+
+    .slider:before {
+        height: 28px;
+        width: 28px;
+        left: 4px;
+        bottom: 4px;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(23px);
+        -ms-transform: translateX(23px);
+        transform: translateX(23px);
+    }
+
+    #gameName{
+        font-size: 15px;
+        padding: 5px;
+        margin-left: 0;
+        margin-right:5px;
+        width: 100%;
     }
 }

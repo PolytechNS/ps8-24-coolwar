@@ -15,9 +15,20 @@
   "cordova": {
     "platforms": [
       "android"
-    ]
+    ],
+    "plugins": {
+      "onesignal-cordova-plugin": {},
+      "cordova-plugin-lottie-splashscreen": {},
+      "cordova-plugin-vibration": {},
+      "cordova-plugin-media": {}
+    }
   },
   "devDependencies": {
-    "cordova-android": "^12.0.1"
+    "cordova-android": "^12.0.1",
+    "cordova-plugin-file": "^8.0.1",
+    "cordova-plugin-lottie-splashscreen": "^0.10.0",
+    "cordova-plugin-media": "^7.0.0",
+    "cordova-plugin-vibration": "^3.1.1",
+    "onesignal-cordova-plugin": "^5.1.2"
   }
 }

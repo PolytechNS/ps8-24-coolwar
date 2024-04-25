@@ -10,6 +10,8 @@ export const socketManager = {
             return;
         }
         this.socket = io('http://coolwar.ps8.academy', {
+            //http://coolwar.ps8.academy
+            //http://10.0.2.2:3000
             auth: { token },
         });
 
