@@ -363,6 +363,7 @@ async function removeNotification(req, res, db) {
 
 
 module.exports = {
+    activateWatch,
     addExpToPlayerWithBot,
     manageEndGameUser,
     checkAchievements,
