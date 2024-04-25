@@ -642,8 +642,7 @@ h1{
         border: 5px solid #000000;;
         padding: 6px;
         margin: 5px;
-        box-shadow: -8px 7px 5px rgba(0, 0, 0, 0.69);
-    }
+        box-shadow: -8px 7px 5px rgba(0, 0, 0, 0.32);    }
 
     .info{
         padding: 10px;
@@ -1173,8 +1172,7 @@ h1{
         border: 5px solid #000000;;
         padding: 6px;
         margin: 5px;
-        box-shadow: -8px 7px 5px rgba(0, 0, 0, 0.69);
-    }
+        box-shadow: -8px 7px 5px rgba(0, 0, 0, 0.32);    }
 
     .info{
         padding: 10px;
@@ -1596,4 +1594,7 @@ h1{
         align-self: center;
     }
 
+    #winner, #rounds{
+        margin: auto;
+    }
 }
