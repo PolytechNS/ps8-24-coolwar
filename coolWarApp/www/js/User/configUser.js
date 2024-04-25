@@ -8,8 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     userService.getUserInfo((userInfo) => {
         console.log('User info in config:', userInfo);
         console.log('User info watch in config:', userInfo.watch);
-        // Si userInfo.watch est undefined ou false, le slider sera non coché.
-        watchSwitch.checked = userInfo.watch; // Coche le slider si userInfo.watch est true
+        if(userInfo.watch){
+            watchSwitch.checked = true;
+        }
     });
 
 
