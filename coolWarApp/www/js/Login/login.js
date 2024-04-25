@@ -30,6 +30,7 @@ function OneSignalInit() {
 }
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
 
     //clean le cache localstorage
