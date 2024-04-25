@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     userService.getUserInfo((userInfo) => {
         console.log('User info in config:', userInfo);
-
+        // Définir l'état du slider basé sur userInfo.watch
+        watchSwitch.checked = userInfo.watch === true;
     });
+
 
     watchSwitch.addEventListener('change', function() {
         // Récupérer le token du localStorage
