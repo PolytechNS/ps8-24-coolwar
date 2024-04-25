@@ -91,7 +91,32 @@ function showCssWatch() {
     watchContent.textContent = "notifications : ";
     document.body.appendChild(watchContent);
     injectNotificationStyles();
-    listenToNotifications();
+    listenToNotificationsWatch(watchContent);
+}
+
+function listenToNotificationsWatch(watchContent) {
+    socketManager.socket.on('receive notification', (notification) => {
+        console.log('New notification received:', notification);
+
+        let notificationBell = document.querySelector('.notification-bell');
+        if (!notificationBell) {
+            notificationBell = document.createElement('img');
+            notificationBell.src = '../../../../assets/bell-icon.png'; // Assurez-vous que le chemin d'accès est correct
+            notificationBell.className = 'notification-bell';
+            notificationBell.style.width = '24px';
+            notificationBell.style.height = '24px';
+            notificationBell.style.verticalAlign = 'middle';
+
+            // Ajouter la cloche directement au contenu de la montre
+            watchContent.appendChild(notificationBell);
+        }
+
+        // Ajouter la classe 'shake' pour activer l'animation
+        notificationBell.classList.add('shake');
+
+        // Vous pouvez ajouter un timeout pour retirer la classe shake après quelques secondes
+        setTimeout(() => notificationBell.classList.remove('shake'), 2000);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
