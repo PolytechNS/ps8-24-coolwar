@@ -1,4 +1,4 @@
-import { userService } from '../Services/User/UserService.js';
+import { userService } from "../Services/User/userService.js";
 
 document.addEventListener('DOMContentLoaded', function() {
     const watchSwitch = document.querySelector('.settings .switch input[type="checkbox"]');
