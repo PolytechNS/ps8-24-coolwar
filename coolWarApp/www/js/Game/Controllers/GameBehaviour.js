@@ -2,6 +2,7 @@ import {Utils} from "../../Utils/utils.js";
 
 export class GameBehaviour{
     isPresentWall(wall,model) {
+        console.log("INSIDE GAMEBAHVIOUR -> isPresentWall");
         let coordinates = Utils.prototype.getCoordinatesFromID(wall.children.item(0).id);
         if (wall.children.item(0).classList.contains("horizontal_wall")) {
             return this.getWall(model?.horizontal_Walls,parseInt(coordinates[0]), parseInt(coordinates[1]))?.isPresent;
