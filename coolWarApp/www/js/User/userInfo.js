@@ -119,9 +119,6 @@ function listenToNotificationsWatch(watchContent) {
 
         // Ajouter la classe 'shake' pour activer l'animation
         notificationBell.classList.add('shake');
-
-        // Vous pouvez ajouter un timeout pour retirer la classe shake après quelques secondes
-        setTimeout(() => notificationBell.classList.remove('shake'), 2000);
     });
 }
 
