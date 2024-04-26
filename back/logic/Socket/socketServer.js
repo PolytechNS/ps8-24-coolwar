@@ -35,47 +35,51 @@ module.exports = (server) => {
         handleChat(io, socket);
         manageEvents(io, socket);
 
-        function manageEvents(io, socket){
-            if(!eventGiven){
-
+        function sendHalloweenEvent(){
+            setTimeout(async () => {
+                console.log("EVENT HALLOWWEEEENN!");
                 sendNotification("Event halloween soon !")
                     .then(() => console.log('Notification sent on server start'))
                     .catch((error) => console.error('Error sending server-start notification:', error));
+                for(let socketId in connectedUsers){
+                    io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
+                }
+            }, 10000);
+        }
 
+        function sendDancerEvent(){
+            sendNotification("Event Dancer Soon !")
+                .then(() => console.log('Notification sent on server start'))
+                .catch((error) => console.error('Error sending server-start notification:', error));
+            setTimeout(async () => {
+                console.log("EVENT DANCEEER !");
+                for(let socketId in connectedUsers){
+                    io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
+                    eventGiven = true;
+                    for(let socketId in connectedUsers){
+                        let userId = connectedUsers[socketId].userId;
 
-                setTimeout(async () => {
-                        console.log("EVENT DANCEEER !");
-                        for(let socketId in connectedUsers){
-                            io.to(socketId).emit('event alert', { message: 'tu fais le fou toi ?', type: "dancer" });
-                            eventGiven = true;
-                            for(let socketId in connectedUsers){
-                                let userId = connectedUsers[socketId].userId;
+                        await client.connect();
+                        const db = client.db();
 
-                                await client.connect();
-                                const db = client.db();
+                        const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
 
-                                const userObjectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+                        await db.collection('users').updateOne(
+                            { _id: userObjectId }, // Critère de recherche
+                            { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
+                        );
 
-                                await db.collection('users').updateOne(
-                                    { _id: userObjectId }, // Critère de recherche
-                                    { $push: { achievements: 'tu_fais_le_fou.jpg' } } // Modification à appliquer
-                                );
-
-                            }
                     }
-                }, 10000);
+                }
+            }, 10000);
+        }
 
-                // setTimeout(async () => {
-                //     console.log("EVENT HALLOWWEEEENN!");
-                //     for(let socketId in connectedUsers){
-                //         io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
-                //     }
-                // }, 10000);
+        function manageEvents(io, socket){
+            if(!eventGiven){
+                //sendDancerEvent();
+                sendHalloweenEvent();
                 eventGiven = true;
-
-
             }
-
         }
 
         // Exemple de récupération de l'ID utilisateur lors de la connexion
