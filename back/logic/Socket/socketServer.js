@@ -35,18 +35,26 @@ module.exports = (server) => {
         handleChat(io, socket);
         manageEvents(io, socket);
 
-        function sendHalloweenEvent(){
+        function sendHalloweenNotificaton(){
             setTimeout(async () => {
-                sendNotification("Event halloween in a few moment !")
+                sendNotification("Event halloween coming soon !")
                     .then(() => console.log('Notification sent on server start'))
                     .catch((error) => console.error('Error sending server-start notification:', error));
             }, 5000);
+        }
+
+        function sendHalloweenEvent(){
+            setTimeout(async () => {
+                sendNotification("Event halloween now !")
+                    .then(() => console.log('Notification sent on server start'))
+                    .catch((error) => console.error('Error sending server-start notification:', error));
+            }, 3000);
             setTimeout(async () => {
                 console.log("EVENT HALLOWWEEEENN!");
                 for(let socketId in connectedUsers){
                     io.to(socketId).emit('event alert', { message: 'Halloweeeeen !', type: "halloween" });
                 }
-            }, 10000);
+            }, 5000);
         }
 
         function sendDancerEvent(){
@@ -73,13 +81,14 @@ module.exports = (server) => {
 
                     }
                 }
-            }, 10000);
+            }, 6000);
         }
 
         function manageEvents(io, socket){
             if(!eventGiven){
+                sendHalloweenNotificaton();
+                //sendHalloweenEvent();
                 //sendDancerEvent();
-                sendHalloweenEvent();
                 eventGiven = true;
             }
         }
