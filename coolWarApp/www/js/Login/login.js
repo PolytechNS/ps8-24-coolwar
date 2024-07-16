@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => {
                 console.error('Login error:', error);
-                alert('Mauvais Login ! Veuillez reessayer', error);
+                alert('Mauvais login / Le compte n\'existe pas', error);
             });
     });
 });

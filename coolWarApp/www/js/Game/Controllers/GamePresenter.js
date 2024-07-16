@@ -79,7 +79,6 @@ export class GamePresenter {
 
         confirmButton.onclick = () => {
             console.log("Confirm button clicked");
-            console.log(confirmButton.classList);
             if(!confirmButton.classList.contains('active_BTN_SELECTION')){alert("You must select a move before confirming !");}
         }
         cancelButton.onclick = () => {
@@ -103,6 +102,7 @@ export class GamePresenter {
     }
 
     cancel_behaviour(){
+        console.log("CANCEL BEHAVIOUR")
         let horizontal_walls_HTML = document.querySelectorAll('.horizontal_hitbox');
         let vertical_walls_HTML = document.querySelectorAll('.vertical_hitbox');
         let playable_case_HTML = document.querySelectorAll('.playable_square');
@@ -232,6 +232,7 @@ export class GamePresenter {
 
                 // Exemple d'utilisation
                 handleUserAction().then((userConfirmed) => {
+                    //Si l'utilisateur à validé son choix
                     if (userConfirmed) {
                         actionGameService.getPlayerPosition(this.model.typeGame,this.model.ownIndexPlayer,this.model.gameId,(res)=>{
                             oldPosition = res;
@@ -263,7 +264,11 @@ export class GamePresenter {
                                 this.sendUpdateToBack();
                             }
                         });
-                    } else {}
+                    }
+                    //s'il annule l'action
+                    else {
+                        console.log("Action mouvement annulée");
+                    }
                     playable_case.style.backgroundColor = originalBackGroundColor;
                     this.hideConfirmationButtons();
                 });
@@ -274,6 +279,7 @@ export class GamePresenter {
 
     clickPlaceWallHandler = (wall) => {
         return () => {
+            //si le bonus bombe est activé
             if(this.wallPower){
                 //VALIDATION DE L'ACTION (previsualisation de l'explosion)
                 this.showConfirmationButtons();
@@ -344,6 +350,13 @@ export class GamePresenter {
                                 */
                             }
                         });
+                    }
+                    else{
+                        console.log("Action mur annulée");
+                        //on remet les murs à leur état initial
+                        wall.children.item(0).style.opacity = "0";
+                        let neighborhood = getWallNeighborhood(wall);
+                        neighborhood.children.item(0).style.opacity = "0";
                     }
                     this.hideConfirmationButtons();
                     this.wallIsSelected = false;
@@ -425,6 +438,13 @@ export class GamePresenter {
                                 this.sendUpdateToBack();
                             }
                         });
+                    }
+                    else{
+                        console.log("Action mur annulée");
+                        //on remet les murs à leur état initial
+                        wall.children.item(0).style.opacity = "0";
+                        let neighborhood = getWallNeighborhood(wall);
+                        neighborhood.children.item(0).style.opacity = "0";
                     }
                     this.hideConfirmationButtons();
                     this.wallIsSelected = false;
@@ -598,7 +618,7 @@ export class GamePresenter {
         cancelButton.classList.remove('inactive_BTN_SELECTION');
     }
     hideConfirmationButtons() {
-        console.log("SHOW CONFIRMATION BUTTONS");
+        console.log("HIDE CONFIRMATION BUTTONS");
         // Les boutons sont déjà dans le DOM, on ne change que leur comportement
         const confirmButton = document.getElementById("confirmMove");
         const cancelButton = document.getElementById("cancelMove");

@@ -3,6 +3,7 @@ import { config } from '../../Utils/config.js'; // Assurez-vous que le chemin es
 
 const AuthService = {
     login(username, password) {
+        console.log('AuthService.login:', username, password);
         return fetch(`${config.API_ENDPOINT}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
